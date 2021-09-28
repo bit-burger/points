@@ -1,0 +1,11 @@
+name: points_repository
+description: The connection and its abstraction for the points connection
+version: 0.0.1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+
+dev_dependencies:
+
