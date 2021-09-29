@@ -1,5 +1,6 @@
 name: points
 description: An example social media app, written in dart with Flutter and supabase as a backend
+publish_to: none
 
 version: 0.0.1
 
