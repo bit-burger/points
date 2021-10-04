@@ -20,10 +20,12 @@ dependencies:
 
   # Supabase
   supabase_flutter: ^0.2.8
+  hive_flutter: ^1.1.0
 
   # State management
   flutter_bloc: ^7.3.0
   bloc: ^7.2.1
+  provider: ^6.0.1
 
   # Own packages
   auth_repository:

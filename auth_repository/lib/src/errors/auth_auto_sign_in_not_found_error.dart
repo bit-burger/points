@@ -1,0 +1,1 @@
+class AuthAutoSignInNotFoundError implements Exception {}
