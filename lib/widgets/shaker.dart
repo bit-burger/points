@@ -11,7 +11,6 @@ class Shaker extends StatefulWidget {
   ShakerState createState() => ShakerState();
 }
 
-
 /// Taken and modified from https://stackoverflow.com/a/66994041/15396325
 class ShakerState extends State<Shaker> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
