@@ -34,6 +34,22 @@ class AuthRepository extends IAuthRepository {
   }
 
   @override
+  Future<String> signUp(String email, String password) async {
+    final response = await _authClient.signUp(email, password);
+    if (response.error == null) {
+      return response.user!.id;
+    }
+    switch (response.error!.message) {
+      case "A user with this email address has already been registered":
+        throw AuthError(AuthErrorType.email);
+      case "Invalid email or password":
+        throw AuthError(AuthErrorType.password);
+      default:
+        throw AuthError(AuthErrorType.connection);
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     final response = await _authClient.signOut();
     if (response.error != null) {

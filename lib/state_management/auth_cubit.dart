@@ -42,7 +42,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     emit(LoadingState());
     try {
-      final userId = await _repository.logIn(email, password);
+      final userId = await _repository.signUp(email, password);
       emit(LoggedInState(userId));
     } on AuthError catch (e) {
       emit(LoggedOutWithErrorState(e.type));

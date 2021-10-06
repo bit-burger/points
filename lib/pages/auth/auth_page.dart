@@ -17,9 +17,14 @@ class AuthPage extends StatefulWidget {
   _AuthPageState createState() => _AuthPageState();
 }
 
+enum AuthType {
+  logIn,
+  signUp,
+}
+
 class _AuthPageState extends State<AuthPage> {
   /// If it is showing the log in or sign up page
-  bool isLogIn = true;
+  AuthType authType = AuthType.logIn;
 
   /// Key of the [Shaker] widget (to shake on a invalid input)
   final _shakerKey = GlobalKey<ShakerState>();
@@ -43,7 +48,11 @@ class _AuthPageState extends State<AuthPage> {
 
   _buildEmailForm(bool isEmailError) {
     return NeumorphicTextFormField(
-      errorText: isEmailError ? "Email not found" : null,
+      errorText: isEmailError
+          ? (authType == AuthType.logIn
+              ? "Email not found"
+              : "Email already in use")
+          : null,
       hintText: "Email",
       key: _emailForm,
       autofocus: true,
@@ -96,16 +105,12 @@ class _AuthPageState extends State<AuthPage> {
       validator: (s) {
         if (s == null || s == "") {
           return 'Please enter a password';
+        } else if (s.length < 6) {
+          return 'Your password should be at least 6 characters long';
         }
-        // validation of a sign up password
-        // if (s == null || s == "") {
-        //   return 'Please enter a password';
-        // } else if (s.length < 8) {
-        //   return 'Your password should be at least 8 characters long';
-        // }
         return null;
       },
-      onFieldSubmitted: (_) => logIn(),
+      onFieldSubmitted: (_) => logInOrSignUp(),
       autovalidateMode: AutovalidateMode.disabled,
     );
   }
@@ -124,12 +129,17 @@ class _AuthPageState extends State<AuthPage> {
                 crossFadeState: !isLoading
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
-                firstChild: Text(
-                  "Log in",
-                  style: Theme.of(context).textTheme.headline6!.copyWith(
-                        color: enabled ? null : Theme.of(context).disabledColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                firstChild: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 250),
+                  child: Text(
+                    authType == AuthType.logIn ? "Log in" : "Sign up",
+                    key: ValueKey(authType),
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color:
+                              enabled ? null : Theme.of(context).disabledColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
                 ),
                 secondChild: SizedBox(
                   height: 24,
@@ -147,7 +157,7 @@ class _AuthPageState extends State<AuthPage> {
                   enabled ? null : -NeumorphicTheme.of(context)!.current!.depth,
             ),
             duration: Duration(milliseconds: 250),
-            onPressed: logIn,
+            onPressed: logInOrSignUp,
           ),
         );
       },
@@ -172,28 +182,31 @@ class _AuthPageState extends State<AuthPage> {
         SizedBox(
           height: 8,
         ),
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          runAlignment: WrapAlignment.center,
-          spacing: 2.5,
-          children: [
-            Text("Don't have an account?"),
-            NeumorphicButton(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-              onPressed:
-                  isLoading ? null : () => setState(() => isLogIn = !isLogIn),
-              style: NeumorphicStyle(
-                boxShape: NeumorphicBoxShape.stadium(),
-              ),
-              child: Text(
-                "Sign up",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: isLoading ? Theme.of(context).disabledColor : null,
+        AnimatedSwitcher(
+          duration: Duration(milliseconds: 250),
+          child: Wrap(
+            key: ValueKey(authType),
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runAlignment: WrapAlignment.center,
+            spacing: 2.5,
+            children: [
+              Text("Don't have an account?"),
+              NeumorphicButton(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                onPressed: isLoading ? null : switchAuthType,
+                style: NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.stadium(),
                 ),
-              ),
-            ),
-          ],
+                child: Text(
+                  authType == AuthType.logIn ? "Log in" : "Sign up",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: isLoading ? Theme.of(context).disabledColor : null,
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ],
     );
@@ -263,15 +276,15 @@ class _AuthPageState extends State<AuthPage> {
         title: AnimatedSwitcher(
           duration: Duration(milliseconds: 250),
           child: Text(
-            isLogIn ? "Log in" : "Sign up",
-            key: ValueKey(isLogIn),
+            authType == AuthType.logIn ? "Log in" : "Sign up",
+            key: ValueKey(authType),
           ),
         ),
       ),
       body: BlocListener<AuthCubit, AuthState>(
         listener: (_, state) {
           if (state is LoggedOutWithErrorState) {
-            authErrorListener(state.type);
+            authErrorHandler(state.type);
           }
         },
         child: Shaker(
@@ -291,32 +304,51 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
+  /// Switch from log in to sign up or vice versa
+  void switchAuthType() {
+    setState(() {
+      authType = authType == AuthType.logIn ? AuthType.signUp : AuthType.logIn;
+      context.read<AuthCubit>().clearErrors();
+      _passwordForm.currentState!.reset();
+      checkIfFormValid();
+    });
+  }
+
   /// On an error that is not a [AuthErrorType.connection] error,
   /// shake with the [_shakerKey]
   /// On an error that is a [AuthErrorType.password] error,
   /// reset the password with the [_passwordForm]
-  void authErrorListener(AuthErrorType errorType) {
+  void authErrorHandler(AuthErrorType errorType) {
     if (errorType != AuthErrorType.connection) {
       _shakerKey.currentState!.shake();
     }
     if (errorType == AuthErrorType.password) {
       _passwordForm.currentState!.reset();
+      checkIfFormValid();
     }
   }
 
   /// Log in by validating the form
   /// On validation errors the Form will automatically be updated
   /// and the [Shaker] widget will be shaken
-  void logIn() {
-    if (context.read<AuthCubit>().state is LoadingState) {
+  void logInOrSignUp() {
+    final authCubit = context.read<AuthCubit>();
+    if (authCubit.state is LoadingState) {
       return;
     }
     if (_form.currentState!.validate()) {
       _form.currentState!.save();
-      context.read<AuthCubit>().logIn(
-            email: _email,
-            password: _password,
-          );
+      if (authType == AuthType.logIn) {
+        authCubit.logIn(
+          email: _email,
+          password: _password,
+        );
+      } else {
+        authCubit.signUp(
+          email: _email,
+          password: _password,
+        );
+      }
     } else {
       // TODO: Should vibrate a error with haptic feedback
       _shakerKey.currentState!.shake();
