@@ -18,7 +18,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final userId = await _repository.tryAutoSignIn();
       emit(LoggedInState(userId));
-    } on AuthAutoSignInNotFoundError {
+    } on AuthAutoSignFailedError {
       emit(LoggedOutState());
     } on AuthError catch (e) {
       emit(LoggedOutWithErrorState(e.type));
