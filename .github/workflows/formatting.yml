@@ -3,36 +3,22 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Dart
+name: Formatting
 
 on:
   push:
-    branches: [ develop, feature/*, hotfix/* ]
+    branches: [ feature/*, hotfix/*, ci/* ]
   pull_request:
     branches: [ develop ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    
       # Setup
-      - uses: subosito/flutter-action@v1
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
-      - name: Install packages
-        run: dart pub install
 
-        
-      # Formatting and analyzing
+      # Formatting
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
-        
-      - name: Analyze project source
-        run: dart analyze
-
-
-      # Testing
-      - name: Run tests
-        run: dart test

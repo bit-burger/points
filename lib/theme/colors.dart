@@ -10,5 +10,5 @@ const List<Color> colors = [
   Color(0xFFA0C4FF),
   Color(0xFFBDB2FF),
   Color(0xFFEFADFF),
-  NeumorphicColors.background,
+  Color(0xFFDDE6E8),
 ];
