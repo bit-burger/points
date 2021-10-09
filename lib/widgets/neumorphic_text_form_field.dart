@@ -159,14 +159,16 @@ class _CustomColorSelectionHandle extends TextSelectionControls {
               child: Builder(builder: builder));
 
   @override
-  Widget buildHandle(BuildContext context, TextSelectionHandleType type,
-      double textLineHeight) {
+  Widget buildHandle(
+      BuildContext context, TextSelectionHandleType type, double textLineHeight,
+      [VoidCallback? onTap, double? startGlyphHeight, double? endGlyphHeight]) {
     return _wrapWithThemeData((BuildContext context) =>
         _controls.buildHandle(context, type, textLineHeight));
   }
 
   @override
-  Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight) {
+  Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight,
+      [double? startGlyphHeight, double? endGlyphHeight]) {
     return _controls.getHandleAnchor(type, textLineHeight);
   }
 
