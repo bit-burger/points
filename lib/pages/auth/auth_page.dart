@@ -270,34 +270,45 @@ class _AuthPageState extends State<AuthPage> {
 
   Widget build(BuildContext context) {
     return NeumorphicScaffold(
-      appBar: NeumorphicAppBar(
-        leading: SizedBox(),
-        title: AnimatedSwitcher(
-          duration: Duration(milliseconds: 250),
-          child: Text(
-            authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
-            key: ValueKey(authMethod),
-          ),
-        ),
-      ),
-      body: BlocListener<AuthCubit, AuthState>(
-        listener: (_, state) {
-          if (state is LoggedOutWithErrorState) {
-            authErrorHandler(state.type);
-          }
-        },
-        child: Shaker(
-          key: _shakerKey,
-          child: Neumorphic(
-            margin: EdgeInsets.all(20),
-            child: Padding(
-              padding: EdgeInsets.all(20),
-              child: _buildForm(),
+      body: SafeArea(
+        child: ListView(
+          physics: PageScrollPhysics(),
+          children: [
+            SizedBox(
+              height: NeumorphicAppBar.toolbarHeight,
+              child: NeumorphicAppBar(
+                leading: SizedBox(),
+                title: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 250),
+                  child: Text(
+                    authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
+                    key: ValueKey(authMethod),
+                  ),
+                ),
+              ),
             ),
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(25)),
+            BlocListener<AuthCubit, AuthState>(
+              listener: (_, state) {
+                if (state is LoggedOutWithErrorState) {
+                  authErrorHandler(state.type);
+                }
+              },
+              child: Shaker(
+                key: _shakerKey,
+                child: Neumorphic(
+                  margin: EdgeInsets.all(20),
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: _buildForm(),
+                  ),
+                  style: NeumorphicStyle(
+                    boxShape:
+                        NeumorphicBoxShape.roundRect(BorderRadius.circular(25)),
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
