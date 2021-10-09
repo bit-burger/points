@@ -6,5 +6,14 @@ final neumorphic = NeumorphicThemeData();
 
 final material = ThemeData(
   errorColor: pointsColors.errorColor,
-  textTheme: GoogleFonts.courierPrimeTextTheme(),
+  textTheme: GoogleFonts.courierPrimeTextTheme().apply(
+    bodyColor: pointsColors.textColor,
+    displayColor: pointsColors.textColor,
+    decorationColor: pointsColors.textColor,
+  ),
+  textSelectionTheme: TextSelectionThemeData(
+    cursorColor: pointsColors.cursorColor,
+    selectionHandleColor: pointsColors.cursorColor,
+    selectionColor: pointsColors.textSelectionColor,
+  ),
 );

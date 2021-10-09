@@ -24,4 +24,7 @@ const purple = Color(0xFFBDB2FF);
 const pink = Color(0xFFEFADFF);
 const white = Color(0xFFDDE6E8);
 
-final errorColor = Colors.red.shade700;
+const textColor = Color(0xFF000000);
+const textSelectionColor = Color(0xFFBDBDBD);
+const cursorColor = Color(0xFF424242);
+const errorColor = Color(0xFFD32F2F);
