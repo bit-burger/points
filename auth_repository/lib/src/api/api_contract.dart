@@ -5,5 +5,5 @@ abstract class IAuthRepository {
 
   Future<String> signUp(String email, String password);
 
-  Future signOut();
+  Future logOut();
 }

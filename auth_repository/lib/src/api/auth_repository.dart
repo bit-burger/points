@@ -49,7 +49,8 @@ class AuthRepository extends IAuthRepository {
   }
 
   @override
-  Future<void> signOut() async {
+  Future<void> logOut() async {
+    _deleteSession();
     final response = await _authClient.signOut();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
@@ -68,6 +69,10 @@ class AuthRepository extends IAuthRepository {
       throw AuthError(AuthErrorType.connection);
     }
     return response.user!.id;
+  }
+
+  void _deleteSession() async {
+    await _sessionStore.delete("sessionTokenJsonStr");
   }
 
   void _saveSession(Session session) {

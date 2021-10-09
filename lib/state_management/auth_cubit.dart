@@ -9,10 +9,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   AuthCubit({required IAuthRepository repository})
       : _repository = repository,
-        super(LoggedOutState());
+        super(AuthInitialState());
 
   void tryToAutoSignIn() async {
-    assert(state is LoggedOutState);
+    assert(state is! LoggedInState);
 
     emit(LoadingState());
     try {
@@ -49,8 +49,16 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  void logOut() {
+    assert(state is LoggedInState);
+
+    _repository.logOut();
+    emit(LoggedOutState());
+  }
+
   void clearErrors() {
     assert(state is LoggedOutState);
+
     emit(LoggedOutState());
   }
 }

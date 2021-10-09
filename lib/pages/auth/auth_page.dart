@@ -8,6 +8,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/widgets/hider.dart';
+import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
 import 'package:points/widgets/shaker.dart';
 import 'package:provider/provider.dart';
@@ -17,14 +18,14 @@ class AuthPage extends StatefulWidget {
   _AuthPageState createState() => _AuthPageState();
 }
 
-enum AuthType {
+enum AuthMethod {
   logIn,
   signUp,
 }
 
 class _AuthPageState extends State<AuthPage> {
   /// If it is showing the log in or sign up page
-  AuthType authType = AuthType.logIn;
+  AuthMethod authMethod = AuthMethod.logIn;
 
   /// Key of the [Shaker] widget (to shake on a invalid input)
   final _shakerKey = GlobalKey<ShakerState>();
@@ -49,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
   _buildEmailForm(bool isEmailError) {
     return NeumorphicTextFormField(
       errorText: isEmailError
-          ? (authType == AuthType.logIn
+          ? (authMethod == AuthMethod.logIn
               ? "Email not found"
               : "Email already in use")
           : null,
@@ -132,8 +133,8 @@ class _AuthPageState extends State<AuthPage> {
                 firstChild: AnimatedSwitcher(
                   duration: Duration(milliseconds: 250),
                   child: Text(
-                    authType == AuthType.logIn ? "Log in" : "Sign up",
-                    key: ValueKey(authType),
+                    authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
+                    key: ValueKey(authMethod),
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           color:
                               enabled ? null : Theme.of(context).disabledColor,
@@ -141,11 +142,7 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                   ),
                 ),
-                secondChild: SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator.adaptive(),
-                ),
+                secondChild: Loader(),
                 firstCurve: Curves.easeOutExpo,
                 secondCurve: Curves.easeOutExpo,
                 duration: Duration(milliseconds: 250),
@@ -185,7 +182,7 @@ class _AuthPageState extends State<AuthPage> {
         AnimatedSwitcher(
           duration: Duration(milliseconds: 250),
           child: Wrap(
-            key: ValueKey(authType),
+            key: ValueKey(authMethod),
             crossAxisAlignment: WrapCrossAlignment.center,
             runAlignment: WrapAlignment.center,
             spacing: 2.5,
@@ -193,12 +190,12 @@ class _AuthPageState extends State<AuthPage> {
               Text("Don't have an account?"),
               NeumorphicButton(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                onPressed: isLoading ? null : switchAuthType,
+                onPressed: isLoading ? null : switchAuthMethod,
                 style: NeumorphicStyle(
                   boxShape: NeumorphicBoxShape.stadium(),
                 ),
                 child: Text(
-                  authType == AuthType.logIn ? "Log in" : "Sign up",
+                  authMethod == AuthMethod.logIn ? "Sign up" : "Log in",
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: isLoading ? Theme.of(context).disabledColor : null,
@@ -276,8 +273,8 @@ class _AuthPageState extends State<AuthPage> {
         title: AnimatedSwitcher(
           duration: Duration(milliseconds: 250),
           child: Text(
-            authType == AuthType.logIn ? "Log in" : "Sign up",
-            key: ValueKey(authType),
+            authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
+            key: ValueKey(authMethod),
           ),
         ),
       ),
@@ -305,9 +302,10 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   /// Switch from log in to sign up or vice versa
-  void switchAuthType() {
+  void switchAuthMethod() {
     setState(() {
-      authType = authType == AuthType.logIn ? AuthType.signUp : AuthType.logIn;
+      authMethod =
+          authMethod == AuthMethod.logIn ? AuthMethod.signUp : AuthMethod.logIn;
       context.read<AuthCubit>().clearErrors();
       _passwordForm.currentState!.reset();
       checkIfFormValid();
@@ -338,7 +336,7 @@ class _AuthPageState extends State<AuthPage> {
     }
     if (_form.currentState!.validate()) {
       _form.currentState!.save();
-      if (authType == AuthType.logIn) {
+      if (authMethod == AuthMethod.logIn) {
         authCubit.logIn(
           email: _email,
           password: _password,
