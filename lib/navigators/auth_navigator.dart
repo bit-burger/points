@@ -18,7 +18,7 @@ class AuthNavigator extends StatelessWidget {
               child: AuthInitialPage(),
               maintainState: false,
             ),
-            if (state is! AuthInitialPage)
+            if (state is! AuthInitialState)
               MaterialPage(
                 name: "Log in",
                 child: AuthPage(),

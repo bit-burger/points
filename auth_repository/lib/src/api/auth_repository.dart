@@ -21,6 +21,7 @@ class AuthRepository extends IAuthRepository {
   Future<String> logIn(String email, String password) async {
     final response = await _authClient.signIn(email: email, password: password);
     if (response.error == null) {
+      _saveSession(response.data!);
       return response.user!.id;
     }
     switch (response.error!.message) {

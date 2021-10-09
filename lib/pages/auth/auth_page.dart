@@ -270,6 +270,7 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NeumorphicAppBar(
+        leading: SizedBox(),
         title: AnimatedSwitcher(
           duration: Duration(milliseconds: 250),
           child: Text(

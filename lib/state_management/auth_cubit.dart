@@ -12,9 +12,8 @@ class AuthCubit extends Cubit<AuthState> {
         super(AuthInitialState());
 
   void tryToAutoSignIn() async {
-    assert(state is! LoggedInState);
+    assert(state is AuthInitialState);
 
-    emit(LoadingState());
     try {
       final userId = await _repository.tryAutoSignIn();
       emit(LoggedInState(userId));
