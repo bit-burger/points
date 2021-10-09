@@ -9,6 +9,7 @@ import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart'
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/widgets/hider.dart';
 import 'package:points/widgets/loader.dart';
+import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
 import 'package:points/widgets/shaker.dart';
 import 'package:provider/provider.dart';
@@ -268,7 +269,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
+    return NeumorphicScaffold(
       appBar: NeumorphicAppBar(
         leading: SizedBox(),
         title: AnimatedSwitcher(
