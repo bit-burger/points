@@ -7,9 +7,7 @@ name: Analyzing
 
 on:
   push:
-    branches: [ feature/*, hotfix/*, ci/* ]
-  pull_request:
-    branches: [ develop ]
+    branches: [ develop, feature/*, hotfix/*, ci/* ]
 
 jobs:
   build:
