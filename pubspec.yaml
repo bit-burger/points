@@ -15,6 +15,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
 
   # UI
+  google_fonts: ^2.1.0
   cupertino_icons: ^1.0.3
   flutter_neumorphic: ^3.1.0
 
@@ -40,4 +41,19 @@ dev_dependencies:
 flutter:
   assets:
     - .env
+    - google_fonts/
+#  fonts:
+#    - family: Courier Prime
+#      fonts:
+#        - asset: assets/fonts/courier_prime/CourierPrime-Bold.ttf
+#          weight: 700
+#        - asset: assets/fonts/courier_prime/CourierPrime-BoldItalic.ttf
+#          weight: 700
+#          style: italic
+#        - asset: assets/fonts/courier_prime/CourierPrime-Regular.ttf
+#          weight: 500
+#        - asset: assets/fonts/courier_prime/CourierPrime-Regular.ttf
+#          weight: 500
+#          style: italic
+
   uses-material-design: true
