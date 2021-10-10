@@ -1,0 +1,9 @@
+name: points_repositories
+description: The repositories needed to interact with a points supabase database
+version: 0.0.1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  supabase: ^0.2.7
