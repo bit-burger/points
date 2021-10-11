@@ -8,6 +8,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/widgets/hider.dart';
+import 'package:points/widgets/neumorphic_chip_button.dart';
 import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
@@ -48,7 +49,6 @@ class _AuthPageState extends State<AuthPage> {
   late String _password;
 
   /// Build methods
-
   _buildEmailForm(bool isEmailError) {
     return NeumorphicTextFormField(
       errorText: isEmailError
@@ -165,20 +165,12 @@ class _AuthPageState extends State<AuthPage> {
             spacing: 2.5,
             children: [
               Text("Don't have an account?"),
-              NeumorphicButton(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              NeumorphicChipButton(
                 onPressed: isLoading ? null : switchAuthMethod,
-                style: NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.stadium(),
-                ),
                 child: Text(
                   authMethod == AuthMethod.logIn ? "Sign up" : "Log in",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: isLoading ? Theme.of(context).disabledColor : null,
-                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
