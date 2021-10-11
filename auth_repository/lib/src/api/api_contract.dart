@@ -1,9 +1,11 @@
+import '../domain/account_credentials.dart';
+
 abstract class IAuthRepository {
-  Future<String> tryAutoSignIn();
+  Future<AccountCredentials> tryAutoSignIn();
 
-  Future<String> logIn(String email, String password);
+  Future<AccountCredentials> logIn(String email, String password);
 
-  Future<String> signUp(String email, String password);
+  Future<AccountCredentials> signUp(String email, String password);
 
-  Future logOut();
+  Future<void> logOut();
 }

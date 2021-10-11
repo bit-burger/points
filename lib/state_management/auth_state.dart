@@ -8,9 +8,9 @@ class AuthInitialState extends AuthState {}
 class LoadingState extends AuthState {}
 
 class LoggedInState extends AuthState {
-  final String userId;
+  final AccountCredentials credentials;
 
-  LoggedInState(this.userId);
+  LoggedInState(this.credentials);
 }
 
 class LoggedOutState extends AuthState {}
