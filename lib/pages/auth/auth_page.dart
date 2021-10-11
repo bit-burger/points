@@ -8,7 +8,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/widgets/hider.dart';
-import 'package:points/widgets/loader.dart';
+import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
 import 'package:points/widgets/shaker.dart';
@@ -123,40 +123,20 @@ class _AuthPageState extends State<AuthPage> {
       valueListenable: _formIsValidNotifier,
       builder: (_, isValidated, __) {
         final enabled = isValidated && !isLoading;
-        return IgnorePointer(
-          ignoring: !enabled,
-          child: NeumorphicButton(
-            child: Center(
-              child: AnimatedCrossFade(
-                crossFadeState: !isLoading
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 250),
-                  child: Text(
-                    authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
-                    key: ValueKey(authMethod),
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color:
-                              enabled ? null : Theme.of(context).disabledColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ),
-                secondChild: Loader(),
-                firstCurve: Curves.easeOutExpo,
-                secondCurve: Curves.easeOutExpo,
-                duration: Duration(milliseconds: 250),
-              ),
-            ),
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.stadium(),
-              depth:
-                  enabled ? null : -NeumorphicTheme.of(context)!.current!.depth,
-            ),
+        return NeumorphicLoadingTextButton(
+          loading: isLoading,
+          child: AnimatedSwitcher(
             duration: Duration(milliseconds: 250),
-            onPressed: logInOrSignUp,
+            child: Text(
+              authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
+              key: ValueKey(authMethod),
+              style: Theme.of(context).textTheme.headline6!.copyWith(
+                    color: enabled ? null : Theme.of(context).disabledColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
           ),
+          onPressed: enabled ? logInOrSignUp : null,
         );
       },
     );
