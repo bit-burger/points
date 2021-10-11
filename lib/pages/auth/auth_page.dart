@@ -281,10 +281,6 @@ class _AuthPageState extends State<AuthPage> {
                     padding: EdgeInsets.all(20),
                     child: _buildForm(),
                   ),
-                  style: NeumorphicStyle(
-                    boxShape:
-                        NeumorphicBoxShape.roundRect(BorderRadius.circular(25)),
-                  ),
                 ),
               ),
             ),
