@@ -27,4 +27,4 @@ const white = Color(0xFFDDE6E8);
 const textColor = Color(0xFF000000);
 const textSelectionColor = Color(0xFFBDBDBD);
 const cursorColor = Color(0xFF424242);
-const errorColor = Color(0xFFD32F2F);
+const errorColor = Color(0xFFC72D2D);

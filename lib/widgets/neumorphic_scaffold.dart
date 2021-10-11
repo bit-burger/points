@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class NeumorphicScaffold extends StatelessWidget {
-  final Widget body;
   final PreferredSizeWidget? appBar;
+  final bool extendBodyBehindAppBar;
+  final Widget body;
 
   const NeumorphicScaffold({
-    required this.body,
     this.appBar,
+    this.extendBodyBehindAppBar = false,
+    required this.body,
   }) : super();
 
   @override
@@ -16,6 +18,7 @@ class NeumorphicScaffold extends StatelessWidget {
     return Scaffold(
       appBar: appBar,
       body: body,
+      extendBodyBehindAppBar: extendBodyBehindAppBar,
       backgroundColor: theme.baseColor,
     );
   }
