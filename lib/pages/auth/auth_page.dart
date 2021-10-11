@@ -122,8 +122,7 @@ class _AuthPageState extends State<AuthPage> {
   _buildLoginButton(bool isLoading) {
     return ValueListenableBuilder<bool>(
       valueListenable: _formIsValidNotifier,
-      builder: (_, isValidated, __) {
-        final enabled = isValidated && !isLoading;
+      builder: (_, validated, __) {
         return NeumorphicLoadingTextButton(
           loading: isLoading,
           child: AnimatedSwitcher(
@@ -131,13 +130,9 @@ class _AuthPageState extends State<AuthPage> {
             child: Text(
               authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
               key: ValueKey(authMethod),
-              style: Theme.of(context).textTheme.headline6!.copyWith(
-                    color: enabled ? null : Theme.of(context).disabledColor,
-                    fontWeight: FontWeight.w600,
-                  ),
             ),
           ),
-          onPressed: enabled ? logInOrSignUp : null,
+          onPressed: validated ? logInOrSignUp : null,
         );
       },
     );

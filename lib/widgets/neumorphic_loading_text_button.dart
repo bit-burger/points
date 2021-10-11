@@ -30,7 +30,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
     } else {
       child = this.child;
     }
-    final enabled = onPressed != null;
+    final enabled = onPressed != null && loading != true;
     return IgnorePointer(
       ignoring: !enabled,
       child: NeumorphicButton(
