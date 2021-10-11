@@ -5,6 +5,8 @@ import 'package:points/pages/auth/auth_initial_page.dart';
 import 'package:points/pages/auth/auth_page.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/state_management/connection_cubit.dart';
+import 'package:points_repositories/points_repositories.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthNavigator extends StatelessWidget {
   @override
@@ -26,9 +28,26 @@ class AuthNavigator extends StatelessWidget {
             if (state is LoggedInState)
               MaterialPage(
                 name: "Signed in",
-                child: BlocProvider(
-                  create: (_) => ConnectionCubit(),
-                  child: ConnectionNavigator(),
+                child: MultiRepositoryProvider(
+                  providers: [
+                    RepositoryProvider(
+                      create: (_) => PointsProfileRepository(
+                        Supabase.instance.client,
+                      ),
+                    ),
+                    RepositoryProvider(
+                      create: (_) => PointsRelationsRepository(),
+                    ),
+                  ],
+                  child: Builder(
+                    builder: (context) => BlocProvider(
+                      create: (_) => ConnectionCubit(
+                          profileRepository: context.read<PointsProfileRepository>(),
+                          relationsRepository: context.read<PointsRelationsRepository>(),
+                        )..connect(),
+                      child: ConnectionNavigator(),
+                    ),
+                  ),
                 ),
               ),
           ],

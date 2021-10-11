@@ -66,10 +66,15 @@ class AuthRepository extends IAuthRepository {
     }
 
     final response = await _authClient.recoverSession(jsonStr);
-    if (response.error != null) {
-      throw AuthError(AuthErrorType.connection);
+    switch (response.error?.message) {
+      case null:
+        return response.user!.id;
+      case "Invalid Refresh Token":
+        _deleteSession();
+        throw AuthAutoSignFailedError();
+      default:
+        throw AuthError(AuthErrorType.connection);
     }
-    return response.user!.id;
   }
 
   void _deleteSession() async {
