@@ -11,6 +11,7 @@ import 'package:points/widgets/hider.dart';
 import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
+import 'package:points/widgets/neumorphic_box.dart';
 import 'package:points/widgets/shaker.dart';
 import 'package:provider/provider.dart';
 
@@ -275,12 +276,8 @@ class _AuthPageState extends State<AuthPage> {
               },
               child: Shaker(
                 key: _shakerKey,
-                child: Neumorphic(
-                  margin: EdgeInsets.all(20),
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: _buildForm(),
-                  ),
+                child: NeumorphicBox(
+                  child: _buildForm(),
                 ),
               ),
             ),
