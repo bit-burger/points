@@ -17,6 +17,8 @@ dependencies:
   # UI
   google_fonts: ^2.1.0
   cupertino_icons: ^1.0.3
+  ionicons: ^0.1.2
+  adaptive_dialog: ^1.1.0
   flutter_neumorphic:
     git:
       url: https://github.com/tsvillain/Flutter-Neumorphic.git
