@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Analyzing
+name: Testing
 
 on: [push]
 
@@ -20,6 +20,6 @@ jobs:
       - name: Create mock configuration files
         run: touch .env
 
-      # Analyzing
-      - name: Analyze project source
-        run: dart analyze
+      # Testing
+      - name: Run tests
+        run: dart test test/unit-tests

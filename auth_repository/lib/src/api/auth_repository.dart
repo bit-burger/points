@@ -64,6 +64,8 @@ class AuthRepository extends IAuthRepository {
       case null:
         final user = response.user!;
         return AccountCredentials(id: user.id, email: user.email!);
+      case "Session expired.":
+      case "Missing currentSession.":
       case "Invalid Refresh Token":
         _deleteSession();
         throw AuthAutoSignFailedError();

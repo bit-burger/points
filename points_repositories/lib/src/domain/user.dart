@@ -4,15 +4,15 @@ class User {
   final int color, icon;
   final int points;
 
-  User(
-    this.id,
-    this.name,
-    this.status,
-    this.bio,
-    this.color,
-    this.icon,
-    this.points,
-  ) {
+  User({
+    required this.id,
+    required this.name,
+    required this.status,
+    required this.bio,
+    required this.color,
+    required this.icon,
+    required this.points,
+  }) {
     assert(name.length <= 8);
     assert(status.length <= 16);
     assert(bio.length <= 256);
