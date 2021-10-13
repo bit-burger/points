@@ -260,6 +260,9 @@ class _AuthPageState extends State<AuthPage> {
                 if (state is LoggedOutWithErrorState) {
                   authErrorHandler(state.type);
                 }
+                if (state is LoggedInState) {
+                  loggedInHandler(state.credentials);
+                }
               },
               child: Shaker(
                 key: _shakerKey,
@@ -283,6 +286,17 @@ class _AuthPageState extends State<AuthPage> {
       _passwordForm.currentState!.reset();
       checkIfFormValid();
     });
+  }
+
+  /// Make TextFormFieldsConform
+  /// Because this can happen after:
+  /// An actual login, a sign up or a auto log in,
+  /// the Form always needs to look the same:
+  /// No password, email filled out
+  void loggedInHandler(AccountCredentials credentials) {
+    // _emailForm.currentState!.setValue(credentials.email);
+    // _passwordForm.currentState!.setValue("");
+    _passwordForm.currentState!.reset();
   }
 
   /// On an error that is not a [AuthErrorType.connection] error,
@@ -336,5 +350,15 @@ class _AuthPageState extends State<AuthPage> {
       final isValid = emailValid && passwordValid;
       _formIsValidNotifier.value = isValid;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: User controllers for loggedInHandler
+    // final authState = context.read<AuthCubit>().state;
+    // if(authState is LoggedInState) {
+    //   loggedInHandler(authState.credentials);
+    // }
+    super.initState();
   }
 }

@@ -6,6 +6,9 @@ import 'points_colors.dart' as pointsColors;
 final neumorphic = NeumorphicThemeData(
     boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(25)),
     appBarTheme: NeumorphicAppBarThemeData(
+      buttonStyle: NeumorphicStyle(
+        boxShape: NeumorphicBoxShape.circle(),
+      ),
       icons: NeumorphicAppBarIcons(
         menuIcon: Icon(Ionicons.menu),
         closeIcon: Icon(Ionicons.close),
