@@ -4,6 +4,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';
+import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points_repositories/points_repositories.dart';
 import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
@@ -14,16 +15,18 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
+        bool isLoading = state is ProfileLoadingState;
         RootUser? rootUser;
         if (state is ProfileExistsState) {
           rootUser = state.profile;
         }
         return IgnorePointer(
-          ignoring: state is ProfileLoadingState,
+          ignoring: isLoading,
           child: NeumorphicScaffold(
+            extendBodyBehindAppBar: true,
             appBar: fix.NeumorphicAppBar(
               title: AnimatedSwitcher(
-                duration: Duration(milliseconds: 500),
+                duration: Duration(milliseconds: 250),
                 child: Text(
                   rootUser?.name ?? "...",
                   key: ValueKey(rootUser),
@@ -74,7 +77,34 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            extendBodyBehindAppBar: true,
+            floatingActionButton: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: kToolbarHeight,
+                maxHeight: kToolbarHeight,
+                minWidth: kToolbarHeight,
+              ),
+              child: NeumorphicButton(
+                onPressed: () {
+                },
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                child: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 500),
+                  child: isLoading
+                      ? Loader()
+                      : Text(
+                          rootUser?.points.toString() ?? "",
+                          style:
+                              Theme.of(context).textTheme.headline4!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                ),
+                style: NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.stadium(),
+                ),
+              ),
+            ),
           ),
         );
       },
