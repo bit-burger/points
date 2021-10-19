@@ -297,6 +297,7 @@ class _AuthPageState extends State<AuthPage> {
     // _emailForm.currentState!.setValue(credentials.email);
     // _passwordForm.currentState!.setValue("");
     _passwordForm.currentState!.reset();
+    checkIfFormValid();
   }
 
   /// On an error that is not a [AuthErrorType.connection] error,
