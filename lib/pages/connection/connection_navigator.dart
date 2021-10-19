@@ -12,6 +12,7 @@ class ConnectionNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ConnectionCubit, ConnectionState>(
+      buildWhen: (a, b) => true,
       builder: (_, state) {
         return Navigator(
           pages: [
@@ -35,21 +36,21 @@ class ConnectionNavigator extends StatelessWidget {
                       create: (_) => PointsRelationsRepository(),
                     ),
                   ],
-                  child: BlocProvider(
-                    create: (_) => ConnectionCubit(),
-                    child: MultiBlocProvider(
-                      providers: [
-                        BlocProvider(
-                          create: (context) => RelationshipsCubit(),
-                        ),
-                        BlocProvider(
-                          create: (context) => ProfileCubit(
-                            profileRepository:
-                                context.read<PointsProfileRepository>(),
-                            connectionCubit: context.read<ConnectionCubit>(),
-                          )..startListening(),
-                        ),
-                      ],
+                  child: MultiBlocProvider(
+                    providers: [
+                      BlocProvider(
+                        create: (context) => RelationshipsCubit(),
+                      ),
+                      BlocProvider(
+                        create: (context) => ProfileCubit(
+                          profileRepository:
+                              context.read<PointsProfileRepository>(),
+                          connectionCubit: context.read<ConnectionCubit>(),
+                        )..startListening(),
+                      ),
+                    ],
+                    child: BlocProvider(
+                      create: (_) => ConnectionCubit(),
                       child: HomePageNavigator(),
                     ),
                   ),
