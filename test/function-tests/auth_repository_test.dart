@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:supabase/supabase.dart';
 import 'package:faker/faker.dart';
 import 'package:hive/hive.dart';
@@ -9,7 +11,6 @@ import 'helpers/configure_supabase_client.dart';
 import 'helpers/fake_hive_box.dart';
 
 void main() {
-  final faker = Faker();
   late GoTrueClient goTrueClient;
 
   setUp(() async {
@@ -60,31 +61,29 @@ void main() {
     });
 
     test("log in, change sessionToken, then fail auto sign in", () async {
-      markTestSkipped("Not currently working");
+      final email = faker.internet.email();
+      final password = faker.internet.password(length: 6);
 
-      // final email = faker.internet.email();
-      // final password = faker.internet.password(length: 6);
-      //
-      // await sut1.signUp(email, password);
-      //
-      // await goTrueClient.signOut();
-      //
-      // final key = "sessionTokenJsonStr";
-      // final rawSession = sessionStore.get(key)!;
-      // final Map<String, dynamic> sessionJson = jsonDecode(rawSession);
-      // final session = Session.fromJson(sessionJson);
-      //
-      // final fakeSession = session.copyWith(
-      //   accessToken: "/" + session.accessToken.substring(1),
-      // );
-      //
-      // sessionStore.put(key, fakeSession.persistSessionString);
-      //
-      // expect(
-      //   sut2.tryAutoSignIn(),
-      //   throwsA(TypeMatcher<AuthAutoSignFailedError>()),
-      // );
-    });
+      await sut1.signUp(email, password);
+
+      await goTrueClient.signOut();
+
+      final key = "sessionTokenJsonStr";
+      final rawSession = sessionStore.get(key)!;
+      final Map<String, dynamic> sessionJson = jsonDecode(rawSession);
+      final session = Session.fromJson(sessionJson);
+
+      final fakeSession = session.copyWith(
+        accessToken: "/" + session.accessToken.substring(1),
+      );
+
+      sessionStore.put(key, fakeSession.persistSessionString);
+
+      expect(
+        sut2.tryAutoSignIn(),
+        throwsA(TypeMatcher<AuthAutoSignFailedError>()),
+      );
+    }, skip: true);
   });
 
   group("Auth flow", () {

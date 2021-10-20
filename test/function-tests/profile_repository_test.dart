@@ -12,12 +12,11 @@ import 'package:async/async.dart';
 
 void main() async {
   late SupabaseClient loggedInClient;
-  final faker = Faker();
   late PointsProfileRepository sut;
 
-  setUpAll(() async {
+  setUp(() async {
     final email = faker.internet.email();
-    final password = faker.internet.email();
+    final password = faker.internet.password(length: 8);
     final supabaseClient = await getConfiguredSupabaseClient();
     final sessionStore = FakeHiveBox<String>();
 
