@@ -85,6 +85,14 @@ class HomePage extends StatelessWidget {
               ),
               child: NeumorphicButton(
                 onPressed: () {
+                  final name = rootUser!.name;
+                  final newName = name.length == 8
+                      ? name.substring(0, name.length - 1)
+                      : name + "a";
+
+                  context
+                      .read<ProfileCubit>()
+                      .updateProfile(newName, null, null, null, null);
                 },
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                 child: AnimatedSwitcher(

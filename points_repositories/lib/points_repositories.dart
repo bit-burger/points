@@ -1,5 +1,6 @@
 export 'src/domain/user.dart';
 export 'src/domain/root_user.dart';
+export 'src/domain/user_relations.dart';
 
 export 'src/errors/points_connection_error.dart';
 

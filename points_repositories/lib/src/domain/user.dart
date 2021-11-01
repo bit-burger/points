@@ -22,6 +22,18 @@ class User {
     assert(points >= 0);
   }
 
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      name: json['name'],
+      status: json['status'],
+      bio: json['bio'],
+      color: json['color'],
+      icon: json['icon'],
+      points: json['points'],
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       other is User &&

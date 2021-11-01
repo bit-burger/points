@@ -6,7 +6,7 @@ import '../../domain/root_user.dart';
 import '../../errors/points_connection_error.dart';
 
 import '../../constants/table_names.dart' as tables;
-import '../../constants/function_names.dart' as functions;
+import '../../constants/profile_function_names.dart' as functions;
 
 part 'api_contract.dart';
 

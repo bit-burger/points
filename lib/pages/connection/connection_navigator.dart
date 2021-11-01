@@ -33,7 +33,9 @@ class ConnectionNavigator extends StatelessWidget {
                       ),
                     ),
                     RepositoryProvider(
-                      create: (_) => PointsRelationsRepository(),
+                      create: (_) => PointsRelationsRepository(
+                        client: Supabase.instance.client,
+                      ),
                     ),
                   ],
                   child: MultiBlocProvider(
