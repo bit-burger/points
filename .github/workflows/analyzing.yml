@@ -5,9 +5,7 @@
 
 name: Analyzing
 
-on:
-  push:
-    branches: [ develop, feature/*, hotfix/*, ci/* ]
+on: [push]
 
 jobs:
   build:

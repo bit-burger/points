@@ -1,6 +1,7 @@
 import '../errors/auth_auto_sign_failed_error.dart';
-
 import '../errors/auth_error.dart';
+
+import '../domain/account_credentials.dart';
 
 import 'api_contract.dart';
 
@@ -18,11 +19,12 @@ class AuthRepository extends IAuthRepository {
         _sessionStore = sessionStore;
 
   @override
-  Future<String> logIn(String email, String password) async {
+  Future<AccountCredentials> logIn(String email, String password) async {
     final response = await _authClient.signIn(email: email, password: password);
     if (response.error == null) {
       _saveSession(response.data!);
-      return response.user!.id;
+      final user = response.user!;
+      return AccountCredentials(id: user.id, email: user.email!);
     }
     switch (response.error!.message) {
       case "Invalid login credentials":
@@ -35,15 +37,40 @@ class AuthRepository extends IAuthRepository {
   }
 
   @override
-  Future<String> signUp(String email, String password) async {
+  Future<AccountCredentials> signUp(String email, String password) async {
     final response = await _authClient.signUp(email, password);
     if (response.error == null) {
       _saveSession(response.data!);
-      return response.user!.id;
+      final user = response.user!;
+      return AccountCredentials(id: user.id, email: user.email!);
     }
     switch (response.error!.message) {
+      case "Thanks for registering, " +
+          "now check your email to complete the process.":
       case "A user with this email address has already been registered":
         throw AuthError(AuthErrorType.email);
+      default:
+        throw AuthError(AuthErrorType.connection);
+    }
+  }
+
+  @override
+  Future<AccountCredentials> tryAutoSignIn() async {
+    final jsonStr = _retrieveSession();
+    if (jsonStr == null) {
+      throw AuthAutoSignFailedError();
+    }
+
+    final response = await _authClient.recoverSession(jsonStr);
+    switch (response.error?.message) {
+      case null:
+        final user = response.user!;
+        return AccountCredentials(id: user.id, email: user.email!);
+      case "Session expired.":
+      case "Missing currentSession.":
+      case "Invalid Refresh Token":
+        _deleteSession();
+        throw AuthAutoSignFailedError();
       default:
         throw AuthError(AuthErrorType.connection);
     }
@@ -56,20 +83,6 @@ class AuthRepository extends IAuthRepository {
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
     }
-  }
-
-  @override
-  Future<String> tryAutoSignIn() async {
-    final jsonStr = _retrieveSession();
-    if (jsonStr == null) {
-      throw AuthAutoSignFailedError();
-    }
-
-    final response = await _authClient.recoverSession(jsonStr);
-    if (response.error != null) {
-      throw AuthError(AuthErrorType.connection);
-    }
-    return response.user!.id;
   }
 
   void _deleteSession() async {

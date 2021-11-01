@@ -1,0 +1,25 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Testing
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Setup
+      - uses: subosito/flutter-action@v1
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: Install packages
+        run: dart pub install
+      - name: Create mock configuration files
+        run: touch .env
+
+      # Testing
+      - name: Run tests
+        run: dart test test/unit-tests

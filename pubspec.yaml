@@ -17,26 +17,39 @@ dependencies:
   # UI
   google_fonts: ^2.1.0
   cupertino_icons: ^1.0.3
-  flutter_neumorphic: ^3.1.0
+  ionicons: ^0.1.2
+  adaptive_dialog: ^1.1.0
+  flutter_neumorphic:
+    git:
+      url: https://github.com/tsvillain/Flutter-Neumorphic.git
 
   # Supabase
   supabase_flutter: ^0.2.8
   hive_flutter: ^1.1.0
 
   # State management
-  flutter_bloc: ^7.3.0
+  flutter_bloc: ^7.3.1
   bloc: ^7.2.1
   provider: ^6.0.1
 
   # Own packages
   auth_repository:
     path: ./auth_repository
-  points_repository:
-    path: ./points_repository
+  points_repositories:
+    path: ./points_repositories
 
 dev_dependencies:
-  test: ^1.17.12
-  matcher: ^0.12.11
+  # Test framework
+  flutter_test:
+    sdk: flutter
+  bloc_test: ^8.3.0
+
+  # Raw packages (without Flutter)
+  supabase: ^0.2.8
+  hive: ^2.0.4
+
+  # Mocking and faking
+  faker: ^2.0.0
 
 flutter:
   assets:

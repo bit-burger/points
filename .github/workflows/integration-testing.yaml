@@ -3,25 +3,27 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Testing
+name: Integration testing
 
 on:
   push:
-    branches: [ develop, feature/*, hotfix/*, ci/* ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       # Setup
-      - uses: subosito/flutter-action@v1
       - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
       - name: Install packages
         run: dart pub install
-      - name: Create mock configuration files
-        run: touch .env
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1.1
+        with:
+          envkey_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          envkey_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       # Testing
       - name: Run tests
-        run: dart test
+        run: dart test test/function-tests

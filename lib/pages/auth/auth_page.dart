@@ -8,9 +8,11 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/widgets/hider.dart';
-import 'package:points/widgets/loader.dart';
+import 'package:points/widgets/neumorphic_chip_button.dart';
+import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
+import 'package:points/widgets/neumorphic_box.dart';
 import 'package:points/widgets/shaker.dart';
 import 'package:provider/provider.dart';
 
@@ -47,7 +49,6 @@ class _AuthPageState extends State<AuthPage> {
   late String _password;
 
   /// Build methods
-
   _buildEmailForm(bool isEmailError) {
     return NeumorphicTextFormField(
       errorText: isEmailError
@@ -121,42 +122,17 @@ class _AuthPageState extends State<AuthPage> {
   _buildLoginButton(bool isLoading) {
     return ValueListenableBuilder<bool>(
       valueListenable: _formIsValidNotifier,
-      builder: (_, isValidated, __) {
-        final enabled = isValidated && !isLoading;
-        return IgnorePointer(
-          ignoring: !enabled,
-          child: NeumorphicButton(
-            child: Center(
-              child: AnimatedCrossFade(
-                crossFadeState: !isLoading
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 250),
-                  child: Text(
-                    authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
-                    key: ValueKey(authMethod),
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color:
-                              enabled ? null : Theme.of(context).disabledColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ),
-                secondChild: Loader(),
-                firstCurve: Curves.easeOutExpo,
-                secondCurve: Curves.easeOutExpo,
-                duration: Duration(milliseconds: 250),
-              ),
-            ),
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.stadium(),
-              depth:
-                  enabled ? null : -NeumorphicTheme.of(context)!.current!.depth,
-            ),
+      builder: (_, validated, __) {
+        return NeumorphicLoadingTextButton(
+          loading: isLoading,
+          child: AnimatedSwitcher(
             duration: Duration(milliseconds: 250),
-            onPressed: logInOrSignUp,
+            child: Text(
+              authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
+              key: ValueKey(authMethod),
+            ),
           ),
+          onPressed: validated ? logInOrSignUp : null,
         );
       },
     );
@@ -189,20 +165,12 @@ class _AuthPageState extends State<AuthPage> {
             spacing: 2.5,
             children: [
               Text("Don't have an account?"),
-              NeumorphicButton(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              NeumorphicChipButton(
                 onPressed: isLoading ? null : switchAuthMethod,
-                style: NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.stadium(),
-                ),
                 child: Text(
                   authMethod == AuthMethod.logIn ? "Sign up" : "Log in",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: isLoading ? Theme.of(context).disabledColor : null,
-                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -292,19 +260,14 @@ class _AuthPageState extends State<AuthPage> {
                 if (state is LoggedOutWithErrorState) {
                   authErrorHandler(state.type);
                 }
+                if (state is LoggedInState) {
+                  loggedInHandler(state.credentials);
+                }
               },
               child: Shaker(
                 key: _shakerKey,
-                child: Neumorphic(
-                  margin: EdgeInsets.all(20),
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: _buildForm(),
-                  ),
-                  style: NeumorphicStyle(
-                    boxShape:
-                        NeumorphicBoxShape.roundRect(BorderRadius.circular(25)),
-                  ),
+                child: NeumorphicBox(
+                  child: _buildForm(),
                 ),
               ),
             ),
@@ -323,6 +286,18 @@ class _AuthPageState extends State<AuthPage> {
       _passwordForm.currentState!.reset();
       checkIfFormValid();
     });
+  }
+
+  /// Make TextFormFieldsConform
+  /// Because this can happen after:
+  /// An actual login, a sign up or a auto log in,
+  /// the Form always needs to look the same:
+  /// No password, email filled out
+  void loggedInHandler(AccountCredentials credentials) {
+    // _emailForm.currentState!.setValue(credentials.email);
+    // _passwordForm.currentState!.setValue("");
+    _passwordForm.currentState!.reset();
+    checkIfFormValid();
   }
 
   /// On an error that is not a [AuthErrorType.connection] error,
@@ -376,5 +351,15 @@ class _AuthPageState extends State<AuthPage> {
       final isValid = emailValid && passwordValid;
       _formIsValidNotifier.value = isValid;
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: User controllers for loggedInHandler
+    // final authState = context.read<AuthCubit>().state;
+    // if(authState is LoggedInState) {
+    //   loggedInHandler(authState.credentials);
+    // }
+    super.initState();
   }
 }
