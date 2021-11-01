@@ -229,7 +229,7 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
   Future<void> _invoke(String id, String function) async {
     final response = await _client.rpc(function, params: {"_id": id}).execute();
     if (response.error != null) {
-      if(response.error!.message.startsWith("SocketException")) {
+      if (response.error!.message.startsWith("SocketException")) {
         _error(PointsConnectionError());
       }
       _error(PointsIllegalRelationError());

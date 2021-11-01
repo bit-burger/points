@@ -42,7 +42,7 @@ class PointsProfileRepository extends IPointsProfileRepository {
         .limit(1)
         .execute()
         .listen(_handleUpdate, onError: (_) {
-          _error(PointsConnectionError());
+      _error(PointsConnectionError());
     });
   }
 
@@ -60,7 +60,6 @@ class PointsProfileRepository extends IPointsProfileRepository {
     _lastUpdatedProfile = newProfile;
     _profileStreamController.add(newProfile);
   }
-
 
   @override
   Future<void> createAccount(String name) async {
