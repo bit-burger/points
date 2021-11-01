@@ -45,6 +45,8 @@ class AuthRepository extends IAuthRepository {
       return AccountCredentials(id: user.id, email: user.email!);
     }
     switch (response.error!.message) {
+      case "Thanks for registering, " +
+          "now check your email to complete the process.":
       case "A user with this email address has already been registered":
         throw AuthError(AuthErrorType.email);
       default:

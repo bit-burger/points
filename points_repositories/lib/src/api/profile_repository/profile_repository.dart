@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:supabase/supabase.dart';
 
-import '../../domain/root_user.dart';
-import '../../errors/points_connection_error.dart';
-
 import '../../constants/table_names.dart' as tables;
 import '../../constants/profile_function_names.dart' as functions;
+
+import '../../domain/root_user.dart';
+import '../../errors/points_connection_error.dart';
+import '../../errors/points_error.dart';
 
 part 'api_contract.dart';
 
@@ -24,6 +25,42 @@ class PointsProfileRepository extends IPointsProfileRepository {
   }
 
   Stream<RootUser?> get profileStream => _profileStream;
+
+  void _startListening() {
+    assert(_client.auth.user() != null,
+        "PointsProfileRepository needs a logged in SupabaseClient");
+
+    _profileStreamController = StreamController.broadcast();
+    _profileStream = _profileStreamController.stream;
+
+    final userId = _client.auth.user()!.id;
+
+    final searchParam = "${tables.profiles}:id=eq.$userId";
+    _sub = _client
+        .from(searchParam)
+        .stream()
+        .limit(1)
+        .execute()
+        .listen(_handleUpdate, onError: (_) {
+          _error(PointsConnectionError());
+    });
+  }
+
+  void _handleUpdate(final List<Map<String, dynamic>> users) async {
+    late final RootUser? profile;
+    if (users.isNotEmpty) {
+      profile = RootUser.fromJson(users[0]);
+    } else {
+      profile = null;
+    }
+    _addToStream(profile);
+  }
+
+  void _addToStream(RootUser? newProfile) {
+    _lastUpdatedProfile = newProfile;
+    _profileStreamController.add(newProfile);
+  }
+
 
   @override
   Future<void> createAccount(String name) async {
@@ -76,43 +113,13 @@ class PointsProfileRepository extends IPointsProfileRepository {
     }
   }
 
+  void _error(PointsError error) {
+    _profileStreamController.addError(error);
+    close();
+  }
+
   void close() {
     _profileStreamController.close();
     _sub.cancel();
-  }
-
-  void _startListening() {
-    assert(_client.auth.user() != null,
-        "PointsProfileRepository needs a logged in SupabaseClient");
-
-    _profileStreamController = StreamController.broadcast();
-    _profileStream = _profileStreamController.stream;
-
-    final userId = _client.auth.user()!.id;
-
-    final searchParam = "${tables.profiles}:id=eq.$userId";
-    _sub = _client
-        .from(searchParam)
-        .stream()
-        .limit(1)
-        .execute()
-        .listen(_handleUpdate, onError: (_) {
-      throw PointsConnectionError();
-    });
-  }
-
-  void _handleUpdate(final List<Map<String, dynamic>> users) async {
-    late final RootUser? profile;
-    if (users.isNotEmpty) {
-      profile = RootUser.fromJson(users[0]);
-    } else {
-      profile = null;
-    }
-    _addToStream(profile);
-  }
-
-  void _addToStream(RootUser? newProfile) {
-    _lastUpdatedProfile = newProfile;
-    _profileStreamController.add(newProfile);
   }
 }

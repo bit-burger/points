@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:points_repositories/points_repositories.dart';
 import 'package:supabase/supabase.dart' hide User;
 
 import '../../domain/user.dart';
@@ -20,6 +21,7 @@ class _RelationsUpdateEvent {
   });
 }
 
+// TODO: Sub on updates for friends
 class PointsRelationsRepository extends IPointsRelationsRepository {
   late final String userId;
   final SupabaseClient _client;
@@ -60,7 +62,7 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
         .execute();
 
     if (response.error != null) {
-      throw PointsConnectionError();
+      _error(PointsConnectionError());
     }
 
     for (final rawRelation in response.data) {
@@ -94,7 +96,7 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
         .execute();
 
     if (response.error != null) {
-      throw PointsConnectionError();
+      _error(PointsConnectionError());
     }
 
     final rawUsers = response.data as List;
@@ -119,10 +121,10 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
       _relationsStreamController.addError(e);
       return;
     }
-    // fill the ids with users
 
+    // Subscribe to the updates of the table and
+    // broadcast them to the _updateStreamController
     final searchParam = "${tables.relations}:id=eq.$userId";
-    // TODO: Make more performant by only listening to the inserts, updates and removes instead of every item
     _updateStreamController = new StreamController<_RelationsUpdateEvent>();
     _sub = _client.from(searchParam).on(SupabaseEventTypes.all, (payload) {
       final updateEvent = _RelationsUpdateEvent(
@@ -135,6 +137,7 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
         _relationsStreamController.addError(PointsConnectionError());
       }
     });
+
     await for (final event in _updateStreamController.stream) {
       await _handleRelationsUpdateEvent(event);
     }
@@ -189,48 +192,53 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
   }
 
   @override
-  void accept(String id) {
-    _invoke(id, functions.accept);
+  Future<void> accept(String id) async {
+    await _invoke(id, functions.accept);
   }
 
   @override
-  void block(String id) {
-    _invoke(id, functions.block);
+  Future<void> block(String id) async {
+    await _invoke(id, functions.block);
   }
 
   @override
-  void reject(String id) {
-    _invoke(id, functions.reject);
+  Future<void> reject(String id) async {
+    await _invoke(id, functions.reject);
   }
 
   @override
-  void request(String id) {
-    _invoke(id, functions.request);
+  Future<void> request(String id) async {
+    await _invoke(id, functions.request);
   }
 
   @override
-  void takeBackRequest(String id) {
-    _invoke(id, functions.takeBackRequest);
+  Future<void> takeBackRequest(String id) async {
+    await _invoke(id, functions.takeBackRequest);
   }
 
   @override
-  void unblock(String id) {
-    _invoke(id, functions.unblock);
+  Future<void> unblock(String id) async {
+    await _invoke(id, functions.unblock);
   }
 
   @override
-  void unfriend(String id) {
-    _invoke(id, functions.unfriend);
+  Future<void> unfriend(String id) async {
+    await _invoke(id, functions.unfriend);
   }
 
-  void _invoke(String id, String function) async {
+  Future<void> _invoke(String id, String function) async {
     final response = await _client.rpc(function, params: {"_id": id}).execute();
     if (response.error != null) {
-      switch (response.error!.message) {
-        default:
-          throw PointsConnectionError();
+      if(response.error!.message.startsWith("SocketException")) {
+        _error(PointsConnectionError());
       }
+      _error(PointsIllegalRelationError());
     }
+  }
+
+  void _error(PointsError error) {
+    _relationsStreamController.addError(error);
+    close();
   }
 
   @override
@@ -238,7 +246,5 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
     _relationsStreamController.close();
     _updateStreamController.close();
     _client.removeSubscription(_sub);
-    // TODO: cancel friend subs
-    // TODO: do this on errors
   }
 }
