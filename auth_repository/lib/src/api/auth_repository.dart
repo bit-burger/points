@@ -39,19 +39,22 @@ class AuthRepository extends IAuthRepository {
   @override
   Future<AccountCredentials> signUp(String email, String password) async {
     final response = await _authClient.signUp(email, password);
-    if (response.error == null) {
-      _saveSession(response.data!);
-      final user = response.user!;
-      return AccountCredentials(id: user.id, email: user.email!);
+    if (response.error != null) {
+      switch (response.error!.message) {
+        case "Thanks for registering, " +
+            "now check your email to complete the process.":
+        case "A user with this email address has already been registered":
+          throw AuthError(AuthErrorType.email);
+        default:
+          throw AuthError(AuthErrorType.connection);
+      }
     }
-    switch (response.error!.message) {
-      case "Thanks for registering, " +
-          "now check your email to complete the process.":
-      case "A user with this email address has already been registered":
-        throw AuthError(AuthErrorType.email);
-      default:
-        throw AuthError(AuthErrorType.connection);
+    if (response.data == null) {
+      throw AuthError(AuthErrorType.email);
     }
+    _saveSession(response.data!);
+    final user = response.user!;
+    return AccountCredentials(id: user.id, email: user.email!);
   }
 
   @override

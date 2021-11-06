@@ -6,4 +6,4 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  supabase: ^0.2.7
+  supabase: ^0.2.9

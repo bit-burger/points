@@ -24,7 +24,7 @@ dependencies:
       url: https://github.com/tsvillain/Flutter-Neumorphic.git
 
   # Supabase
-  supabase_flutter: ^0.2.8
+  supabase_flutter: ^0.2.9
   hive_flutter: ^1.1.0
 
   # State management

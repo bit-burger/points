@@ -23,7 +23,7 @@ class _RelationsUpdateEvent {
 
 // TODO: Sub on updates for friends
 class PointsRelationsRepository extends IPointsRelationsRepository {
-  late final String userId;
+  late final String _userId;
   final SupabaseClient _client;
   late final RealtimeSubscription _sub;
 
@@ -41,7 +41,7 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
       : _client = client,
         _relationsStreamController = StreamController.broadcast() {
     _startStreaming();
-    userId = _client.auth.user()!.id;
+    _userId = _client.auth.user()!.id;
   }
 
   Future<Map<String, Set<String>>> _getRelationUserIds() async {
@@ -124,9 +124,10 @@ class PointsRelationsRepository extends IPointsRelationsRepository {
 
     // Subscribe to the updates of the table and
     // broadcast them to the _updateStreamController
-    final searchParam = "${tables.relations}:id=eq.$userId";
+    final searchParam = "${tables.relations}:id=eq.$_userId";
     _updateStreamController = new StreamController<_RelationsUpdateEvent>();
     _sub = _client.from(searchParam).on(SupabaseEventTypes.all, (payload) {
+
       final updateEvent = _RelationsUpdateEvent(
         newRecord: payload.newRecord,
         oldRecord: payload.oldRecord,
