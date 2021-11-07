@@ -18,3 +18,7 @@ dev_dependencies:
   # Helpers
   supabase_testing_utils:
     path: ../supabase_testing_utils
+  auth_repository:
+    path: ../auth_repository
+  hive_test:
+    path: ../hive_test

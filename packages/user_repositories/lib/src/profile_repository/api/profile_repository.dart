@@ -13,10 +13,10 @@ import 'profile_repository_contract.dart';
 class ProfileRepository extends IProfileRepository {
   final SupabaseClient _client;
 
-  late final StreamController<RootUser?> _profileStreamController;
+  late final StreamController<RootUser> _profileStreamController;
   late final StreamSubscription _sub;
 
-  late final Stream<RootUser?> _profileStream;
+  late final Stream<RootUser> _profileStream;
   RootUser? currentProfile;
 
   ProfileRepository({required SupabaseClient client}) : _client = client {
@@ -46,34 +46,12 @@ class ProfileRepository extends IProfileRepository {
   }
 
   void _handleUpdate(final List<Map<String, dynamic>> users) async {
-    late final RootUser? profile;
-    if (users.isNotEmpty) {
-      profile = RootUser.fromJson(users[0]);
-    } else {
-      profile = null;
-    }
-    _addToStream(profile);
+    _addToStream(RootUser.fromJson(users[0]));
   }
 
-  void _addToStream(RootUser? newProfile) {
+  void _addToStream(RootUser newProfile) {
     currentProfile = newProfile;
     _profileStreamController.add(newProfile);
-  }
-
-  @override
-  Future<void> createAccount(String name) async {
-    final params = {
-      "name": name,
-    };
-    final response = await _client
-        .rpc(
-          functions.createProfile,
-          params: params,
-        )
-        .execute();
-    if (response.error != null) {
-      throw PointsConnectionError();
-    }
   }
 
   @override
@@ -94,19 +72,6 @@ class ProfileRepository extends IProfileRepository {
     };
     final response =
         await _client.rpc(functions.updateProfile, params: params).execute();
-    if (response.error != null) {
-      throw PointsConnectionError();
-    }
-  }
-
-  // TODO: Put this in auth_repository
-  @override
-  Future<void> deleteAccount() async {
-    final response = await _client
-        .from("profiles")
-        .delete()
-        .eq("id", _client.auth.user()!.id)
-        .execute();
     if (response.error != null) {
       throw PointsConnectionError();
     }

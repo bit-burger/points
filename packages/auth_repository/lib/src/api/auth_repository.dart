@@ -1,3 +1,6 @@
+import 'package:auth_repository/auth_repository.dart';
+import 'package:supabase/supabase.dart';
+
 import '../errors/auth_auto_sign_failed_error.dart';
 import '../errors/auth_error.dart';
 
@@ -8,19 +11,29 @@ import 'auth_repository_contract.dart';
 import 'package:gotrue/gotrue.dart';
 import 'package:hive/hive.dart';
 
+extension on GoTrueClient {
+  void forceSignOut() {
+    currentUser = null;
+    currentSession = null;
+  }
+}
+
 class AuthRepository extends IAuthRepository {
-  final GoTrueClient _authClient;
+  final SupabaseClient _client;
   final Box<String> _sessionStore;
 
   AuthRepository({
-    required GoTrueClient authClient,
+    required SupabaseClient client,
     required Box<String> sessionStore,
-  })  : _authClient = authClient,
-        _sessionStore = sessionStore;
+  })  : _client = client,
+        _sessionStore = sessionStore {
+    _client.auth.autoRefreshToken = false;
+  }
 
   @override
   Future<AccountCredentials> logIn(String email, String password) async {
-    final response = await _authClient.signIn(email: email, password: password);
+    final response =
+        await _client.auth.signIn(email: email, password: password);
     if (response.error == null) {
       _saveSession(response.data!);
       final user = response.user!;
@@ -38,7 +51,7 @@ class AuthRepository extends IAuthRepository {
 
   @override
   Future<AccountCredentials> signUp(String email, String password) async {
-    final response = await _authClient.signUp(email, password);
+    final response = await _client.auth.signUp(email, password);
     if (response.error != null) {
       switch (response.error!.message) {
         case "Thanks for registering, " +
@@ -64,7 +77,7 @@ class AuthRepository extends IAuthRepository {
       throw AuthAutoSignFailedError();
     }
 
-    final response = await _authClient.recoverSession(jsonStr);
+    final response = await _client.auth.recoverSession(jsonStr);
     switch (response.error?.message) {
       case null:
         final user = response.user!;
@@ -81,8 +94,16 @@ class AuthRepository extends IAuthRepository {
 
   @override
   Future<void> logOut() async {
-    _deleteSession();
-    final response = await _authClient.signOut();
+    final response = await _client.auth.signOut();
+    if (response.error != null) {
+      throw AuthError(AuthErrorType.connection);
+    }
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    final response = await _client.rpc("delete_user").execute();
+    _client.auth.forceSignOut();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
     }

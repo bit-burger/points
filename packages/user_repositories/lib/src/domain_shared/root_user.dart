@@ -41,13 +41,12 @@ class RootUser extends User {
 
   factory RootUser.defaultWith({
     required String id,
-    required String name,
   }) {
     return RootUser(
       id: id,
-      name: name,
-      status: "Smiling.",
-      bio: "",
+      name: "Alpha",
+      status: "im new to points",
+      bio: "Hi im Alpha",
       color: 9,
       icon: 0,
       points: 0,

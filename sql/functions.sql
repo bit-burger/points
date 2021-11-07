@@ -1,15 +1,7 @@
-CREATE OR REPLACE FUNCTION profile_create(name varchar) returns void AS $$
-BEGIN
-insert into public.profiles values (auth.uid(), name, 'Smiling.', '', 9, 0, 0, 0);
-END;
+CREATE OR REPLACE FUNCTION delete_user() returns void AS $$
+  delete from auth.users where
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
-
-
---CREATE OR REPLACE FUNCTION profile_delete(_id uuid) returns void AS $$
-
---$$ LANGUAGE plpgsql
---SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION profile_update(
@@ -27,11 +19,6 @@ where (id = auth.uid());
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
-
-
-
-
-
 
 
 CREATE OR REPLACE FUNCTION relations_accept(_id uuid) returns void AS $$
@@ -227,4 +214,3 @@ delete from relations
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
-;

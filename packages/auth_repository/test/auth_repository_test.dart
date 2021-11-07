@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:gotrue/gotrue.dart';
 import 'package:faker/faker.dart';
 import 'package:hive/hive.dart';
+import 'package:supabase/supabase.dart';
 import 'package:test/test.dart';
 
 import 'package:auth_repository/auth_repository.dart';
@@ -11,11 +12,10 @@ import 'package:hive_test/hive_test.dart';
 import 'package:supabase_testing_utils/supabase_testing_utils.dart';
 
 void main() {
-  late GoTrueClient goTrueClient;
+  late SupabaseClient client;
 
   setUp(() async {
-    final supabaseClient = await getConfiguredSupabaseClient();
-    goTrueClient = supabaseClient.auth;
+    client = await getConfiguredSupabaseClient();
   });
 
   group("Auto sign in", () {
@@ -27,11 +27,11 @@ void main() {
       sessionStore = FakeHiveBox<String>();
 
       sut1 = AuthRepository(
-        authClient: goTrueClient,
+        client: client,
         sessionStore: sessionStore,
       );
       sut2 = AuthRepository(
-        authClient: goTrueClient,
+        client: client,
         sessionStore: sessionStore,
       );
     });
@@ -42,7 +42,7 @@ void main() {
 
       await sut1.signUp(email, password);
 
-      await goTrueClient.signOut();
+      await client.auth.signOut();
 
       sut2.tryAutoSignIn();
     });
@@ -66,7 +66,7 @@ void main() {
 
       await sut1.signUp(email, password);
 
-      await goTrueClient.signOut();
+      await client.auth.signOut();
 
       final key = "sessionTokenJsonStr";
       final rawSession = sessionStore.get(key)!;
@@ -92,9 +92,18 @@ void main() {
       final sessionStore = FakeHiveBox<String>();
 
       sut = AuthRepository(
-        authClient: goTrueClient,
+        client: client,
         sessionStore: sessionStore,
       );
+    });
+
+    test("log in and destroy account", () async {
+      final email = faker.internet.email();
+      final password = faker.internet.password(length: 6);
+
+      await sut.signUp(email, password);
+
+      await sut.deleteAccount();
     });
 
     test("log in and sign up repeatedly, then can't sign up again", () async {

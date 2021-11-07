@@ -55,28 +55,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void createProfile(String name) async {
-    assert(state is NoProfileExistsState);
-
-    emit(ProfileLoadingState());
-    try {
-      await _profileRepository.createAccount(name);
-    } on PointsConnectionError {
-      _connectionCubit.reportError();
-    }
-  }
-
-  void deleteProfile() async {
-    assert(state is ProfileExistsState);
-
-    emit(ProfileLoadingState());
-    try {
-      await _profileRepository.deleteAccount();
-    } on PointsConnectionError {
-      _connectionCubit.reportError();
-    }
-  }
-
   @override
   Future<void> close() {
     _profileRepository.close();

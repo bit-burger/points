@@ -37,8 +37,6 @@ class LoggedInUser {
 
     final profileStream = StreamQueue(profileRepository.profileStream);
 
-    assert((await profileStream.next) == null);
-    profileRepository.createAccount(faker.randomGenerator.string(8, min: 3));
     final user = (await profileStream.next)!;
 
     final relationRepository = RelationsRepository(

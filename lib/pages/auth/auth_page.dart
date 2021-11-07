@@ -191,7 +191,7 @@ class _AuthPageState extends State<AuthPage> {
             buildWhen: (oldState, newState) => newState is! LoadingState,
             builder: (context, state) {
               AuthErrorType? errorType;
-              if (state is LoggedOutWithErrorState) {
+              if (state is AuthErrorState) {
                 errorType = state.type;
               }
               return Column(
@@ -213,7 +213,7 @@ class _AuthPageState extends State<AuthPage> {
             buildWhen: (oldState, newState) => newState is! LoggedInState,
             builder: (context, state) {
               AuthErrorType? errorType;
-              if (state is LoggedOutWithErrorState) {
+              if (state is AuthErrorState) {
                 errorType = state.type;
               }
               return Column(
@@ -257,7 +257,7 @@ class _AuthPageState extends State<AuthPage> {
             ),
             BlocListener<AuthCubit, AuthState>(
               listener: (_, state) {
-                if (state is LoggedOutWithErrorState) {
+                if (state is AuthErrorState) {
                   authErrorHandler(state.type);
                 }
                 if (state is LoggedInState) {

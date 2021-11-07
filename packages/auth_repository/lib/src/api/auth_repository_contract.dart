@@ -8,4 +8,6 @@ abstract class IAuthRepository {
   Future<AccountCredentials> signUp(String email, String password);
 
   Future<void> logOut();
+
+  Future<void> deleteAccount();
 }

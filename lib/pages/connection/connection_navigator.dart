@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:points/pages/connection/connection_error_page.dart';
-import 'package:points/pages/home_page/home_page_navigator.dart';
+import 'package:points/pages/home_page/home_page.dart';
 import 'package:points/state_management/connection_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';
 import 'package:points/state_management/relationships_cubit.dart';
@@ -53,7 +53,7 @@ class ConnectionNavigator extends StatelessWidget {
                     ],
                     child: BlocProvider(
                       create: (_) => ConnectionCubit(),
-                      child: HomePageNavigator(),
+                      child: HomePage(),
                     ),
                   ),
                 ),

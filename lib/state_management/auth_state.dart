@@ -15,8 +15,8 @@ class LoggedInState extends AuthState {
 
 class LoggedOutState extends AuthState {}
 
-class LoggedOutWithErrorState extends LoggedOutState {
+class AuthErrorState extends LoggedOutState {
   final AuthErrorType type;
 
-  LoggedOutWithErrorState(this.type);
+  AuthErrorState(this.type);
 }

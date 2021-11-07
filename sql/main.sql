@@ -2,6 +2,7 @@
 drop table if exists profiles, relations, audit_log, greek_alphabet;
 drop domain if exists points, color, icon;
 drop type if exists relationship_state;
+drop trigger if exists on_auth_user_created on auth.users cascade;
 
 -- profiles --
 create domain points as bigint check (value >= 0);
@@ -9,7 +10,7 @@ create domain color as smallint check ((value >= 0) and (value < 10));
 create domain icon as smallint check ((value >= 0) and (value < 256));
 
 create table public.greek_alphabet(
-  letter varchar(8)
+  name varchar(8)
 );
 
 insert into greek_alphabet values
@@ -40,32 +41,43 @@ insert into greek_alphabet values
 
 create table public.profiles(
   id uuid primary key references auth.users on delete cascade,
-  name varchar(8),
-  status varchar(16),
-  bio varchar(256),
-  color color,
-  icon icon,
-  points points,
-  gives points
+  name varchar(8) not null,
+  status varchar(16) not null default 'im new to points',
+  bio varchar(256) not null,
+  color color not null default 0,
+  icon icon not null default 0,
+  points points not null default 0,
+  gives points not null default 0
 );
 
 alter table public.profiles enable row level security;
 
-CREATE POLICY delete_own_profile ON public.profiles
-    FOR DELETE USING (
-      auth.uid() = id
-    );
-
--- Now done via funciton, to ensure that points and gives are not changed
---CREATE POLICY update_own_profile ON public.profiles
---    FOR UPDATE USING (
---      auth.uid() = id
---    ) WITH CHECK (
---      auth.uid() = id
---    );
-
 CREATE POLICY read_all_profiles ON public.profiles
     FOR SELECT USING (true);
+
+-- trigger the function every time a user is created
+
+-- TODO: Make newname a random letter of the greek alphabet
+create or replace function public.handle_new_user()
+returns trigger as $$
+declare newname varchar;
+begin
+  newname := 'Alpha';
+
+  insert into public.profiles (id, name, bio)
+  values (
+    new.id,
+    newname,
+    concat('Hi im ', newname)
+  );
+  return new;
+end;
+$$ language plpgsql security definer;
+
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
 
 -- relations --
 
