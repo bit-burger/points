@@ -15,7 +15,7 @@ class Points extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authRepository = AuthRepository(
-      authClient: Supabase.instance.client.auth,
+      client: Supabase.instance.client,
       sessionStore: sessionStore,
     );
     return NeumorphicApp(

@@ -20,7 +20,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on AuthAutoSignFailedError {
       emit(LoggedOutState());
     } on AuthError catch (e) {
-      emit(LoggedOutWithErrorState(e.type));
+      emit(AuthErrorState(e.type));
     }
   }
 
@@ -32,7 +32,7 @@ class AuthCubit extends Cubit<AuthState> {
       final userId = await _repository.logIn(email, password);
       emit(LoggedInState(userId));
     } on AuthError catch (e) {
-      emit(LoggedOutWithErrorState(e.type));
+      emit(AuthErrorState(e.type));
     }
   }
 
@@ -44,15 +44,30 @@ class AuthCubit extends Cubit<AuthState> {
       final userId = await _repository.signUp(email, password);
       emit(LoggedInState(userId));
     } on AuthError catch (e) {
-      emit(LoggedOutWithErrorState(e.type));
+      emit(AuthErrorState(e.type));
     }
   }
 
-  void logOut() {
+  void logOut() async {
     assert(state is LoggedInState);
 
-    _repository.logOut();
-    emit(LoggedOutState());
+    try {
+      await _repository.logOut();
+      emit(LoggedOutState());
+    } on AuthError catch (e) {
+      emit(AuthErrorState(e.type));
+    }
+  }
+
+  void deleteAccount() async {
+    assert(state is LoggedInState);
+
+    try {
+      await _repository.deleteAccount();
+      emit(LoggedOutState());
+    } on AuthError catch (e) {
+      emit(AuthErrorState(e.type));
+    }
   }
 
   void clearErrors() {

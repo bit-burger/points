@@ -1,0 +1,24 @@
+name: user_repositories
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=2.14.3 <3.0.0'
+
+dependencies:
+  supabase: ^0.2.9
+
+dev_dependencies:
+  test: ^1.19.3
+
+  # Mocking and faking
+  faker: ^2.0.0
+
+  # Helpers
+  supabase_testing_utils:
+    path: ../supabase_testing_utils
+  auth_repository:
+    path: ../auth_repository
+  hive_test:
+    path: ../hive_test

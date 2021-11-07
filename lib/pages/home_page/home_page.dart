@@ -6,7 +6,7 @@ import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
-import 'package:points_repositories/points_repositories.dart';
+import 'package:user_repositories/profile_repository.dart';
 import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
 import '../../theme/points_colors.dart' as points;
 
