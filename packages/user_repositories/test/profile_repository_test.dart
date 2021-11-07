@@ -23,7 +23,8 @@ void main() async {
     loggedInClient = supabaseClient;
 
     sut = ProfileRepository(client: loggedInClient);
-    authRepository = AuthRepository(client: loggedInClient, sessionStore: FakeHiveBox());
+    authRepository =
+        AuthRepository(client: loggedInClient, sessionStore: FakeHiveBox());
   });
 
   test("create account, update it and delete it", () async {
