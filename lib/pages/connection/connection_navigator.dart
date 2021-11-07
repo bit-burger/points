@@ -5,8 +5,9 @@ import 'package:points/pages/home_page/home_page_navigator.dart';
 import 'package:points/state_management/connection_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';
 import 'package:points/state_management/relationships_cubit.dart';
-import 'package:points_repositories/points_repositories.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:user_repositories/profile_repository.dart';
+import 'package:user_repositories/relations_repository.dart';
 
 class ConnectionNavigator extends StatelessWidget {
   @override
@@ -28,12 +29,12 @@ class ConnectionNavigator extends StatelessWidget {
                 child: MultiRepositoryProvider(
                   providers: [
                     RepositoryProvider(
-                      create: (_) => PointsProfileRepository(
+                      create: (_) => ProfileRepository(
                         client: Supabase.instance.client,
                       ),
                     ),
                     RepositoryProvider(
-                      create: (_) => PointsRelationsRepository(
+                      create: (_) => RelationsRepository(
                         client: Supabase.instance.client,
                       ),
                     ),
@@ -45,8 +46,7 @@ class ConnectionNavigator extends StatelessWidget {
                       ),
                       BlocProvider(
                         create: (context) => ProfileCubit(
-                          profileRepository:
-                              context.read<PointsProfileRepository>(),
+                          profileRepository: context.read<ProfileRepository>(),
                           connectionCubit: context.read<ConnectionCubit>(),
                         )..startListening(),
                       ),

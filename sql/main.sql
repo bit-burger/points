@@ -78,6 +78,7 @@ create type relationship_state as enum (
 );
 
 create table public.relations(
+--chat_id serial not null unique,
   id uuid not null references auth.users (id) on delete cascade,
   other_id uuid not null references auth.users (id) on delete cascade,
   state relationship_state not null,

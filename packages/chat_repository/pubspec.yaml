@@ -1,0 +1,13 @@
+name: chat_repository
+description: The repository to chat with friends in points
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '>=2.14.3 <3.0.0'
+
+dependencies:
+  supabase: ^0.2.9
+
+dev_dependencies:
+  test: ^1.19.3

@@ -1,17 +1,17 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:points_repositories/points_repositories.dart';
+import 'package:user_repositories/profile_repository.dart';
 
 import 'connection_cubit.dart';
 
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  final IPointsProfileRepository _profileRepository;
+  final IProfileRepository _profileRepository;
   final ConnectionCubit _connectionCubit;
 
   ProfileCubit({
-    required IPointsProfileRepository profileRepository,
+    required IProfileRepository profileRepository,
     required ConnectionCubit connectionCubit,
   })  : _profileRepository = profileRepository,
         _connectionCubit = connectionCubit,
