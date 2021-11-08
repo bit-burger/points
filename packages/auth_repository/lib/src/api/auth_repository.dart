@@ -35,7 +35,7 @@ class AuthRepository extends IAuthRepository {
     final response =
         await _client.auth.signIn(email: email, password: password);
     if (response.error == null) {
-      _saveSession(response.data!);
+      await _saveSession(response.data!);
       final user = response.user!;
       return AccountCredentials(id: user.id, email: user.email!);
     }
@@ -65,7 +65,7 @@ class AuthRepository extends IAuthRepository {
     if (response.data == null) {
       throw AuthError(AuthErrorType.email);
     }
-    _saveSession(response.data!);
+    await _saveSession(response.data!);
     final user = response.user!;
     return AccountCredentials(id: user.id, email: user.email!);
   }
@@ -85,7 +85,7 @@ class AuthRepository extends IAuthRepository {
       case "Session expired.":
       case "Missing currentSession.":
       case "Invalid Refresh Token":
-        _deleteSession();
+        await _deleteSession();
         throw AuthAutoSignFailedError();
       default:
         throw AuthError(AuthErrorType.connection);
@@ -95,6 +95,7 @@ class AuthRepository extends IAuthRepository {
   @override
   Future<void> logOut() async {
     final response = await _client.auth.signOut();
+    await _deleteSession();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
     }
@@ -109,13 +110,13 @@ class AuthRepository extends IAuthRepository {
     }
   }
 
-  void _deleteSession() async {
+  Future<void> _deleteSession() async {
     await _sessionStore.delete("sessionTokenJsonStr");
   }
 
-  void _saveSession(Session session) {
+  Future<void> _saveSession(Session session) async {
     final sessionDataStr = session.persistSessionString;
-    _sessionStore.put("sessionTokenJsonStr", sessionDataStr);
+    await _sessionStore.put("sessionTokenJsonStr", sessionDataStr);
   }
 
   String? _retrieveSession() {
