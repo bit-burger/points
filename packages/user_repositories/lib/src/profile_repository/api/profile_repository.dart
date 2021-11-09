@@ -23,7 +23,7 @@ class ProfileRepository extends IProfileRepository {
     _startListening();
   }
 
-  Stream<User?> get profileStream => _profileStream;
+  Stream<User> get profileStream => _profileStream;
 
   void _startListening() {
     assert(_client.auth.user() != null,
