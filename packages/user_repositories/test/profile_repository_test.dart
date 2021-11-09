@@ -1,7 +1,7 @@
 import 'package:hive_test/hive_test.dart';
 import 'package:test/test.dart';
 import 'package:faker/faker.dart';
-import 'package:supabase/supabase.dart';
+import 'package:supabase/supabase.dart' hide User;
 import 'package:supabase_testing_utils/supabase_testing_utils.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:auth_repository/auth_repository.dart';
@@ -40,7 +40,7 @@ void main() async {
     final bio4 = faker.lorem.sentence();
     final icon4 = faker.randomGenerator.integer(255);
 
-    final exRU1 = RootUser.defaultWith(id: userId);
+    final exRU1 = User.defaultWith(id: userId);
     final exRU2 = exRU1.copyWith(name: name2, status: status2, color: color2);
     final exRU3 = exRU2.copyWith(name: name3, bio: bio3);
     final exRU4 = exRU3.copyWith(bio: bio4, icon: icon4);

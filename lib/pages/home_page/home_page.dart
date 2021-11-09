@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
         bool isLoading = state is ProfileLoadingState;
-        RootUser? rootUser;
+        User? rootUser;
         if (state is ProfileExistsState) {
           rootUser = state.profile;
         }
