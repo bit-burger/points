@@ -10,7 +10,7 @@ class ProfileLoadingState extends ProfileState {}
 class NoProfileExistsState extends ProfileState {}
 
 class ProfileExistsState extends ProfileState {
-  final RootUser profile;
+  final User profile;
 
   ProfileExistsState(this.profile);
 }

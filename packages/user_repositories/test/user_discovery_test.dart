@@ -8,8 +8,7 @@ void main() {
 
     final result = await user2.userDiscovery.getUserByEmail(email: user1.email);
 
-    // TODO: Fix user equals
-    expect(user1.user, result);
+    expect(result, user1.user);
   });
 
   group("Query testing", () {

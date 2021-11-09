@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:supabase/supabase.dart';
+import 'package:supabase/supabase.dart' hide User;
 
-import '../../domain_shared/root_user.dart';
+import '../../domain_shared/user.dart';
 import '../../errors_shared/points_connection_error.dart';
 import '../../errors_shared/points_error.dart';
 
@@ -13,17 +13,17 @@ import 'profile_repository_contract.dart';
 class ProfileRepository extends IProfileRepository {
   final SupabaseClient _client;
 
-  late final StreamController<RootUser> _profileStreamController;
+  late final StreamController<User> _profileStreamController;
   late final StreamSubscription _sub;
 
-  late final Stream<RootUser> _profileStream;
-  RootUser? currentProfile;
+  late final Stream<User> _profileStream;
+  User? currentProfile;
 
   ProfileRepository({required SupabaseClient client}) : _client = client {
     _startListening();
   }
 
-  Stream<RootUser?> get profileStream => _profileStream;
+  Stream<User> get profileStream => _profileStream;
 
   void _startListening() {
     assert(_client.auth.user() != null,
@@ -46,10 +46,10 @@ class ProfileRepository extends IProfileRepository {
   }
 
   void _handleUpdate(final List<Map<String, dynamic>> users) async {
-    _addToStream(RootUser.fromJson(users[0]));
+    _addToStream(User.fromJson(users[0]));
   }
 
-  void _addToStream(RootUser newProfile) {
+  void _addToStream(User newProfile) {
     currentProfile = newProfile;
     _profileStreamController.add(newProfile);
   }

@@ -1,6 +1,6 @@
 import 'package:auth_repository/auth_repository.dart';
 import 'package:hive_test/hive_test.dart';
-import 'package:supabase/supabase.dart';
+import 'package:supabase/supabase.dart' hide User;
 import 'package:faker/faker.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
@@ -12,7 +12,7 @@ import 'package:user_repositories/profile_repository.dart';
 
 class LoggedInUser {
   final SupabaseClient client;
-  final RootUser user;
+  final User user;
   final String id, email, password;
   final AuthRepository auth;
   final ProfileRepository profile;
