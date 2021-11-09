@@ -7,9 +7,8 @@ abstract class IUserDiscoveryRepository {
 
   Future<List<User>> queryUsers({
     String? nameQuery,
-    bool nameIsExact = false,
     bool sortByPopularity = false,
-    int page = 0,
+    int pageIndex = 0,
     int pageLength = 10,
   });
 }

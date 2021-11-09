@@ -17,95 +17,63 @@ class UserDiscoveryRepository extends IUserDiscoveryRepository {
   Future<User> getUserByEmail({
     required String email,
   }) async {
-    final userIdResponse = await _client
-        .rpc(functions.getUserIdFromEmail, params: {"_email": email}).execute();
-    if (userIdResponse.error != null) {
-      throw PointsConnectionError();
-    }
-    final profilesResponse = await _client
-        .from("profiles")
-        .select()
-        .eq("id", userIdResponse.data)
+    final response = await _client
+        .rpc(functions.profileFromEmail, params: {"_email": email})
         .single()
         .execute();
 
-    if (profilesResponse.error != null) {
-      throw PointsConnectionError();
-    }
-    return User.fromJson(profilesResponse.data);
-  }
-
-  /*
-    exact name
-    exact name     + popularity
-    (imprecise name)
-    imprecise name + popularity
-    no name
-    no name        + popularity
-  */
-
-  // TODO: imprecise name + popularity: order by levenschtein(name) / 10, points
-  // TODO: Profiles ausschließen die blockiert sind (per join mit relations)
-  @override
-  Future<List<User>> queryUsers({
-    String? nameQuery,
-    bool nameIsExact = false,
-    bool sortByPopularity = false,
-    int page = 0,
-    int pageLength = 10,
-  }) async {
-    assert(page >= 0);
-    assert(pageLength > 0);
-    assert(!nameIsExact || nameQuery == null);
-
-    if (nameIsExact) {
-      return _queryUsersWithPreciseOrWithoutName(
-          nameQuery, sortByPopularity, page, pageLength);
-    }
-
-    if (nameQuery != null) {
-      return _queryUsersImpreciseName(
-          nameQuery, sortByPopularity, page, pageLength);
-    }
-
-    return _queryUsersWithPreciseOrWithoutName(
-        nameQuery, sortByPopularity, page, pageLength);
-  }
-
-  Future<List<User>> _queryUsersWithPreciseOrWithoutName(
-    String? nameQuery,
-    bool sortByPopularity,
-    int page,
-    int pageLength,
-  ) async {
-    var query = _client.from("profiles").select();
-
-    if (nameQuery != null) {
-      query.eq("name", nameQuery);
-    }
-
-    if (sortByPopularity) {
-      query.order("points");
-    }
-
-    final startingIndex = (page - 1) * pageLength;
-    final endIndex = startingIndex + pageLength - 1;
-    query.range(startingIndex, endIndex);
-
-    final response = await query.execute();
     if (response.error != null) {
       throw PointsConnectionError();
     }
-    return _usersFromRows(response.data);
+
+    return User.fromJson(response.data);
   }
 
-  Future<List<User>> _queryUsersImpreciseName(
-    String nameQuery,
-    bool sortByPopularity,
-    int page,
-    int pageLength,
-  ) async {
-    throw UnimplementedError();
+  /*
+    imprecise name
+    imprecise name  + popularity
+    no name
+    no name         + popularity
+  */
+  @override
+  Future<List<User>> queryUsers({
+    String? nameQuery,
+    bool sortByPopularity = false,
+    int pageIndex = 0,
+    int pageLength = 20,
+  }) async {
+    assert(pageIndex >= 0);
+    assert(pageLength > 0);
+
+    late final PostgrestTransformBuilder query;
+
+    if (nameQuery == null) {
+      // Queries without name
+      query = _client.rpc(
+        functions.queryProfiles(
+          sortByPopularity: sortByPopularity,
+        ),
+      );
+    } else {
+      // Queries with name
+      query = _client.rpc(
+        functions.queryProfiles(
+          searchWithName: true,
+          sortByPopularity: sortByPopularity,
+        ),
+        params: {"_name": nameQuery},
+      );
+    }
+
+    query.page(pageIndex, pageLength: pageLength);
+
+    final response = await query.execute();
+
+    if (response.error != null) {
+      throw PointsConnectionError();
+    }
+
+    return _usersFromRows(response.data);
   }
 
   List<User> _usersFromRows(dynamic list) {
@@ -113,5 +81,16 @@ class UserDiscoveryRepository extends IUserDiscoveryRepository {
     return rawUsers
         .map<User>((rawUser) => User.fromJson(rawUser))
         .toList(growable: false);
+  }
+}
+
+extension on PostgrestTransformBuilder {
+  PostgrestTransformBuilder page(
+    int pageIndex, {
+    required int pageLength,
+  }) {
+    final startingIndex = pageIndex * pageLength;
+    final endIndex = startingIndex + (pageLength - 1);
+    return range(startingIndex, endIndex);
   }
 }
