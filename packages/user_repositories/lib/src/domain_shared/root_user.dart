@@ -44,9 +44,9 @@ class RootUser extends User {
   }) {
     return RootUser(
       id: id,
-      name: "Alpha",
+      name: "alpha",
       status: "im new to points",
-      bio: "Hi im Alpha",
+      bio: "Hi im alpha",
       color: 9,
       icon: 0,
       points: 0,

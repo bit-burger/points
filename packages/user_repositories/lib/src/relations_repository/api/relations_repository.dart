@@ -32,6 +32,7 @@ class RelationsRepository extends IRelationsRepository {
   late final StreamController<_RelationsUpdateEvent> _updateStreamController;
 
   late final Map<String, List<User>> _currentRelations;
+
   UserRelations? currentUserRelations;
 
   @override

@@ -41,10 +41,10 @@ insert into greek_alphabet values
 
 create table public.profiles(
   id uuid primary key references auth.users on delete cascade,
-  name varchar(8) not null,
+  name varchar(8) not null check(name ~ '^(?!-|\s)([a-z-]|\s)*[a-z]$'),
   status varchar(16) not null default 'im new to points',
   bio varchar(256) not null,
-  color color not null default 0,
+  color color not null default 9,
   icon icon not null default 0,
   points points not null default 0,
   gives points not null default 0
@@ -62,7 +62,7 @@ create or replace function public.handle_new_user()
 returns trigger as $$
 declare newname varchar;
 begin
-  newname := 'Alpha';
+  newname := 'alpha';
 
   insert into public.profiles (id, name, bio)
   values (

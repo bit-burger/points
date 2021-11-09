@@ -30,11 +30,11 @@ void main() async {
   test("create account, update it and delete it", () async {
     final userId = loggedInClient.auth.user()!.id;
 
-    final name2 = faker.randomGenerator.string(8, min: 3);
+    final name2 = faker.randomPointsName();
     final status2 = faker.randomGenerator.string(16, min: 10);
     final color2 = faker.randomGenerator.integer(9);
 
-    final name3 = faker.randomGenerator.string(8, min: 3);
+    final name3 = faker.randomPointsName();
     final bio3 = faker.lorem.sentence();
 
     final bio4 = faker.lorem.sentence();

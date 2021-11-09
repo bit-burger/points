@@ -1,8 +1,17 @@
+----------
+-- AUTH --
+----------
+
 CREATE OR REPLACE FUNCTION delete_user() returns void AS $$
-  delete from auth.users where
+BEGIN
+delete from auth.users where id = auth.uid();
+END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
 
+----------------------
+-- PROFILE UPDATING --
+----------------------
 
 CREATE OR REPLACE FUNCTION profile_update(
   new_bio varchar, new_color smallint, new_icon smallint, new_name varchar, new_status varchar
@@ -20,6 +29,59 @@ END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
 
+
+
+---------------------
+-- PROFILE QUERIES --
+---------------------
+
+create or replace function profile_from_email(_email varchar) returns setof profiles as $func$
+select profiles.* from auth.users
+left join profiles on users.id = profiles.id
+where users.email = _email;
+$func$ LANGUAGE sql
+SECURITY DEFINER;
+
+
+-- sorts out profiles with relation to auth.uid()
+create or replace function query_profiles()
+returns setof public.profiles as $func$
+  SELECT profiles.*
+  FROM public.profiles
+  left join relations on relations.id = auth.uid() and relations.other_id = profiles.id
+  where relations.id is null and profiles.id <> auth.uid();
+$func$
+LANGUAGE sql;
+
+create or replace function query_profiles_popularity()
+returns setof public.profiles as $func$
+  SELECT *
+  FROM query_profiles()
+  order by points;
+$func$
+LANGUAGE sql;
+
+create or replace function query_profiles_name(_name varchar(8))
+returns setof public.profiles as $func$
+  SELECT *
+  FROM query_profiles() as profiles
+  order by levenshtein(_name, profiles.name) + levenshtein(substring(_name, 0, 1), substring(profiles.name, 0, 1)) * 2;
+$func$
+LANGUAGE sql;
+
+create or replace function query_profiles_name_popularity(_name varchar(8))
+returns setof public.profiles as $func$
+  SELECT *
+  FROM query_profiles() as profiles
+  order by levenshtein(_name, profiles.name) / 10, profiles.points;
+$func$
+LANGUAGE sql;
+
+
+
+---------------
+-- RELATIONS --
+---------------
 
 CREATE OR REPLACE FUNCTION relations_accept(_id uuid) returns void AS $$
 DECLARE

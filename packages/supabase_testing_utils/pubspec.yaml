@@ -10,5 +10,9 @@ dependencies:
   supabase: ^0.2.9
   dotenv: ^3.0.0
   faker: ^2.0.0
+  hive_test:
+    path: ../hive_test
+  auth_repository:
+    path: ../auth_repository
   user_repositories:
     path: ../user_repositories
