@@ -11,6 +11,7 @@ class UserListTile extends StatelessWidget {
   final int icon;
 
   final VoidCallback onPressed;
+  // TODO: Implement onLongPressed
   final VoidCallback? onLongPressed;
 
   const UserListTile({
@@ -23,6 +24,7 @@ class UserListTile extends StatelessWidget {
     this.onLongPressed,
   }) : super();
 
+  // TODO: Better scaling
   @override
   Widget build(BuildContext context) {
     return NeumorphicButton(
@@ -40,7 +42,17 @@ class UserListTile extends StatelessWidget {
               fontSize: 12,
             ),
           ),
-          SizedBox(width: 16),
+          SizedBox(width: 12),
+          Spacer(),
+          // TODO: Better text scaling
+          Text(
+            points.toString(),
+            textScaleFactor: 1.5,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
         ],
       ),
       onPressed: () {},
