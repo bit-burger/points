@@ -5,6 +5,8 @@ abstract class UserDiscoveryState {}
 
 class UserDiscoveryInitial extends UserDiscoveryState {}
 
+class UserDiscoveryWaitingForUserInput extends UserDiscoveryState {}
+
 class UserDiscoveryNewQueryLoading extends UserDiscoveryState {}
 
 class UserDiscoveryLoadMoreLoading extends UserDiscoveryState {}

@@ -29,6 +29,10 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
     );
   }
 
+  void clear() {
+    emit(UserDiscoveryWaitingForUserInput());
+  }
+
   void loadMore() async {
     assert(state is UserDiscoveryResult);
     assert(!(state as UserDiscoveryResult).isLast);

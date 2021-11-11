@@ -10,8 +10,7 @@ class UserListTile extends StatelessWidget {
   final int points;
   final int icon;
 
-  final VoidCallback onPressed;
-  // TODO: Implement onLongPressed
+  final VoidCallback? onPressed;
   final VoidCallback? onLongPressed;
 
   const UserListTile({
@@ -20,45 +19,47 @@ class UserListTile extends StatelessWidget {
     required this.color,
     required this.points,
     required this.icon,
-    required this.onPressed,
+    this.onPressed,
     this.onLongPressed,
   }) : super();
 
   // TODO: Better scaling
   @override
   Widget build(BuildContext context) {
-    return NeumorphicButton(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        children: [
-          Icon(Ionicons.copy_outline),
-          SizedBox(width: 16),
-          Text(name.padRight(8)),
-          SizedBox(width: 16),
-          Text(
-            status,
-            style: TextStyle(
-              fontSize: 12,
+    return GestureDetector(
+      onLongPress: onLongPressed,
+      child: NeumorphicButton(
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Row(
+          children: [
+            Icon(Ionicons.copy_outline),
+            SizedBox(width: 16),
+            Text(name.padRight(8)),
+            SizedBox(width: 16),
+            Text(
+              status,
+              style: TextStyle(
+                fontSize: 12,
+              ),
             ),
-          ),
-          SizedBox(width: 12),
-          Spacer(),
-          // TODO: Better text scaling
-          Text(
-            points.toString(),
-            textScaleFactor: 1.5,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+            SizedBox(width: 12),
+            Spacer(),
+            Text(
+              points.toString(),
+              textScaleFactor: 1.5,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Spacer(),
-        ],
-      ),
-      onPressed: () {},
-      style: NeumorphicStyle(
-        color: colors[color],
-        boxShape: NeumorphicBoxShape.stadium(),
+            Spacer(),
+          ],
+        ),
+        onPressed: () {},
+        style: NeumorphicStyle(
+          color: colors[color],
+          boxShape: NeumorphicBoxShape.stadium(),
+        ),
       ),
     );
   }

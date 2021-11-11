@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
 import 'package:ionicons/ionicons.dart';
@@ -20,6 +21,54 @@ class UserDiscoveryPage extends StatefulWidget {
 
 class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
+
+  Widget _buildTextField() {
+    return NeumorphicTextField(
+      controller: _controller,
+      onSubmitted: (s) => _search(s),
+      onChanged: (s) {
+        context.read<UserDiscoveryCubit>().clear();
+      },
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(8),
+        UppercaseToLowercaseTextInputFormatter(),
+      ],
+      style: NeumorphicStyle(
+        boxShape: NeumorphicBoxShape.stadium(),
+        intensity: 0.7,
+        depth: 8,
+      ),
+      focusNode: _focusNode,
+      hintText: "search...",
+      textInputAction: TextInputAction.search,
+      trailing: SizedBox(
+        width: 24,
+        child: TextButton(
+          style: ButtonStyle(
+            overlayColor: MaterialStateProperty.all(Colors.transparent),
+            foregroundColor: MaterialStateProperty.resolveWith(
+              (state) {
+                if (state.contains(MaterialState.pressed)) {
+                  return Colors.grey[400];
+                }
+                return Colors.grey[600];
+              },
+            ),
+            padding: MaterialStateProperty.all(EdgeInsets.zero),
+          ),
+          child: Icon(Ionicons.close_outline),
+          onPressed: () {
+            if (_controller.text.isNotEmpty) {
+              _controller.clear();
+              context.read<UserDiscoveryCubit>().clear();
+              _focusNode.requestFocus();
+            }
+          },
+        ),
+      ),
+    );
+  }
 
   Widget _buildUserList(UserDiscoveryResult state) {
     return ListView.builder(
@@ -56,6 +105,31 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
         ),
       );
     }
+    if (state is UserDiscoveryWaitingForUserInput) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Loader(),
+          SizedBox(height: 16),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                "Press enter or ",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).hintColor,
+                ),
+              ),
+              Icon(
+                Ionicons.search_outline,
+                color: Theme.of(context).hintColor,
+              ),
+            ],
+          ),
+        ],
+      );
+    }
     if (state is UserDiscoveryInitial) {
       return SizedBox();
     }
@@ -76,18 +150,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
             appBar: NeumorphicAppBar(
               title: Padding(
                 padding: EdgeInsets.only(right: 12),
-                child: NeumorphicTextField(
-                  controller: _controller,
-                  onSubmitted: (s) => _search(s),
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(8),
-                    UppercaseToLowercaseTextInputFormatter(),
-                  ],
-                  style:
-                      NeumorphicStyle(boxShape: NeumorphicBoxShape.stadium()),
-                  hintText: "search...",
-                  textInputAction: TextInputAction.search,
-                ),
+                child: _buildTextField(),
               ),
               middleSpacing: false,
               centerTitle: false,
@@ -100,6 +163,8 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
                   onPressed: () => _search(_controller.text),
                   style: NeumorphicStyle(
                     boxShape: NeumorphicBoxShape.circle(),
+                    intensity: 0.7,
+                    depth: 8,
                   ),
                 ),
               ),
