@@ -53,7 +53,7 @@ class _AuthPageState extends State<AuthPage> {
     return NeumorphicTextFormField(
       errorText: isEmailError
           ? (authMethod == AuthMethod.logIn
-              ? "Email not found"
+              ? "Email or password wrong"
               : "Email already in use")
           : null,
       hintText: "Email",
@@ -124,12 +124,16 @@ class _AuthPageState extends State<AuthPage> {
       valueListenable: _formIsValidNotifier,
       builder: (_, validated, __) {
         return NeumorphicLoadingTextButton(
+          padding: EdgeInsets.zero,
           loading: isLoading,
-          child: AnimatedSwitcher(
-            duration: Duration(milliseconds: 250),
-            child: Text(
-              authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
-              key: ValueKey(authMethod),
+          child: SizedBox(
+            height: 56,
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 250),
+              child: Text(
+                authMethod == AuthMethod.logIn ? "Log in" : "Sign up",
+                key: ValueKey(authMethod),
+              ),
             ),
           ),
           onPressed: validated ? logInOrSignUp : null,

@@ -8,6 +8,7 @@ import 'package:points/state_management/relationships_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
+import 'package:user_repositories/user_discovery_repository.dart';
 
 class ConnectionNavigator extends StatelessWidget {
   @override
@@ -35,6 +36,11 @@ class ConnectionNavigator extends StatelessWidget {
                     ),
                     RepositoryProvider(
                       create: (_) => RelationsRepository(
+                        client: Supabase.instance.client,
+                      ),
+                    ),
+                    RepositoryProvider(
+                      create: (_) => UserDiscoveryRepository(
                         client: Supabase.instance.client,
                       ),
                     ),

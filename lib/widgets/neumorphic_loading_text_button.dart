@@ -4,14 +4,20 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'loader.dart';
 
 class NeumorphicLoadingTextButton extends StatelessWidget {
-  final bool? loading;
   final Widget child;
   final VoidCallback? onPressed;
+  final String? tooltip;
+  final bool? loading;
+  final EdgeInsets? padding;
+  final NeumorphicStyle? style;
 
   const NeumorphicLoadingTextButton({
     required this.child,
     required this.onPressed,
+    this.tooltip,
     this.loading,
+    this.padding,
+    this.style,
   }) : super();
 
   @override
@@ -31,9 +37,12 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
       child = this.child;
     }
     final enabled = onPressed != null && loading != true;
+    final depth = enabled ? null : -NeumorphicTheme.of(context)!.current!.depth;
     return IgnorePointer(
       ignoring: !enabled,
       child: NeumorphicButton(
+        padding: padding,
+        tooltip: tooltip,
         child: Center(
           child: AnimatedDefaultTextStyle(
             duration: Duration(milliseconds: 250),
@@ -44,10 +53,11 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
             child: child,
           ),
         ),
-        style: NeumorphicStyle(
-          boxShape: NeumorphicBoxShape.stadium(),
-          depth: enabled ? null : -NeumorphicTheme.of(context)!.current!.depth,
-        ),
+        style: style?.copyWith(depth: depth) ??
+            NeumorphicStyle(
+              boxShape: NeumorphicBoxShape.stadium(),
+              depth: depth,
+            ),
         duration: Duration(milliseconds: 250),
         onPressed: onPressed ?? () {},
       ),
