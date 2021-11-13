@@ -10,6 +10,7 @@ import 'package:points/state_management/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
+import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
 import '../../theme/points_colors.dart' as points;
@@ -49,6 +50,8 @@ class HomePage extends StatelessWidget {
                           create: (_) => UserDiscoveryCubit(
                             userDiscoveryRepository:
                                 context.read<UserDiscoveryRepository>(),
+                            relationsRepository:
+                                context.read<RelationsRepository>(),
                           )..query(sortByPopularity: false),
                           child: UserDiscoveryPage(),
                         ),

@@ -1,5 +1,12 @@
 part of 'user_discovery_cubit.dart';
 
+class UserResult {
+  final User user;
+  final bool wasRequested;
+
+  UserResult(this.user, this.wasRequested);
+}
+
 @immutable
 abstract class UserDiscoveryState {}
 
@@ -14,7 +21,7 @@ class UserDiscoveryLoadMoreLoading extends UserDiscoveryState {}
 class UserDiscoveryEmptyResult extends UserDiscoveryState {}
 
 class UserDiscoveryResult extends UserDiscoveryState {
-  final List<User> result;
+  final List<UserResult> result;
   final bool isLast;
 
   UserDiscoveryResult(this.result, this.isLast);
