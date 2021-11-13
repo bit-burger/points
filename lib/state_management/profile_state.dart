@@ -7,8 +7,6 @@ class ProfileInitialState extends ProfileState {}
 
 class ProfileLoadingState extends ProfileState {}
 
-class NoProfileExistsState extends ProfileState {}
-
 class ProfileExistsState extends ProfileState {
   final User profile;
 

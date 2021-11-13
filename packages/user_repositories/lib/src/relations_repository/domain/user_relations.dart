@@ -15,6 +15,9 @@ class UserRelations {
   /// All Users that have blocked the RootUser
   final List<User> blockedBy;
 
+  /// All Users together
+  List<User> get all => friends + requests + pending + blocked + blockedBy;
+
   UserRelations(
       this.friends, this.requests, this.pending, this.blocked, this.blockedBy);
 

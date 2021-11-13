@@ -12,6 +12,7 @@ class UserListTile extends StatelessWidget {
 
   final VoidCallback? onPressed;
   final VoidCallback? onLongPressed;
+  final EdgeInsets? margin;
 
   const UserListTile({
     required this.name,
@@ -21,6 +22,7 @@ class UserListTile extends StatelessWidget {
     required this.icon,
     this.onPressed,
     this.onLongPressed,
+    this.margin,
   }) : super();
 
   // TODO: Better scaling
@@ -29,8 +31,9 @@ class UserListTile extends StatelessWidget {
     return GestureDetector(
       onLongPress: onLongPressed,
       child: NeumorphicButton(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        margin: margin ?? EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        onPressed: onPressed,
         child: Row(
           children: [
             Icon(Ionicons.copy_outline),
@@ -55,7 +58,6 @@ class UserListTile extends StatelessWidget {
             Spacer(),
           ],
         ),
-        onPressed: () {},
         style: NeumorphicStyle(
           color: colors[color],
           boxShape: NeumorphicBoxShape.stadium(),

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:points/pages/connection/connection_error_page.dart';
 import 'package:points/pages/home_page/home_page.dart';
+import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/connection_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';
 import 'package:points/state_management/relationships_cubit.dart';
+import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
@@ -48,7 +50,10 @@ class ConnectionNavigator extends StatelessWidget {
                   child: MultiBlocProvider(
                     providers: [
                       BlocProvider(
-                        create: (context) => RelationshipsCubit(),
+                        create: (context) => RelationshipsCubit(
+                          relationsRepository:
+                              context.read<RelationsRepository>(),
+                        )..startListening(),
                       ),
                       BlocProvider(
                         create: (context) => ProfileCubit(
@@ -59,7 +64,36 @@ class ConnectionNavigator extends StatelessWidget {
                     ],
                     child: BlocProvider(
                       create: (_) => ConnectionCubit(),
-                      child: HomePage(),
+                      child: Navigator(
+                        initialRoute: "home",
+                        onGenerateRoute: (settings) {
+                          switch (settings.name) {
+                            case "home":
+                              return MaterialPageRoute(
+                                  builder: (_) => HomePage());
+                            case "user-discovery":
+                              return MaterialPageRoute(
+                                  builder: (_) => UserDiscoveryPage());
+                            case "settings":
+                          }
+                        },
+                        onUnknownRoute: (_) {
+                          return MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return NeumorphicScaffold(
+                                body: Center(
+                                  child: Text(
+                                    "404: Page not found",
+                                    style: TextStyle(
+                                      color: Theme.of(context).errorColor,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),

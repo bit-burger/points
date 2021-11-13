@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
 import 'package:ionicons/ionicons.dart';
+import 'package:points/helpers/relation_action_sheet.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
 import 'package:points/state_management/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
@@ -19,6 +21,7 @@ class UserDiscoveryPage extends StatefulWidget {
   State<UserDiscoveryPage> createState() => _UserDiscoveryPageState();
 }
 
+// TODO: Make sure you cant request somebody two times
 class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
@@ -81,7 +84,16 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
           color: user.color,
           icon: user.icon,
           points: user.points,
-          onPressed: () {},
+          onPressed: () async {
+            showRelationActionSheet(
+              context: context,
+              actions: [
+                requestAction,
+                blockAction,
+              ],
+              userId: user.id,
+            );
+          },
         );
       },
     );
@@ -173,7 +185,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
             body: Center(
               child: AnimatedSwitcher(
                 duration: Duration(
-                  milliseconds: 500,
+                  milliseconds: 400,
                 ),
                 child: _buildContent(state),
               ),
@@ -181,6 +193,9 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
             floatingActionButton: NeumorphicFloatingActionButton(
               child: Icon(Ionicons.home_outline),
               onPressed: () => Navigator.pop(context),
+              style: NeumorphicStyle(
+                depth: 8,
+              ),
             ),
           ),
         );

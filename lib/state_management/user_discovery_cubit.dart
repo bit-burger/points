@@ -5,7 +5,7 @@ import 'package:user_repositories/user_discovery_repository.dart';
 part 'user_discovery_state.dart';
 
 class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
-  static const _resultsPageLength = 25;
+  static const _resultsPageLength = 20;
 
   final IUserDiscoveryRepository _userDiscoveryRepository;
 

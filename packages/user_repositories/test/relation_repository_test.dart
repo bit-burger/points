@@ -156,7 +156,7 @@ void main() {
     // user1 takes back request to user2
     await request();
 
-    user2.relations.takeBackRequest(user1.id);
+    user2.relations.cancelRequest(user1.id);
 
     final j1 = await relationsStream1.next;
     expect(

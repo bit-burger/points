@@ -8,6 +8,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String? tooltip;
   final bool? loading;
+  final Widget? loader;
   final EdgeInsets? padding;
   final NeumorphicStyle? style;
 
@@ -16,6 +17,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
     required this.onPressed,
     this.tooltip,
     this.loading,
+    this.loader,
     this.padding,
     this.style,
   }) : super();
@@ -28,7 +30,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
         crossFadeState:
             !loading! ? CrossFadeState.showFirst : CrossFadeState.showSecond,
         firstChild: this.child,
-        secondChild: Loader(),
+        secondChild: loader ?? Loader(),
         firstCurve: Curves.easeOutExpo,
         secondCurve: Curves.easeOutExpo,
         duration: Duration(milliseconds: 250),
