@@ -22,11 +22,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     try {
       await for (final profile in _profileRepository.profileStream) {
-        if (profile != null) {
-          emit(ProfileExistsState(profile));
-        } else {
-          emit(NoProfileExistsState());
-        }
+        emit(ProfileExistsState(profile));
       }
     } on PointsConnectionError {
       _connectionCubit.reportError();

@@ -1,11 +1,9 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/widgets/hider.dart';
+
+import 'neumorphic_text_field.dart';
 
 class NeumorphicTextFormField extends FormField<String> {
   NeumorphicTextFormField({
@@ -43,36 +41,21 @@ class NeumorphicTextFormField extends FormField<String> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Neumorphic(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: TextField(
-                        selectionControls: _CustomColorSelectionHandle(
-                          Theme.of(context)
-                              .textSelectionTheme
-                              .selectionHandleColor!,
-                        ),
-                        controller: state._effectiveController,
-                        obscureText: obscureText,
-                        keyboardType: keyboardType,
-                        textInputAction: textInputAction,
-                        autocorrect: false,
-                        focusNode: focusNode,
-                        autofocus: autofocus,
-                        decoration: InputDecoration(
-                          hintText: hintText,
-                          border: InputBorder.none,
-                        ),
-                        onSubmitted: onFieldSubmitted,
-                        onChanged: (s) {
-                          if (onChanged != null) onChanged(s);
-                          return state.didChange(s);
-                        },
-                        inputFormatters: inputFormatters,
-                      ),
-                      style: NeumorphicStyle(
-                        depth: -NeumorphicTheme.depth(context)!,
-                        boxShape: NeumorphicBoxShape.stadium(),
-                      ),
+                    NeumorphicTextField(
+                      controller: state._effectiveController,
+                      obscureText: obscureText,
+                      keyboardType: keyboardType,
+                      textInputAction: textInputAction,
+                      autocorrect: false,
+                      focusNode: focusNode,
+                      autofocus: autofocus,
+                      hintText: hintText,
+                      onSubmitted: onFieldSubmitted,
+                      onChanged: (s) {
+                        if (onChanged != null) onChanged(s);
+                        return state.didChange(s);
+                      },
+                      inputFormatters: inputFormatters,
                     ),
                     // SizeTransition(sizeFactor: sizeFactor),
                     Hider(
@@ -131,71 +114,5 @@ class NeumorphicTextFormFieldState extends FormFieldState<String> {
     // manipulated, no setState call is needed here.
     _effectiveController!.text = widget.initialValue ?? '';
     super.reset();
-  }
-}
-
-/// Temporary fix as the selectionHandleColor does not work on iOS
-/// Copied and modified from: https://github.com/flutter/flutter/issues/74890#issuecomment-901169865
-class _CustomColorSelectionHandle extends TextSelectionControls {
-  _CustomColorSelectionHandle(this.handleColor)
-      : _controls = Platform.isIOS
-            ? cupertinoTextSelectionControls
-            : materialTextSelectionControls;
-
-  final Color handleColor;
-  final TextSelectionControls _controls;
-
-  /// Wrap the given handle builder with the needed theme data for
-  /// each platform to modify the color.
-  Widget _wrapWithThemeData(Widget Function(BuildContext) builder) =>
-      Platform.isIOS
-          // ios handle uses the CupertinoTheme primary color, so override that.
-          ? CupertinoTheme(
-              data: CupertinoThemeData(primaryColor: handleColor),
-              child: Builder(builder: builder))
-          // material handle uses the selection handle color, so override that.
-          : TextSelectionTheme(
-              data: TextSelectionThemeData(selectionHandleColor: handleColor),
-              child: Builder(builder: builder));
-
-  @override
-  Widget buildHandle(
-      BuildContext context, TextSelectionHandleType type, double textLineHeight,
-      [VoidCallback? onTap, double? startGlyphHeight, double? endGlyphHeight]) {
-    return _wrapWithThemeData((BuildContext context) =>
-        _controls.buildHandle(context, type, textLineHeight));
-  }
-
-  @override
-  Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight,
-      [double? startGlyphHeight, double? endGlyphHeight]) {
-    return _controls.getHandleAnchor(type, textLineHeight);
-  }
-
-  @override
-  Size getHandleSize(double textLineHeight) {
-    return _controls.getHandleSize(textLineHeight);
-  }
-
-  @override
-  Widget buildToolbar(
-    BuildContext context,
-    Rect globalEditableRegion,
-    double textLineHeight,
-    Offset position,
-    List<TextSelectionPoint> endpoints,
-    TextSelectionDelegate delegate,
-    ClipboardStatusNotifier clipboardStatus,
-    Offset? lastSecondaryTapDownPosition,
-  ) {
-    return _controls.buildToolbar(
-        context,
-        globalEditableRegion,
-        textLineHeight,
-        position,
-        endpoints,
-        delegate,
-        clipboardStatus,
-        lastSecondaryTapDownPosition);
   }
 }

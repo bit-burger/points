@@ -34,6 +34,9 @@ class NeumorphicAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// Defaults to being adapted to the current [TargetPlatform].
   final bool? centerTitle;
 
+  /// Should there be space between leading, title and trailing
+  final bool middleSpacing;
+
   /// Widgets to display in a row after the [title] widget.
   ///
   /// Typically these widgets are [IconButton]s representing common operations.
@@ -54,6 +57,7 @@ class NeumorphicAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.leading,
     this.centerTitle,
     this.trailing,
+    this.middleSpacing = true,
   })  : preferredSize = Size.fromHeight(toolbarHeight),
         super(key: key);
 
@@ -117,9 +121,10 @@ class NeumorphicAppBarState extends State<NeumorphicAppBar> {
                   child: widget.trailing,
                 ),
               ),
-              centerMiddle:
+              centerMiddle: widget.centerTitle ??
                   widget._getEffectiveCenterTitle(theme, nTheme!.current!),
-              middleSpacing: NavigationToolbar.kMiddleSpacing,
+              middleSpacing:
+                  widget.middleSpacing ? NavigationToolbar.kMiddleSpacing : 0,
             ),
           ),
         ),

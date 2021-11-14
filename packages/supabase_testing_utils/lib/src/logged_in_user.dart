@@ -48,11 +48,11 @@ class LoggedInUser {
 
     final profileStream = StreamQueue(profileRepository.profileStream);
 
-    final user = (await profileStream.next)!;
+    final user = await profileStream.next;
 
     if (name != null) {
       profileRepository.updateAccount(name: name);
-      assert((await profileStream.next)!.name == name);
+      assert((await profileStream.next).name == name);
     }
 
     final relationRepository = RelationsRepository(

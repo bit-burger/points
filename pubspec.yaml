@@ -8,29 +8,33 @@ environment:
   sdk: ">=2.14.4 <3.0.0"
 
 dependencies:
+  # Flutter and extensions
   flutter:
     sdk: flutter
-
-  # Configuration
-  flutter_dotenv: ^5.0.2
-
-  # UI
-  cupertino_icons: ^1.0.4
-  google_fonts: ^2.1.0
-  ionicons: ^0.1.2
-  adaptive_dialog: ^1.2.0
   flutter_neumorphic:
     git:
       url: https://github.com/tsvillain/Flutter-Neumorphic.git
 
-  # Supabase
-  supabase_flutter: ^0.2.9
-  hive_flutter: ^1.1.0
+  # Icons and fonts
+  cupertino_icons: ^1.0.4
+  google_fonts: ^2.1.0
+  ionicons: ^0.1.2
+
+  # Widgets
+  adaptive_dialog: ^1.2.0
+  infinite_scroll_pagination: ^3.1.0
 
   # State management
   flutter_bloc: ^7.3.3
   bloc: ^7.2.1
   provider: ^6.0.1
+
+  # Configuration
+  flutter_dotenv: ^5.0.2
+
+  # Supabase
+  supabase_flutter: ^0.2.9
+  hive_flutter: ^1.1.0
 
   # Own packages
   auth_repository:
@@ -50,23 +54,11 @@ dev_dependencies:
 
   # Mocking and faking
   faker: ^2.0.0
+  mocktail: ^0.2.0
 
 flutter:
   assets:
     - .env
     - google_fonts/
-#  fonts:
-#    - family: Courier Prime
-#      fonts:
-#        - asset: assets/fonts/courier_prime/CourierPrime-Bold.ttf
-#          weight: 700
-#        - asset: assets/fonts/courier_prime/CourierPrime-BoldItalic.ttf
-#          weight: 700
-#          style: italic
-#        - asset: assets/fonts/courier_prime/CourierPrime-Regular.ttf
-#          weight: 500
-#        - asset: assets/fonts/courier_prime/CourierPrime-Regular.ttf
-#          weight: 500
-#          style: italic
 
   uses-material-design: true

@@ -211,7 +211,7 @@ class RelationsRepository extends IRelationsRepository {
   }
 
   @override
-  Future<void> takeBackRequest(String id) async {
+  Future<void> cancelRequest(String id) async {
     await _invoke(id, functions.takeBackRequest);
   }
 

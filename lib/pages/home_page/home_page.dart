@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:points/pages/relationships/relations_sub_page.dart';
+import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';
+import 'package:points/state_management/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
-import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
+import 'package:user_repositories/relations_repository.dart';
+import 'package:user_repositories/user_discovery_repository.dart';
+
 import '../../theme/points_colors.dart' as points;
+import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
 
 class HomePage extends StatelessWidget {
   @override
@@ -32,18 +38,38 @@ class HomePage extends StatelessWidget {
                   key: ValueKey(rootUser),
                 ),
               ),
-              leading: NeumorphicButton(
-                tooltip: "Search for users",
-                child: Icon(Ionicons.search_outline),
-                onPressed: () {},
-                style: NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
+              leading: Hero(
+                tag: "User search",
+                transitionOnUserGestures: true,
+                child: NeumorphicButton(
+                  tooltip: "Search for users",
+                  child: Icon(Ionicons.search_outline),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) => UserDiscoveryCubit(
+                            userDiscoveryRepository:
+                                context.read<UserDiscoveryRepository>(),
+                            relationsRepository:
+                                context.read<RelationsRepository>(),
+                          )..awaitPages(),
+                          child: UserDiscoveryPage(),
+                        ),
+                      ),
+                    );
+                  },
+                  style: NeumorphicStyle(
+                    boxShape: NeumorphicBoxShape.circle(),
+                  ),
                 ),
               ),
               trailing: NeumorphicButton(
                 tooltip: "Settings",
                 child: Icon(Ionicons.settings_outline),
-                onPressed: () {},
+                onPressed: () {
+                  context.read<AuthCubit>().logOut();
+                },
                 style: NeumorphicStyle(
                   boxShape: NeumorphicBoxShape.circle(),
                 ),
@@ -68,49 +94,33 @@ class HomePage extends StatelessWidget {
                   );
                 }
               },
-              child: Center(
-                child: TextButton(
-                  onPressed: () {
-                    context.read<AuthCubit>().logOut();
-                  },
-                  child: Text("Log out"),
-                ),
-              ),
+              child: RelationsSubPage(),
             ),
-            floatingActionButton: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: kToolbarHeight,
-                maxHeight: kToolbarHeight,
-                minWidth: kToolbarHeight,
-              ),
-              child: NeumorphicButton(
-                onPressed: () {
-                  final name = rootUser!.name;
-                  final newName = name.length == 8
-                      ? name.substring(0, name.length - 1)
-                      : name + "a";
+            floatingActionButton: NeumorphicFloatingActionButton(
+              onPressed: () {
+                final name = rootUser!.name;
+                final newName = name.length == 8
+                    ? name.substring(0, name.length - 1)
+                    : name + "a";
 
-                  context
-                      .read<ProfileCubit>()
-                      .updateProfile(newName, null, null, null, null);
-                },
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                child: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 500),
-                  child: isLoading
-                      ? Loader()
-                      : Text(
-                          rootUser?.points.toString() ?? "",
-                          style:
-                              Theme.of(context).textTheme.headline4!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                          textAlign: TextAlign.center,
-                        ),
-                ),
-                style: NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.stadium(),
-                ),
+                context
+                    .read<ProfileCubit>()
+                    .updateProfile(newName, null, null, null, null);
+              },
+              style: NeumorphicStyle(
+                depth: 8,
+              ),
+              child: AnimatedSwitcher(
+                duration: Duration(milliseconds: 500),
+                child: isLoading
+                    ? Loader()
+                    : Text(
+                        rootUser?.points.toString() ?? "",
+                        style: Theme.of(context).textTheme.headline4!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                        textAlign: TextAlign.center,
+                      ),
               ),
             ),
           ),

@@ -11,7 +11,7 @@ abstract class IRelationsRepository {
 
   Future<void> request(String id);
 
-  Future<void> takeBackRequest(String id);
+  Future<void> cancelRequest(String id);
 
   Future<void> unblock(String id);
 
