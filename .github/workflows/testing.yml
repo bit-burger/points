@@ -22,7 +22,3 @@ jobs:
           dart test test/profile_repository_test.dart
           dart test test/relation_repository_test.dart
           dart test test/user_discovery_repository_test.dart
-      - name: test chat_repository
-        run: |
-          cd packages/chat_repository
-          dart test
