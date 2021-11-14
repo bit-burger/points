@@ -20,14 +20,21 @@ jobs:
         run: |
           ls
           dart pub install
-          echo $pwd
+          pwd
           alias pub="dart pub install && cd .."
+          pwd
           cd packages/auth_repository && pub
+          pwd
           cd chat_repository && pub
+          pwd
           cd hive_test && pub
+          pwd
           cd meta_repository && pub
+          pwd
           cd supabase_testing_utils && pub
+          pwd
           cd user_repositores && pub
+          pwd
 
   secrets:
     runs-on: ubuntu-latest
