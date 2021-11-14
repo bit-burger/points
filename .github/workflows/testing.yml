@@ -1,0 +1,47 @@
+name: Testing
+
+on: push
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup
+        uses: bit-burger/points/.github/workflows/setup.yml@develop
+
+  build-app:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Flutter Runner
+        uses: jddeep/Flutter-Runner@1.2.0
+
+  test-app:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: test
+
+  test-packages:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: navigate to packages
+      - name: test auth_repository
+        run: |
+          cd packages/auth_repository
+          dart test
+      - name: test user_repositories
+        run: |
+          cd packages/user_repositories
+          dart test test/profile_repository_test.dart
+          dart test test/relation_repository_test.dart
+          dart test test/user_discovery_repository_test.dart
+      - name: test meta_repository
+        run: |
+          cd packages/meta_repository
+          dart test
+      - name: test chat_repository
+        run: |
+          cd packages/chat_repository
+          dart test
