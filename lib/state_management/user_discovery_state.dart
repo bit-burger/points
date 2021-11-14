@@ -10,22 +10,20 @@ class UserResult {
 @immutable
 abstract class UserDiscoveryState {}
 
-class UserDiscoveryInitial extends UserDiscoveryState {}
-
 class UserDiscoveryWaitingForUserInput extends UserDiscoveryState {}
-
-class UserDiscoveryNewQueryLoading extends UserDiscoveryState {}
-
-class UserDiscoveryLoadMoreLoading extends UserDiscoveryState {}
-
-class UserDiscoveryEmptyResult extends UserDiscoveryState {}
 
 class UserDiscoveryResult extends UserDiscoveryState {
   final List<UserResult> result;
-  final bool isLast;
+  final int? nextPage;
 
-  UserDiscoveryResult(this.result, this.isLast);
+  UserDiscoveryResult(this.result, this.nextPage);
 }
+
+class UserDiscoveryAwaitingPages extends UserDiscoveryResult {
+  UserDiscoveryAwaitingPages() : super([], 0);
+}
+
+class UserDiscoveryEmptyResult extends UserDiscoveryState {}
 
 class UserDiscoveryError extends UserDiscoveryState {
   final String message;

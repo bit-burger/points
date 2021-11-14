@@ -12,8 +12,9 @@ import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
-import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
+
 import '../../theme/points_colors.dart' as points;
+import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
 
 class HomePage extends StatelessWidget {
   @override
@@ -52,7 +53,7 @@ class HomePage extends StatelessWidget {
                                 context.read<UserDiscoveryRepository>(),
                             relationsRepository:
                                 context.read<RelationsRepository>(),
-                          )..query(sortByPopularity: false),
+                          )..awaitPages(),
                           child: UserDiscoveryPage(),
                         ),
                       ),

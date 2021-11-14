@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
 import 'package:points/state_management/user_discovery_cubit.dart';
@@ -13,7 +15,6 @@ import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_field.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:points/widgets/user_list_tile.dart';
 
 class UserDiscoveryPage extends StatefulWidget {
@@ -22,13 +23,17 @@ class UserDiscoveryPage extends StatefulWidget {
 }
 
 class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
-  final _controller = TextEditingController();
-  final _focusNode = FocusNode();
+  final _searchTextController = TextEditingController();
+  final _searchFocusNode = FocusNode();
+
+  final _pagingController = PagingController<int, UserResult>(
+    firstPageKey: 0,
+  );
 
   Widget _buildTextField() {
     return NeumorphicTextField(
-      controller: _controller,
-      onSubmitted: (s) => _search(s),
+      controller: _searchTextController,
+      onSubmitted: (_) => _search,
       onChanged: (s) {
         context.read<UserDiscoveryCubit>().clear();
       },
@@ -41,7 +46,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
         intensity: 0.7,
         depth: 8,
       ),
-      focusNode: _focusNode,
+      focusNode: _searchFocusNode,
       hintText: "search...",
       textInputAction: TextInputAction.search,
       trailing: SizedBox(
@@ -61,10 +66,10 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
           ),
           child: Icon(Ionicons.close_outline),
           onPressed: () {
-            if (_controller.text.isNotEmpty) {
-              _controller.clear();
+            if (_searchTextController.text.isNotEmpty) {
+              _searchTextController.clear();
               context.read<UserDiscoveryCubit>().clear();
-              _focusNode.requestFocus();
+              _searchFocusNode.requestFocus();
             }
           },
         ),
@@ -97,41 +102,43 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
     }
   }
 
-  Widget _buildUserList(UserDiscoveryResult state) {
-    return ListView.builder(
-      itemCount: state.result.length,
-      itemBuilder: (item, index) {
-        final userResult = state.result[index];
-        final user = userResult.user;
-
-        return UserListTile(
-          name: user.name,
-          status: user.status,
-          color: user.color,
-          icon: user.icon,
-          points: user.points,
-          onPressed:
-              userResult.wasRequested ? null : () => _showUserActions(user.id),
-        );
-      },
+  Widget _buildUserList() {
+    return PagedListView<int, UserResult>(
+      padding: MediaQuery.of(context).padding.add(EdgeInsets.only(
+            top: 80,
+            bottom: 80,
+          )),
+      builderDelegate: PagedChildBuilderDelegate(
+        animateTransitions: true,
+        firstPageProgressIndicatorBuilder: (_) => Loader(),
+        newPageProgressIndicatorBuilder: (_) => Loader(),
+        itemBuilder: (context, userResult, index) {
+          final user = userResult.user;
+          return UserListTile(
+            name: user.name,
+            status: user.status,
+            color: user.color,
+            icon: user.icon,
+            points: user.points,
+            onPressed: userResult.wasRequested
+                ? null
+                : () => _showUserActions(user.id),
+          );
+        },
+      ),
+      pagingController: _pagingController,
     );
   }
 
   Widget _buildContent(UserDiscoveryState state) {
-    if (state is UserDiscoveryNewQueryLoading) {
-      return Loader();
-    }
     if (state is UserDiscoveryEmptyResult) {
-      return Text("No results found");
-    }
-    if (state is UserDiscoveryResult) {
-      return _buildUserList(state);
-    }
-    if (state is UserDiscoveryError) {
-      return Text(
-        state.message,
-        style: TextStyle(
-          color: Theme.of(context).errorColor,
+      return Center(
+        child: Text(
+          "No matching results found",
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).hintColor,
+          ),
         ),
       );
     }
@@ -160,60 +167,68 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
         ],
       );
     }
-    if (state is UserDiscoveryInitial) {
-      return SizedBox();
+    if (state is UserDiscoveryError) {
+      return Text(
+        state.message,
+        style: TextStyle(
+          color: Theme.of(context).errorColor,
+        ),
+      );
     }
-    throw Exception("State not covered");
+    return _buildUserList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserDiscoveryCubit, UserDiscoveryState>(
-      buildWhen: (oldState, newState) {
-        return newState is! UserDiscoveryLoadMoreLoading;
+    return BlocConsumer<UserDiscoveryCubit, UserDiscoveryState>(
+      listener: (context, state) {
+        if (state is UserDiscoveryResult) {
+          _pagingController.value = PagingState(
+            nextPageKey: state.nextPage,
+            itemList:
+                (state is UserDiscoveryAwaitingPages) ? null : state.result,
+          );
+        }
       },
+      buildWhen: (oldState, newState) =>
+          oldState is! UserDiscoveryResult || newState is! UserDiscoveryResult,
       builder: (context, state) {
-        final loading = state is UserDiscoveryNewQueryLoading;
-        return IgnorePointer(
-          ignoring: loading,
-          child: NeumorphicScaffold(
-            appBar: NeumorphicAppBar(
-              title: Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: _buildTextField(),
-              ),
-              middleSpacing: false,
-              centerTitle: false,
-              trailing: Hero(
-                tag: "User search",
-                child: NeumorphicLoadingTextButton(
-                  loading: loading,
-                  tooltip: "Search",
-                  child: Icon(Ionicons.search_outline),
-                  onPressed: () => _search(_controller.text),
-                  style: NeumorphicStyle(
-                    boxShape: NeumorphicBoxShape.circle(),
-                    intensity: 0.7,
-                    depth: 8,
-                  ),
+        return NeumorphicScaffold(
+          appBar: NeumorphicAppBar(
+            title: Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: _buildTextField(),
+            ),
+            middleSpacing: false,
+            centerTitle: false,
+            trailing: Hero(
+              tag: "User search",
+              child: NeumorphicLoadingTextButton(
+                tooltip: "Search",
+                child: Icon(Ionicons.search_outline),
+                onPressed: _search,
+                style: NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.circle(),
+                  intensity: 0.7,
+                  depth: 8,
                 ),
               ),
             ),
-            extendBodyBehindAppBar: true,
-            body: Center(
-              child: AnimatedSwitcher(
-                duration: Duration(
-                  milliseconds: 400,
-                ),
-                child: _buildContent(state),
+          ),
+          extendBodyBehindAppBar: true,
+          body: Center(
+            child: AnimatedSwitcher(
+              duration: Duration(
+                milliseconds: 400,
               ),
+              child: _buildContent(state),
             ),
-            floatingActionButton: NeumorphicFloatingActionButton(
-              child: Icon(Ionicons.home_outline),
-              onPressed: () => Navigator.pop(context),
-              style: NeumorphicStyle(
-                depth: 8,
-              ),
+          ),
+          floatingActionButton: NeumorphicFloatingActionButton(
+            child: Icon(Ionicons.home_outline),
+            onPressed: () => Navigator.pop(context),
+            style: NeumorphicStyle(
+              depth: 8,
             ),
           ),
         );
@@ -221,12 +236,31 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
     );
   }
 
-  void _search(String? searchTerm) {
+  void _search() {
     final userDiscoveryCubit = context.read<UserDiscoveryCubit>();
 
-    if (searchTerm?.isEmpty != false) {
-      searchTerm = null;
-    }
-    userDiscoveryCubit.query(nameQuery: searchTerm, sortByPopularity: false);
+    userDiscoveryCubit.awaitPages();
+  }
+
+  @override
+  void initState() {
+    _pagingController.addPageRequestListener((nextPage) {
+      String? searchTerm = _searchTextController.text;
+      if (searchTerm.isEmpty) {
+        searchTerm = null;
+      }
+      context.read<UserDiscoveryCubit>().addToPages(
+            pageIndex: nextPage,
+            nameQuery: searchTerm,
+            sortByPopularity: false,
+          );
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 }

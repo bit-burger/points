@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
@@ -11,15 +12,12 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
   final IUserDiscoveryRepository _userDiscoveryRepository;
   final IRelationsRepository _relationsRepository;
 
-  late String? lastNameQuery;
-  late bool lastSortByPopularity;
-
   UserDiscoveryCubit({
     required IUserDiscoveryRepository userDiscoveryRepository,
     required IRelationsRepository relationsRepository,
   })  : _userDiscoveryRepository = userDiscoveryRepository,
         _relationsRepository = relationsRepository,
-        super(UserDiscoveryInitial());
+        super(UserDiscoveryWaitingForUserInput());
 
   void request(String id) {
     assert(state is UserDiscoveryResult);
@@ -43,53 +41,29 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
     final userResult = users.removeAt(i);
     users.insert(i, UserResult(userResult.user, true));
 
-    emit(UserDiscoveryResult(users, state.isLast));
-  }
-
-  void query({
-    String? nameQuery,
-    bool sortByPopularity = false,
-  }) async {
-    emit(UserDiscoveryNewQueryLoading());
-
-    await _query(
-      nameQuery: nameQuery,
-      sortByPopularity: sortByPopularity,
-    );
+    emit(UserDiscoveryResult(users, state.nextPage));
   }
 
   void clear() {
     emit(UserDiscoveryWaitingForUserInput());
   }
 
-  void loadMore() async {
-    assert(state is UserDiscoveryResult);
-    assert(!(state as UserDiscoveryResult).isLast);
-
-    final lastResult = (state as UserDiscoveryResult).result;
-
-    final pageIndex = lastResult.length ~/ _resultsPageLength;
-
-    emit(UserDiscoveryLoadMoreLoading());
-
-    await _query(
-      nameQuery: lastNameQuery,
-      sortByPopularity: lastSortByPopularity,
-      pageIndex: pageIndex,
-      previousResult: lastResult,
-    );
+  void awaitPages() {
+    emit(UserDiscoveryAwaitingPages());
   }
 
-  Future<void> _query({
+  void addToPages({
     required String? nameQuery,
     required bool sortByPopularity,
     int pageIndex = 0,
-    List<UserResult> previousResult = const [],
   }) async {
     try {
+      final previousResult = (state as UserDiscoveryResult).result;
+
       final newUsers = (await _userDiscoveryRepository.queryUsers(
         nameQuery: nameQuery,
         sortByPopularity: sortByPopularity,
+        pageIndex: pageIndex,
         pageLength: _resultsPageLength,
       ));
 
@@ -97,17 +71,24 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
           .map((user) => UserResult(user, false))
           .toList(growable: false);
 
+      assert(newUserResults
+              .map((userResult) => userResult.user.id)
+              .toSet()
+              .length ==
+          newUserResults.length);
+
       final isLastPage = newUsers.length < _resultsPageLength;
+      final nextPage = isLastPage ? null : pageIndex + 1;
 
       final combinedNewResult = <UserResult>[
         ...previousResult,
         ...newUserResults
       ];
 
-      if (combinedNewResult.isEmpty) {
-        emit(UserDiscoveryEmptyResult());
+      if (combinedNewResult.isNotEmpty) {
+        emit(UserDiscoveryResult(combinedNewResult, nextPage));
       } else {
-        emit(UserDiscoveryResult(newUserResults, isLastPage));
+        emit(UserDiscoveryEmptyResult());
       }
     } on PointsError catch (e) {
       emit(UserDiscoveryError(e.message));
