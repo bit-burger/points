@@ -33,7 +33,7 @@ jobs:
           pwd
           cd supabase_testing_utils && pub
           pwd
-          cd user_repositores && pub
+          cd user_repositories && pub
           pwd
 
   secrets:
