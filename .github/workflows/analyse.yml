@@ -2,6 +2,7 @@ name: Analyse
 
 on: push
 
+
 jobs:
   setup:
     uses: bit-burger/points/.github/workflows/setup.yml@develop
