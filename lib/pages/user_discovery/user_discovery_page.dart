@@ -9,7 +9,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart'
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
-import 'package:points/state_management/user_discovery_cubit.dart';
+import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_loading_text_button.dart';

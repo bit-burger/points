@@ -1,7 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:points/state_management/relationships_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:points/state_management/relations/relations_cubit.dart';
 
 class _RelationSheetAction extends SheetAction {
   _RelationSheetAction({
@@ -39,34 +39,34 @@ final unfriendAction = _RelationSheetAction(
   key: "unfriend",
 );
 
-void showRelationActionSheet({
+void showRelationsActionSheet({
   required BuildContext context,
   required List<_RelationSheetAction> actions,
   required String userId,
 }) async {
-  final relationshipsCubit = context.read<RelationshipsCubit>();
+  final relationsCubit = context.read<RelationsCubit>();
   final result = await showModalActionSheet(context: context, actions: actions);
   switch (result) {
     case "accept":
-      relationshipsCubit.accept(userId);
+      relationsCubit.accept(userId);
       break;
     case "block":
-      relationshipsCubit.block(userId);
+      relationsCubit.block(userId);
       break;
     case "cancel_request":
-      relationshipsCubit.cancelRequest(userId);
+      relationsCubit.cancelRequest(userId);
       break;
     case "reject":
-      relationshipsCubit.reject(userId);
+      relationsCubit.reject(userId);
       break;
     case "request":
-      relationshipsCubit.request(userId);
+      relationsCubit.request(userId);
       break;
     case "unblock":
-      relationshipsCubit.unblock(userId);
+      relationsCubit.unblock(userId);
       break;
     case "unfriend":
-      relationshipsCubit.unfriend(userId);
+      relationsCubit.unfriend(userId);
       break;
     case null:
       break;

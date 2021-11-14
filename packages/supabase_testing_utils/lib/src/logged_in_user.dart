@@ -61,7 +61,7 @@ class LoggedInUser {
       }
     }
 
-    final relationRepository = RelationsRepository(
+    final relationsRepository = RelationsRepository(
       client: supabaseClient,
     );
 
@@ -76,7 +76,7 @@ class LoggedInUser {
       password,
       authRepository,
       profileRepository,
-      relationRepository,
+      relationsRepository,
       userDiscoverRepository,
     );
   }

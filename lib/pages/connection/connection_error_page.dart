@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide ConnectionState;
-import 'package:points/state_management/auth_cubit.dart';
-import 'package:points/state_management/connection_cubit.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
+import 'package:points/state_management/connection/connection_cubit.dart';
 import 'package:points/widgets/neumorphic_box.dart';
 import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';

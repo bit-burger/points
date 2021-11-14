@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:points/helpers/relation_action_sheet.dart';
-import 'package:points/state_management/relationships_cubit.dart';
+import 'package:points/helpers/relations_action_sheet.dart';
+import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/user_list_tile.dart';
 import 'package:user_repositories/relations_repository.dart';
@@ -88,7 +88,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
           users: relations.friends,
           key: "friends",
           onLongPressed: (user) async {
-            showRelationActionSheet(
+            showRelationsActionSheet(
               context: context,
               actions: [
                 unfriendAction,
@@ -106,7 +106,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
             );
 
             if (result == OkCancelResult.ok) {
-              context.read<RelationshipsCubit>().unfriend(user.id);
+              context.read<RelationsCubit>().unfriend(user.id);
             }
           },
         ),
@@ -114,7 +114,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
             name: "requests",
             users: relations.requests,
             onPressed: (user) {
-              showRelationActionSheet(
+              showRelationsActionSheet(
                 context: context,
                 actions: [
                   acceptAction,
@@ -125,13 +125,13 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
               );
             },
             onDismissed: (user) {
-              context.read<RelationshipsCubit>().reject(user.id);
+              context.read<RelationsCubit>().reject(user.id);
             }),
         ..._listViewFromUsers(
           name: "pending",
           users: relations.pending,
           onPressed: (user) {
-            showRelationActionSheet(
+            showRelationsActionSheet(
               context: context,
               actions: [
                 cancelAction,
@@ -141,18 +141,18 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
             );
           },
           onDismissed: (user) {
-            context.read<RelationshipsCubit>().cancelRequest(user.id);
+            context.read<RelationsCubit>().cancelRequest(user.id);
           },
         ),
       ],
     );
   }
 
-  Widget _buildContent(RelationshipsState state) {
-    if (state is RelationshipsInitialLoading) {
+  Widget _buildContent(RelationsState state) {
+    if (state is RelationsInitialLoading) {
       return Center(key: ValueKey("loading"), child: Loader());
     }
-    final relations = (state as RelationshipsData).userRelations;
+    final relations = (state as RelationsData).userRelations;
     final normalRelationsCount = relations.friends.length +
         relations.requests.length +
         relations.pending.length;
@@ -173,7 +173,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RelationshipsCubit, RelationshipsState>(
+    return BlocBuilder<RelationsCubit, RelationsState>(
       builder: (_, state) {
         return AnimatedSwitcher(
           duration: Duration(milliseconds: 250),

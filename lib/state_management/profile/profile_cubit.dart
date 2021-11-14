@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:user_repositories/profile_repository.dart';
 
-import 'connection_cubit.dart';
+import '../connection/connection_cubit.dart';
 
 part 'profile_state.dart';
 
