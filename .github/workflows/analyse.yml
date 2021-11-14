@@ -5,7 +5,7 @@ on: push
 
 jobs:
   setup:
-    uses: bit-burger/points/.github/workflows/setup.yml@develop
+    uses: bit-burger/points/.github/workflows/setup.yml@feature/fix-ci
 
   check-formatting:
     runs-on: ubuntu-latest
