@@ -1,14 +1,15 @@
+import 'dart:async';
+
+import 'package:async/async.dart';
 import 'package:auth_repository/auth_repository.dart';
+import 'package:faker/faker.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:supabase/supabase.dart' hide User;
-import 'package:faker/faker.dart';
+import 'package:user_repositories/profile_repository.dart';
+import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
 import 'configure_supabase_client.dart';
-import 'package:async/async.dart';
-
-import 'package:user_repositories/relations_repository.dart';
-import 'package:user_repositories/profile_repository.dart';
 
 class LoggedInUser {
   final SupabaseClient client;
@@ -19,16 +20,14 @@ class LoggedInUser {
   final RelationsRepository relations;
   final UserDiscoveryRepository userDiscovery;
 
-  LoggedInUser._(
-    this.client,
-    this.user,
-    this.email,
-    this.password,
-    this.auth,
-    this.profile,
-    this.relations,
-    this.userDiscovery,
-  ) : id = user.id;
+  LoggedInUser._(this.client,
+      this.user,
+      this.email,
+      this.password,
+      this.auth,
+      this.profile,
+      this.relations,
+      this.userDiscovery,) : id = user.id;
 
   static Future<LoggedInUser> getRandom({String? name}) async {
     final supabaseClient = await getConfiguredSupabaseClient();
@@ -52,7 +51,14 @@ class LoggedInUser {
 
     if (name != null) {
       profileRepository.updateAccount(name: name);
-      assert((await profileStream.next).name == name);
+
+      final val = await Future.any([
+        profileStream.next,
+        Future.delayed(Duration(seconds: 1)),
+      ]);
+      if (val is User) {
+        assert(val == user.copyWith(name: name));
+      }
     }
 
     final relationRepository = RelationsRepository(

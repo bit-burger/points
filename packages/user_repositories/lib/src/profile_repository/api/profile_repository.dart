@@ -5,9 +5,7 @@ import 'package:supabase/supabase.dart' hide User;
 import '../../domain_shared/user.dart';
 import '../../errors_shared/points_connection_error.dart';
 import '../../errors_shared/points_error.dart';
-
 import '../profile_function_names.dart' as functions;
-
 import 'profile_repository_contract.dart';
 
 // TODO: Handle with error, when no profile is found/0 rows
@@ -47,7 +45,9 @@ class ProfileRepository extends IProfileRepository {
   }
 
   void _handleUpdate(final List<Map<String, dynamic>> users) async {
-    _addToStream(User.fromJson(users[0]));
+    if (users.isNotEmpty) {
+      _addToStream(User.fromJson(users[0]));
+    }
   }
 
   void _addToStream(User newProfile) {

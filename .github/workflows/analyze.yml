@@ -1,0 +1,24 @@
+name: Analyze
+
+on: push
+
+
+jobs:
+  setup:
+    uses: bit-burger/points/.github/workflows/setup.yml@feature/fix-ci
+
+  check-formatting:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+  analyze:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: Analyze project source
+        run: dart analyze
