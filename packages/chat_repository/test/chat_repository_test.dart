@@ -1,3 +1,1 @@
-main() {
-  print("ding");
-}
+void main() {}
