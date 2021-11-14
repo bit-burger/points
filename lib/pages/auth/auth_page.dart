@@ -6,14 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
-import 'package:points/state_management/auth_cubit.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/widgets/hider.dart';
 import 'package:points/widgets/loader.dart';
+import 'package:points/widgets/neumorphic_box.dart';
 import 'package:points/widgets/neumorphic_chip_button.dart';
 import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
-import 'package:points/widgets/neumorphic_box.dart';
 import 'package:points/widgets/shaker.dart';
 import 'package:provider/provider.dart';
 

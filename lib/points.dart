@@ -4,8 +4,9 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:points/theme/points_theme.dart' as pointsTheme;
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'pages/auth/auth_navigator.dart';
-import 'state_management/auth_cubit.dart';
+import 'state_management/auth/auth_cubit.dart';
 
 class Points extends StatelessWidget {
   final Box<String> sessionStore;

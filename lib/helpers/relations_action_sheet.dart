@@ -1,7 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:points/state_management/relations_cubit.dart';
+import 'package:points/state_management/relations/relations_cubit.dart';
 
 class _RelationSheetAction extends SheetAction {
   _RelationSheetAction({

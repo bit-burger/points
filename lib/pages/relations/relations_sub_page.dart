@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/helpers/relations_action_sheet.dart';
-import 'package:points/state_management/relations_cubit.dart';
+import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/user_list_tile.dart';
 import 'package:user_repositories/relations_repository.dart';

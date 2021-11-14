@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:points/pages/connection/connection_navigator.dart';
 import 'package:points/pages/auth/auth_initial_page.dart';
 import 'package:points/pages/auth/auth_page.dart';
-import 'package:points/state_management/auth_cubit.dart';
-import 'package:points/state_management/connection_cubit.dart';
+import 'package:points/pages/connection/connection_navigator.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
+import 'package:points/state_management/connection/connection_cubit.dart';
 
 class AuthNavigator extends StatelessWidget {
   @override
