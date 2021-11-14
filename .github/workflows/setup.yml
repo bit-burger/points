@@ -18,13 +18,13 @@ jobs:
       - name: Install packages
         shell: bash
         run: |
-          dart pub install
-          alias pb="dart pub install && cd .."
-          cd packages/auth_repository && pb
-          cd chat_repository && pb
-          cd hive_test && pb
-          cd meta_repository && pb
-          cd supabase_testing_utils && pb
+          dart pub install && \
+          alias pb="dart pub install && cd .." && \
+          cd packages/auth_repository && pb && \
+          cd chat_repository && pb && \
+          cd hive_test && pb && \
+          cd meta_repository && pb && \
+          cd supabase_testing_utils && pb && \
           cd user_repositories && pb
 
   secrets:
