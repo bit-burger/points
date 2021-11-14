@@ -6,12 +6,24 @@ jobs:
   setup:
     uses: bit-burger/points/.github/workflows/setup.yml@feature/fix-ci
 
+  build-app:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: jddeep/Flutter-Runner@1.2.0
+
+  test-app:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: test cubits and ui
+        run: flutter test
+
   test-packages:
     runs-on: ubuntu-latest
     needs: setup
     steps:
       - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
-      - name: navigate to packages
       - name: test auth_repository
         run: |
           cd packages/auth_repository
