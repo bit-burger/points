@@ -19,6 +19,7 @@ jobs:
         shell: bash
         run: |
           dart pub install
+          echo $pwd
           alias pub="dart pub install && cd .."
           cd packages/auth_repository && pub
           cd chat_repository && pub
