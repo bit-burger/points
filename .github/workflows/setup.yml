@@ -24,9 +24,9 @@ jobs:
           cd packages/auth_repository && pub
           cd chat_repository && pub
           cd hive_test && pub
-          meta_repository && pub
-          supabase_testing_utils && pub
-          user_repositores && pub
+          cd meta_repository && pub
+          cd supabase_testing_utils && pub
+          cd user_repositores && pub
   secrets:
     runs-on: ubuntu-latest
     steps:
