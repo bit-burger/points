@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:points/pages/relationships/relations_sub_page.dart';
+import 'package:points/pages/relations/relations_sub_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/auth_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';

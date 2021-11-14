@@ -5,11 +5,9 @@ import 'package:supabase/supabase.dart' hide User;
 import '../../domain_shared/user.dart';
 import '../../errors_shared/points_connection_error.dart';
 import '../../errors_shared/points_error.dart';
-
 import '../domain/user_relations.dart';
 import '../errors/points_illegal_relation_error.dart';
 import '../relations_function_names.dart' as functions;
-
 import 'relations_repository_contract.dart';
 
 class _RelationsUpdateEvent {
@@ -77,8 +75,8 @@ class RelationsRepository extends IRelationsRepository {
   ) async {
     final allRelationIds = <String>[];
 
-    for (final relationships in relationIds.values) {
-      allRelationIds.addAll(relationships);
+    for (final relations in relationIds.values) {
+      allRelationIds.addAll(relations);
     }
 
     assert(

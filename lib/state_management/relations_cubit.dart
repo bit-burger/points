@@ -2,19 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:user_repositories/relations_repository.dart';
 
-part 'relationships_state.dart';
+part 'relations_state.dart';
 
-class RelationshipsCubit extends Cubit<RelationshipsState> {
+class RelationsCubit extends Cubit<RelationsState> {
   final IRelationsRepository _relationsRepository;
 
-  RelationshipsCubit({
+  RelationsCubit({
     required IRelationsRepository relationsRepository,
   })  : _relationsRepository = relationsRepository,
-        super(RelationshipsInitialLoading());
+        super(RelationsInitialLoading());
 
   void startListening() async {
     await for (final relations in _relationsRepository.relationsStream) {
-      emit(RelationshipsData(relations));
+      emit(RelationsData(relations));
     }
   }
 

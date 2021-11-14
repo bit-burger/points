@@ -20,5 +20,5 @@ jobs:
         run: |
           cd packages/user_repositories
           dart test test/profile_repository_test.dart
-          dart test test/relation_repository_test.dart
+          dart test test/relations_repository_test.dart
           dart test test/user_discovery_repository_test.dart

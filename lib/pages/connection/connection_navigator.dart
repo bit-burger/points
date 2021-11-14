@@ -5,7 +5,7 @@ import 'package:points/pages/home_page/home_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/connection_cubit.dart';
 import 'package:points/state_management/profile_cubit.dart';
-import 'package:points/state_management/relationships_cubit.dart';
+import 'package:points/state_management/relations_cubit.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:user_repositories/profile_repository.dart';
@@ -50,7 +50,7 @@ class ConnectionNavigator extends StatelessWidget {
                   child: MultiBlocProvider(
                     providers: [
                       BlocProvider(
-                        create: (context) => RelationshipsCubit(
+                        create: (context) => RelationsCubit(
                           relationsRepository:
                               context.read<RelationsRepository>(),
                         )..startListening(),
