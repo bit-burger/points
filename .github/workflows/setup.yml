@@ -23,6 +23,7 @@ jobs:
       - name: Install packages
         shell: bash
         run: |
+          ls
           dart pub install
           echo $pwd
           alias pub="dart pub install && cd .."
