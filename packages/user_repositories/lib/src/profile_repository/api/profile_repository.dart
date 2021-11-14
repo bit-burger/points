@@ -45,8 +45,9 @@ class ProfileRepository extends IProfileRepository {
   }
 
   void _handleUpdate(final List<Map<String, dynamic>> users) async {
-    print(users);
-    _addToStream(User.fromJson(users[0]));
+    if (users.isNotEmpty) {
+      _addToStream(User.fromJson(users[0]));
+    }
   }
 
   void _addToStream(User newProfile) {
