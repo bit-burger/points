@@ -4,10 +4,7 @@ on: push
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: setup
-        uses: bit-burger/points/.github/workflows/setup.yml@develop
+    uses: bit-burger/points/.github/workflows/setup.yml@develop
 
   check-formatting:
     runs-on: ubuntu-latest
