@@ -2,6 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:ionicons/ionicons.dart';
 
 const List<IconData> pointsIcons = [
+  // default
+  Ionicons.person_outline,
+  // all others
   Ionicons.airplane_outline,
   Ionicons.alarm_outline,
   Ionicons.albums_outline,
@@ -160,7 +163,6 @@ const List<IconData> pointsIcons = [
   Ionicons.pause_outline,
   Ionicons.paw_outline,
   Ionicons.people_outline,
-  Ionicons.person_outline,
   Ionicons.phone_landscape_outline,
   Ionicons.phone_portrait_outline,
   Ionicons.pin_outline,

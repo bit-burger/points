@@ -47,6 +47,7 @@ class NeumorphicAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// by this widget. The height of each action is constrained to be no bigger
   /// than the toolbar's height, which is [kToolbarHeight].
   final Widget? trailing;
+  final Widget? secondTrailing;
 
   @override
   final Size preferredSize;
@@ -57,9 +58,12 @@ class NeumorphicAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.leading,
     this.centerTitle,
     this.trailing,
+    this.secondTrailing,
     this.middleSpacing = true,
   })  : preferredSize = Size.fromHeight(toolbarHeight),
-        super(key: key);
+        super(key: key) {
+    assert(!(trailing == null && secondTrailing != null));
+  }
 
   @override
   NeumorphicAppBarState createState() => NeumorphicAppBarState();
@@ -115,10 +119,22 @@ class NeumorphicAppBarState extends State<NeumorphicAppBar> {
               ),
               trailing: Padding(
                 padding: EdgeInsets.only(left: 4.0),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints.tightFor(
-                      width: kToolbarHeight, height: kToolbarHeight),
-                  child: widget.trailing,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (widget.secondTrailing != null)
+                      ConstrainedBox(
+                        constraints: const BoxConstraints.tightFor(
+                            width: kToolbarHeight, height: kToolbarHeight),
+                        child: widget.secondTrailing,
+                      ),
+                    if (widget.secondTrailing != null) SizedBox(width: 16),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints.tightFor(
+                          width: kToolbarHeight, height: kToolbarHeight),
+                      child: widget.trailing,
+                    ),
+                  ],
                 ),
               ),
               centerMiddle: widget.centerTitle ??

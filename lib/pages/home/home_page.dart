@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                 tooltip: "Settings",
                 child: Icon(Ionicons.settings_outline),
                 onPressed: () {
-                  Navigator.of(context).pushNamed("profile");
+                  Navigator.of(context).pushNamed("settings");
                 },
                 style: NeumorphicStyle(
                   boxShape: NeumorphicBoxShape.circle(),

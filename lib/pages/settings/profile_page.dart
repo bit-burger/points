@@ -18,7 +18,7 @@ import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
 import '../../theme/points_colors.dart' as pointsColors;
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   static const _textFieldBorder =
       UnderlineInputBorder(borderSide: BorderSide(width: 2));
   static const _textFieldErrorBorder = UnderlineInputBorder(
@@ -40,9 +40,16 @@ class ProfilePage extends StatelessWidget {
     helperText: "",
   );
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool isOnIconPage = false;
+
   Widget _buildIcon(ProfileFormBloc formBloc) {
-    return BlocBuilder<InputFieldBloc<int, dynamic>, InputFieldBlocState>(
-      bloc: formBloc.iconSelection,
+    return BlocBuilder<ProfileFormBloc, FormBlocState>(
+      bloc: formBloc,
       builder: (context, state) {
         return FractionallySizedBox(
           widthFactor: 1 / 2,
@@ -52,9 +59,37 @@ class ProfilePage extends StatelessWidget {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return Center(
-                    child: NeumorphicIcon(
-                      pointsIcons[state.value],
-                      size: constraints.maxWidth * (4/5),
+                    child: GestureDetector(
+                      onTapDown: (details) async {
+                        setState(() {
+                          isOnIconPage = true;
+                        });
+                      },
+                      onTapCancel: () {
+                        setState(() {
+                          isOnIconPage = false;
+                        });
+                      },
+                      onTapUp: (details) async {
+                        await Navigator.pushNamed(
+                          context,
+                          "icons",
+                          arguments: formBloc.iconSelection,
+                        );
+                        setState(() {
+                          isOnIconPage = false;
+                        });
+                      },
+                      child: NeumorphicIcon(
+                        pointsIcons[formBloc.iconSelection.value ?? 0],
+                        size: constraints.maxWidth * (17 / 24),
+                        curve: Curves.easeOut,
+                        style: NeumorphicStyle(
+                          color: pointsColors
+                              .colors[formBloc.colorSelection.value ?? 9],
+                          disableDepth: isOnIconPage,
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -79,7 +114,7 @@ class ProfilePage extends StatelessWidget {
         UppercaseToLowercaseTextInputFormatter(),
       ],
       padding: EdgeInsets.only(top: 16),
-      decoration: _textFieldDecoration.copyWith(hintText: "name"),
+      decoration: ProfilePage._textFieldDecoration.copyWith(hintText: "name"),
     );
 
     yield TextFieldBlocBuilder(
@@ -87,7 +122,7 @@ class ProfilePage extends StatelessWidget {
       textInputAction: TextInputAction.next,
       autocorrect: false,
       padding: EdgeInsets.only(top: 16),
-      decoration: _textFieldDecoration.copyWith(hintText: "status"),
+      decoration: ProfilePage._textFieldDecoration.copyWith(hintText: "status"),
     );
 
     yield TextFieldBlocBuilder(
@@ -97,7 +132,7 @@ class ProfilePage extends StatelessWidget {
       maxLines: null,
       maxLength: null,
       padding: EdgeInsets.only(top: 16),
-      decoration: _textFieldDecoration.copyWith(hintText: "bio"),
+      decoration: ProfilePage._textFieldDecoration.copyWith(hintText: "bio"),
     );
   }
 
@@ -141,8 +176,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildColorButton(
-      int color, ProfileFormBloc formBloc, BuildContext context) {
+  Widget _buildColorButton(int color, ProfileFormBloc formBloc) {
     final pressed = formBloc.colorSelection.value == color;
     return Expanded(
       child: AspectRatio(
@@ -176,11 +210,11 @@ class ProfilePage extends StatelessWidget {
           children: [
             Row(
               children: List.generate(
-                  5, (index) => _buildColorButton(index, formBloc, context)),
+                  5, (index) => _buildColorButton(index, formBloc)),
             ),
             Row(
-              children: List.generate(5,
-                  (index) => _buildColorButton(index + 5, formBloc, context)),
+              children: List.generate(
+                  5, (index) => _buildColorButton(index + 5, formBloc)),
             ),
           ],
         );
@@ -202,7 +236,14 @@ class ProfilePage extends StatelessWidget {
               return AnimatedSwitcher(
                 duration: Duration(milliseconds: 500),
                 child: UserListTile(
-                  key: UniqueKey(),
+                  key: ValueKey(
+                    Object.hash(
+                      name,
+                      status,
+                      formBloc.colorSelection.value,
+                      formBloc.iconSelection.value,
+                    ),
+                  ),
                   onPressed: () {},
                   name: name,
                   status: status,
