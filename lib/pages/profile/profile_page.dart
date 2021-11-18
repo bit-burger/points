@@ -12,6 +12,7 @@ import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/user_list_tile.dart';
 import '../../widgets/neumorphic_app_bar_fix.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:points/theme/points_icons.dart';
 import 'package:points/widgets/neumorphic_box.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
@@ -38,6 +39,36 @@ class ProfilePage extends StatelessWidget {
     contentPadding: EdgeInsets.only(bottom: 6),
     helperText: "",
   );
+
+  Widget _buildIcon(ProfileFormBloc formBloc) {
+    return BlocBuilder<InputFieldBloc<int, dynamic>, InputFieldBlocState>(
+      bloc: formBloc.iconSelection,
+      builder: (context, state) {
+        return FractionallySizedBox(
+          widthFactor: 1 / 2,
+          child: AspectRatio(
+            aspectRatio: 1 / 1,
+            child: Neumorphic(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Center(
+                    child: NeumorphicIcon(
+                      pointsIcons[state.value],
+                      size: constraints.maxWidth * (4/5),
+                    ),
+                  );
+                },
+              ),
+              style: NeumorphicStyle(
+                boxShape: NeumorphicBoxShape.circle(),
+                depth: -NeumorphicTheme.depth(context)!,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   Iterable<Widget> _buildTextFields(ProfileFormBloc formBloc) sync* {
     yield TextFieldBlocBuilder(
@@ -224,21 +255,15 @@ class ProfilePage extends StatelessWidget {
                     listPadding: true,
                     child: ListView(
                       children: [
-                        SizedBox(
-                          height: 8,
-                        ),
+                        SizedBox(height: 24),
+                        _buildIcon(formBloc),
+                        SizedBox(height: 16),
                         ..._buildTextFields(formBloc),
-                        SizedBox(
-                          height: 16,
-                        ),
+                        SizedBox(height: 16),
                         _buildColorButtonRows(formBloc),
-                        SizedBox(
-                          height: 24,
-                        ),
+                        SizedBox(height: 24),
                         _buildSubmitButtons(formBloc),
-                        SizedBox(
-                          height: 24,
-                        ),
+                        SizedBox(height: 24),
                       ],
                     ),
                   ),
