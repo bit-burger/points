@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:points/pages/connection/connection_error_page.dart';
 import 'package:points/pages/home_page/home_page.dart';
+import 'package:points/pages/profile/profile_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/connection/connection_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
@@ -74,7 +75,9 @@ class ConnectionNavigator extends StatelessWidget {
                             case "user-discovery":
                               return MaterialPageRoute(
                                   builder: (_) => UserDiscoveryPage());
-                            case "settings":
+                            case "profile":
+                              return MaterialPageRoute(
+                                  builder: (_) => ProfilePage());
                           }
                         },
                         onUnknownRoute: (_) {

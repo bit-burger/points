@@ -13,6 +13,7 @@ class UserListTile extends StatelessWidget {
   final VoidCallback? onPressed;
   final VoidCallback? onLongPressed;
   final EdgeInsets? margin;
+  final Key? key;
 
   const UserListTile({
     required this.name,
@@ -23,7 +24,8 @@ class UserListTile extends StatelessWidget {
     this.onPressed,
     this.onLongPressed,
     this.margin,
-  }) : super();
+    this.key,
+  }) : super(key: key);
 
   // TODO: Better scaling
   @override

@@ -10,6 +10,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
   final bool? loading;
   final Widget? loader;
   final EdgeInsets? padding;
+  final TextStyle? textStyle;
   final NeumorphicStyle? style;
 
   const NeumorphicLoadingTextButton({
@@ -19,6 +20,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
     this.loading,
     this.loader,
     this.padding,
+    this.textStyle,
     this.style,
   }) : super();
 
@@ -48,10 +50,11 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
         child: Center(
           child: AnimatedDefaultTextStyle(
             duration: Duration(milliseconds: 250),
-            style: Theme.of(context).textTheme.headline6!.copyWith(
-                  color: enabled ? null : Theme.of(context).disabledColor,
-                  fontWeight: FontWeight.w600,
-                ),
+            style:
+                (textStyle ?? Theme.of(context).textTheme.headline6!).copyWith(
+              color: enabled ? null : Theme.of(context).disabledColor,
+              fontWeight: FontWeight.w600,
+            ),
             child: child,
           ),
         ),

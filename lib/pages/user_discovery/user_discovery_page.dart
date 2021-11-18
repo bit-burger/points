@@ -33,7 +33,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
   Widget _buildTextField() {
     return NeumorphicTextField(
       controller: _searchTextController,
-      onSubmitted: (_) => _search,
+      onSubmitted: (_) => _search(),
       onChanged: (s) {
         context.read<UserDiscoveryCubit>().clear();
       },
