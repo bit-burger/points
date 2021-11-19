@@ -98,6 +98,31 @@ class NeumorphicAppBarTheme extends InheritedWidget {
 }
 
 class NeumorphicAppBarState extends State<NeumorphicAppBar> {
+  Widget? _buildTrailing() {
+    if (widget.trailing != null) {
+      Widget trailing = ConstrainedBox(
+        constraints: const BoxConstraints.tightFor(
+            width: kToolbarHeight, height: kToolbarHeight),
+        child: widget.trailing,
+      );
+      if (widget.secondTrailing != null) {
+        trailing = Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints.tightFor(
+                  width: kToolbarHeight, height: kToolbarHeight),
+              child: widget.secondTrailing,
+            ),
+            SizedBox(width: 16),
+            trailing,
+          ],
+        );
+      }
+      return trailing;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -112,30 +137,14 @@ class NeumorphicAppBarState extends State<NeumorphicAppBar> {
             child: NavigationToolbar(
               leading: widget.leading,
               middle: DefaultTextStyle(
-                style: (appBarTheme.textTheme?.headline5 ??
+                style: (appBarTheme.titleTextStyle ??
                         Theme.of(context).textTheme.headline5!)
                     .merge(nTheme?.current?.appBarTheme.textStyle),
                 child: widget.title,
               ),
               trailing: Padding(
                 padding: EdgeInsets.only(left: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (widget.secondTrailing != null)
-                      ConstrainedBox(
-                        constraints: const BoxConstraints.tightFor(
-                            width: kToolbarHeight, height: kToolbarHeight),
-                        child: widget.secondTrailing,
-                      ),
-                    if (widget.secondTrailing != null) SizedBox(width: 16),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints.tightFor(
-                          width: kToolbarHeight, height: kToolbarHeight),
-                      child: widget.trailing,
-                    ),
-                  ],
-                ),
+                child: _buildTrailing(),
               ),
               centerMiddle: widget.centerTitle ??
                   widget._getEffectiveCenterTitle(theme, nTheme!.current!),
