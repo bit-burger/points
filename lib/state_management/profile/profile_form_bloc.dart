@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:async/async.dart';
+import '../../helpers/reg_exp.dart' as regExp;
 
 class ProfileFormBloc extends FormBloc<String, String> {
-  static final _nameRegExp = RegExp(r'^([a-z-]|\s)+$');
-
   static String? Function(String? s) lengthCheck(String fieldName,
       {required int maxLength}) {
     return (s) {
@@ -26,9 +25,9 @@ class ProfileFormBloc extends FormBloc<String, String> {
     validators: [
       lengthCheck("Name", maxLength: 8),
       (name) {
-        if (RegExp("(^-| )|(-| )\$").hasMatch(name!)) {
+        if (regExp.pointsNameHyphenSpaceCheck.hasMatch(name!)) {
           return "'-' should not be at the begging or end of the name";
-        } else if (!_nameRegExp.hasMatch(name)) {
+        } else if (!regExp.pointsSimpleName.hasMatch(name)) {
           // hyphens means '-'
           return "Only letters (a-z), spaces ( ) and hyphens (-) are allowed ";
         }

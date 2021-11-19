@@ -16,6 +16,7 @@ import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
 import 'package:points/widgets/shaker.dart';
 import 'package:provider/provider.dart';
+import '../../helpers/reg_exp.dart' as regExp;
 
 class AuthPage extends StatefulWidget {
   @override
@@ -63,16 +64,13 @@ class _AuthPageState extends State<AuthPage> {
       textInputAction: TextInputAction.next,
       inputFormatters: [
         FilteringTextInputFormatter(
-          RegExp(r"[.a-zA-Z0-9+-_@]"),
+          regExp.emailFilter,
           allow: true,
         ),
         UppercaseToLowercaseTextInputFormatter(),
       ],
       validator: (s) {
-        final regexPattern =
-            r"^(?![-+.])(\w|[-+.])*\w@(?![-+.])(\w|[-+])*\w\.[a-z]+$";
-        final regex = new RegExp(regexPattern);
-        if ((s == null || !regex.hasMatch(s))) {
+        if ((s == null || !regExp.email.hasMatch(s))) {
           return 'Please enter a valid email address';
         }
         return null;
