@@ -278,6 +278,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               trailing: NeumorphicButton(
+                tooltip: "Log out",
                 child: Icon(Ionicons.log_out_outline),
                 onPressed: () {
                   context.read<AuthCubit>().logOut();

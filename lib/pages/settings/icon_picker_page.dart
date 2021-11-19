@@ -33,6 +33,7 @@ class _IconPickerPageState extends State<IconPickerPage> {
             ),
           ),
           trailing: NeumorphicButton(
+            tooltip: "Zoom out",
             child: Center(
               child: Text(
                 "-",
@@ -53,6 +54,7 @@ class _IconPickerPageState extends State<IconPickerPage> {
             ),
           ),
           secondTrailing: NeumorphicButton(
+            tooltip: "Zoom in",
             child: Center(
               child: Text(
                 "+",
