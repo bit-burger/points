@@ -3,7 +3,7 @@ import '../../domain_shared/user.dart';
 class ExactNameSearchParameter {}
 
 abstract class IUserDiscoveryRepository {
-  Future<User> getUserByEmail({required String email});
+  Future<User?> getUserByEmail({required String email});
 
   Future<List<User>> queryUsers({
     String? nameQuery,

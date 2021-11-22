@@ -14,19 +14,24 @@ class UserDiscoveryRepository extends IUserDiscoveryRepository {
   }) : _client = client;
 
   @override
-  Future<User> getUserByEmail({
+  Future<User?> getUserByEmail({
     required String email,
   }) async {
     final response = await _client
         .rpc(functions.profileFromEmail, params: {"_email": email})
-        .single()
         .execute();
 
     if (response.error != null) {
       throw PointsConnectionError();
     }
 
-    return User.fromJson(response.data);
+    assert(response.data.length < 2);
+
+    if(response.data.length == 0) {
+      return null;
+    }
+
+    return User.fromJson(response.data[0]);
   }
 
   /*

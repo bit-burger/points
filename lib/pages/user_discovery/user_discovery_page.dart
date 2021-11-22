@@ -9,6 +9,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart'
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
+import 'package:points/pages/user_discovery/invite_popup.dart';
 import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
@@ -16,6 +17,7 @@ import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_field.dart';
 import 'package:points/widgets/user_list_tile.dart';
+import '../../theme/points_colors.dart' as colors;
 
 class UserDiscoveryPage extends StatefulWidget {
   @override
@@ -224,12 +226,30 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
               child: _buildContent(state),
             ),
           ),
-          floatingActionButton: NeumorphicFloatingActionButton(
-            child: Icon(Ionicons.home_outline),
-            onPressed: () => Navigator.pop(context),
-            style: NeumorphicStyle(
-              depth: 8,
-            ),
+          floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              NeumorphicFloatingActionButton(
+                child: Icon(Ionicons.person_add_outline),
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  barrierColor: colors.white.withAlpha(100),
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => InvitePopup(),
+                ),
+                style: NeumorphicStyle(
+                  depth: 8,
+                ),
+              ),
+              SizedBox(height: 16),
+              NeumorphicFloatingActionButton(
+                child: Icon(Ionicons.home_outline),
+                onPressed: () => Navigator.pop(context),
+                style: NeumorphicStyle(
+                  depth: 8,
+                ),
+              ),
+            ],
           ),
         );
       },
