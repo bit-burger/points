@@ -25,6 +25,7 @@ dependencies:
   infinite_scroll_pagination: ^3.1.0
 
   # State management
+  flutter_form_bloc: ^0.20.6
   flutter_bloc: ^7.3.3
   bloc: ^7.2.1
   provider: ^6.0.1

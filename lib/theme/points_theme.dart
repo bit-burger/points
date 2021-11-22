@@ -18,6 +18,7 @@ final neumorphic = NeumorphicThemeData(
     ));
 
 final material = ThemeData(
+  brightness: Brightness.light,
   errorColor: pointsColors.errorColor,
   textTheme: GoogleFonts.courierPrimeTextTheme().apply(
     bodyColor: pointsColors.textColor,

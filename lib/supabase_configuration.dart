@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' as flutter;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../helpers/reg_exp.dart' as regExp;
 
 Future<void> configureSupabase() async {
   final env = dotenv.env;
@@ -11,12 +12,12 @@ Future<void> configureSupabase() async {
   assert(supabaseAnonKey != null, "The supabase anon key is missing");
 
   assert(
-    RegExp(r"^https?:\/\/.+\..+").hasMatch(supabaseUrl!),
+    regExp.supabaseUrl.hasMatch(supabaseUrl!),
     "The supabase url ($supabaseUrl) is invalid",
   );
 
   assert(
-    RegExp(r"^(\.|\w){147}$").hasMatch(supabaseAnonKey!),
+    regExp.supabaseKey.hasMatch(supabaseAnonKey!),
     "The supabase anon key ($supabaseAnonKey) is invalid",
   );
 

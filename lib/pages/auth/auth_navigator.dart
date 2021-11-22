@@ -21,13 +21,19 @@ class AuthNavigator extends StatelessWidget {
             if (state is! AuthInitialState)
               MaterialPage(
                 name: "Log in",
-                child: AuthPage(),
+                child: WillPopScope(
+                  onWillPop: () async => false,
+                  child: AuthPage(),
+                ),
               ),
             if (state is LoggedInState)
               MaterialPage(
-                child: BlocProvider(
-                  create: (_) => ConnectionCubit(),
-                  child: ConnectionNavigator(),
+                child: WillPopScope(
+                  onWillPop: () async => false,
+                  child: BlocProvider(
+                    create: (_) => ConnectionCubit(),
+                    child: ConnectionNavigator(),
+                  ),
                 ),
               ),
           ],

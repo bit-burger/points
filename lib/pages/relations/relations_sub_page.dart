@@ -17,12 +17,21 @@ class RelationsSubPage extends StatefulWidget {
 }
 
 class _RelationsSubPageState extends State<RelationsSubPage> {
+  bool _showBlocked = false;
+
+  void _toggleShowBlocked() {
+    setState(() {
+      _showBlocked = !_showBlocked;
+    });
+  }
+
   Iterable<Widget> _listViewFromUsers({
     required List<User> users,
     String? name,
     String? key,
     void Function(User user)? onPressed,
     void Function(User user)? onLongPressed,
+    Future<bool> Function(User user)? confirmDismiss,
     void Function(User user)? onDismissed,
   }) sync* {
     assert((name != null) != (key != null));
@@ -67,6 +76,8 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
                 key: ValueKey(user.id),
                 direction: DismissDirection.endToStart,
                 onDismissed: (_) => onDismissed(user),
+                confirmDismiss:
+                    confirmDismiss == null ? null : (_) => confirmDismiss(user),
                 child: widget,
               );
             }
@@ -97,7 +108,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
               userId: user.id,
             );
           },
-          onDismissed: (user) async {
+          confirmDismiss: (user) async {
             final result = await showOkCancelAlertDialog(
               context: context,
               title: "Warning",
@@ -105,9 +116,10 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
               isDestructiveAction: true,
             );
 
-            if (result == OkCancelResult.ok) {
-              context.read<RelationsCubit>().unfriend(user.id);
-            }
+            return result == OkCancelResult.ok;
+          },
+          onDismissed: (user) async {
+            context.read<RelationsCubit>().unfriend(user.id);
           },
         ),
         ..._listViewFromUsers(
@@ -144,8 +156,61 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
             context.read<RelationsCubit>().cancelRequest(user.id);
           },
         ),
+        if (_showBlocked)
+          ..._listViewFromUsers(
+            name: "blocked",
+            users: relations.blocked,
+            onPressed: (user) {
+              showRelationsActionSheet(
+                context: context,
+                actions: [
+                  unblockAction,
+                ],
+                userId: user.id,
+              );
+            },
+            confirmDismiss: (user) async {
+              final result = await showOkCancelAlertDialog(
+                context: context,
+                title: "Warning",
+                message: "Do you want to unblock '${user.name}'?",
+                isDestructiveAction: true,
+              );
+
+              return result == OkCancelResult.ok;
+            },
+            onDismissed: (user) async {
+              context.read<RelationsCubit>().unblock(user.id);
+            },
+          ),
+        if (_showBlocked)
+          ..._listViewFromUsers(
+            name: "blocked by",
+            users: relations.blockedBy,
+          ),
+        Column(
+          children: _buildShowBlocksButton(relations).toList(),
+        ),
       ],
     );
+  }
+
+  Iterable<Widget> _buildShowBlocksButton(UserRelations relations) sync* {
+    if (relations.blockedRelationsCount > 0) {
+      yield SizedBox(height: 16);
+      if (_showBlocked) {
+        yield NeumorphicButton(
+          child: Text("Hide blocked users"),
+          onPressed: _toggleShowBlocked,
+        );
+      } else {
+        yield NeumorphicButton(
+          child: Text("Show blocked users"),
+          onPressed: _toggleShowBlocked,
+        );
+      }
+      yield SizedBox(height: 24);
+    }
   }
 
   Widget _buildContent(RelationsState state) {
@@ -153,18 +218,38 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
       return Center(key: ValueKey("loading"), child: Loader());
     }
     final relations = (state as RelationsData).userRelations;
-    final normalRelationsCount = relations.friends.length +
-        relations.requests.length +
-        relations.pending.length;
-    if (normalRelationsCount == 0) {
+    final relationsCount = _showBlocked
+        ? relations.relationsCount
+        : relations.normalRelationsCount;
+    final blockedRelationsCount = relations.blockedRelationsCount;
+
+    if (relationsCount == 0) {
+      var text = "No friends :(";
+      if (blockedRelationsCount == 0) {
+        text = "No friends and blocks :(";
+      }
+      _buildShowBlocksButton(relations);
       return Center(
-        key: ValueKey("no relations"),
-        child: Text(
-          "No friends :(",
-          style: Theme.of(context)
-              .textTheme
-              .headline5!
-              .copyWith(color: Theme.of(context).hintColor),
+        key: ValueKey(text),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5!
+                      .copyWith(color: Theme.of(context).hintColor),
+                ),
+              ),
+            ),
+            ..._buildShowBlocksButton(relations),
+          ],
         ),
       );
     }
@@ -173,7 +258,17 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RelationsCubit, RelationsState>(
+    return BlocConsumer<RelationsCubit, RelationsState>(
+      listenWhen: (oldState, newState) {
+        // if there are no blocked relations anymore toggle blocked
+        if (oldState is! RelationsData || newState is! RelationsData) {
+          return false;
+        }
+        return oldState.userRelations.blockedRelationsCount > 0 &&
+            newState.userRelations.blockedRelationsCount == 0 &&
+            _showBlocked;
+      },
+      listener: (context, state) => _toggleShowBlocked(),
       builder: (_, state) {
         return AnimatedSwitcher(
           duration: Duration(milliseconds: 250),

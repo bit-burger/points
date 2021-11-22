@@ -29,28 +29,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void updateProfile(
-    String? name,
-    String? status,
-    String? bio,
-    int? color,
-    int? icon,
-  ) async {
-    assert(state is ProfileExistsState);
-
-    try {
-      await _profileRepository.updateAccount(
-        name: name,
-        status: status,
-        bio: bio,
-        color: color,
-        icon: icon,
-      );
-    } on PointsConnectionError {
-      _connectionCubit.reportError();
-    }
-  }
-
   @override
   Future<void> close() {
     _profileRepository.close();

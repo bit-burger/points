@@ -20,14 +20,16 @@ class LoggedInUser {
   final RelationsRepository relations;
   final UserDiscoveryRepository userDiscovery;
 
-  LoggedInUser._(this.client,
-      this.user,
-      this.email,
-      this.password,
-      this.auth,
-      this.profile,
-      this.relations,
-      this.userDiscovery,) : id = user.id;
+  LoggedInUser._(
+    this.client,
+    this.user,
+    this.email,
+    this.password,
+    this.auth,
+    this.profile,
+    this.relations,
+    this.userDiscovery,
+  ) : id = user.id;
 
   static Future<LoggedInUser> getRandom({String? name}) async {
     final supabaseClient = await getConfiguredSupabaseClient();

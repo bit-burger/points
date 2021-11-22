@@ -4,7 +4,6 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/pages/relations/relations_sub_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
-import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
@@ -68,7 +67,7 @@ class HomePage extends StatelessWidget {
                 tooltip: "Settings",
                 child: Icon(Ionicons.settings_outline),
                 onPressed: () {
-                  context.read<AuthCubit>().logOut();
+                  Navigator.of(context).pushNamed("settings");
                 },
                 style: NeumorphicStyle(
                   boxShape: NeumorphicBoxShape.circle(),
@@ -97,16 +96,7 @@ class HomePage extends StatelessWidget {
               child: RelationsSubPage(),
             ),
             floatingActionButton: NeumorphicFloatingActionButton(
-              onPressed: () {
-                final name = rootUser!.name;
-                final newName = name.length == 8
-                    ? name.substring(0, name.length - 1)
-                    : name + "a";
-
-                context
-                    .read<ProfileCubit>()
-                    .updateProfile(newName, null, null, null, null);
-              },
+              onPressed: () {},
               style: NeumorphicStyle(
                 depth: 8,
               ),

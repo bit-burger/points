@@ -7,7 +7,7 @@ drop trigger if exists on_auth_user_created on auth.users cascade;
 -- profiles --
 create domain points as bigint check (value >= 0);
 create domain color as smallint check ((value >= 0) and (value < 10));
-create domain icon as smallint check ((value >= 0) and (value < 256));
+create domain icon as smallint check ((value >= 0) and (value < 230));
 
 create table public.greek_alphabet(
   name varchar(8)
