@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:points/pages/user_discovery/invite_popup.dart';
 import 'package:points/pages/relations/relations_sub_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
@@ -13,7 +12,6 @@ import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
-import '../../theme/points_colors.dart' as points;
 import '../../widgets/neumorphic_app_bar_fix.dart' as fix;
 
 class HomePage extends StatelessWidget {
@@ -75,27 +73,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            body: BlocListener<ProfileCubit, ProfileState>(
-              listener: (context, state) {
-                if (state is ProfileExistsState) {
-                  Scaffold.of(context).showBottomSheet(
-                    (context) => Container(
-                      height: 50,
-                      color: points.colors[state.profile.color],
-                      child: Center(
-                        child: Text(
-                          "${state.profile.name}: ${state.profile.points}",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-              },
-              child: RelationsSubPage(),
-            ),
+            body: RelationsSubPage(),
             floatingActionButton: NeumorphicFloatingActionButton(
               onPressed: () {},
               style: NeumorphicStyle(
