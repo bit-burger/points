@@ -8,7 +8,7 @@ import '../../errors_shared/points_error.dart';
 import '../profile_function_names.dart' as functions;
 import 'profile_repository_contract.dart';
 
-// TODO: Handle with error, when no profile is found/0 rows
+/// Supabase implementation of [IProfileRepository]
 class ProfileRepository extends IProfileRepository {
   final SupabaseClient _client;
 
@@ -24,6 +24,7 @@ class ProfileRepository extends IProfileRepository {
 
   Stream<User> get profileStream => _profileStream;
 
+  /// Start listening to supabase realtime
   void _startListening() {
     assert(_client.auth.user() != null,
         "PointsProfileRepository needs a logged in SupabaseClient");
@@ -44,6 +45,7 @@ class ProfileRepository extends IProfileRepository {
     });
   }
 
+  // TODO: Handle with error, when no profile is found/0 rows
   void _handleUpdate(final List<Map<String, dynamic>> users) async {
     if (users.isNotEmpty) {
       _addToStream(User.fromJson(users[0]));
@@ -83,6 +85,7 @@ class ProfileRepository extends IProfileRepository {
     close();
   }
 
+  /// Close streams and cancel realtime
   void close() {
     _profileStreamController.close();
     _sub.cancel();

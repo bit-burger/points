@@ -1,22 +1,21 @@
 import '../../domain_shared/user.dart';
 
+/// Represents the relations a user in points has
 class UserRelations {
+  /// All friends of the user
   final List<User> friends;
 
-  /// All the requests to the RootUser
+  /// All the requests to the user
   final List<User> requests;
 
-  /// All requests the RootUser has sent
+  /// All requests the user has sent
   final List<User> pending;
 
-  /// All Users that the RootUser blocked
+  /// All Users that the user blocked
   final List<User> blocked;
 
-  /// All Users that have blocked the RootUser
+  /// All users that have blocked this user
   final List<User> blockedBy;
-
-  /// All Users together
-  List<User> get all => friends + requests + pending + blocked + blockedBy;
 
   UserRelations(
       this.friends, this.requests, this.pending, this.blocked, this.blockedBy);
@@ -24,6 +23,8 @@ class UserRelations {
   factory UserRelations.empty() {
     return UserRelations([], [], [], [], []);
   }
+
+  List<User> get all => friends + requests + pending + blocked + blockedBy;
 
   int get relationsCount => normalRelationsCount + blockedRelationsCount;
 

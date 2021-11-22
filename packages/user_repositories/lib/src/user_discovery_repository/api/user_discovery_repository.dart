@@ -6,6 +6,7 @@ import '../user_discovery_function_names.dart' as functions;
 
 import 'user_discovery_repository_contract.dart';
 
+/// Supabase implementation of [IUserDiscoveryRepository]
 class UserDiscoveryRepository extends IUserDiscoveryRepository {
   final SupabaseClient _client;
 

@@ -10,6 +10,7 @@ import '../errors/points_illegal_relation_error.dart';
 import '../relations_function_names.dart' as functions;
 import 'relations_repository_contract.dart';
 
+/// Represents one change in supabase realtime
 class _RelationsUpdateEvent {
   final Map<String, dynamic>? oldRecord;
   final Map<String, dynamic>? newRecord;
@@ -21,6 +22,7 @@ class _RelationsUpdateEvent {
 }
 
 // TODO: Sub on updates for friends
+/// Supabase implementation of [IRelationsRepository]
 class RelationsRepository extends IRelationsRepository {
   late final String _userId;
   final SupabaseClient _client;
@@ -108,6 +110,8 @@ class RelationsRepository extends IRelationsRepository {
     return relations;
   }
 
+  /// First fetch all data with
+  /// [_getRelationUserIds] and [_fillRelationsWithUsers]
   void _startStreaming() async {
     try {
       final relationIds = await _getRelationUserIds();
@@ -140,6 +144,7 @@ class RelationsRepository extends IRelationsRepository {
     }
   }
 
+  /// Find out which relation was changed
   Future<void> _handleRelationsUpdateEvent(_RelationsUpdateEvent event) async {
     final id = event.oldRecord?["other_id"] ?? event.newRecord?["other_id"];
     late final User user;
@@ -172,6 +177,7 @@ class RelationsRepository extends IRelationsRepository {
     _updateRelations();
   }
 
+  /// Create a new [UserRelations] with the [_currentRelations] sorted
   void _updateRelations() {
     final userRelations = UserRelations(
       _sortUserList(_currentRelations["friends"]!),
@@ -189,41 +195,42 @@ class RelationsRepository extends IRelationsRepository {
   }
 
   @override
-  Future<void> accept(String id) async {
-    await _invoke(id, functions.accept);
+  void accept(String id) async {
+    _invoke(id, functions.accept);
   }
 
   @override
-  Future<void> block(String id) async {
-    await _invoke(id, functions.block);
+  void block(String id) async {
+    _invoke(id, functions.block);
   }
 
   @override
-  Future<void> reject(String id) async {
-    await _invoke(id, functions.reject);
+  void reject(String id) async {
+    _invoke(id, functions.reject);
   }
 
   @override
-  Future<void> request(String id) async {
-    await _invoke(id, functions.request);
+  void request(String id) async {
+    _invoke(id, functions.request);
   }
 
   @override
-  Future<void> cancelRequest(String id) async {
-    await _invoke(id, functions.takeBackRequest);
+  void cancelRequest(String id) async {
+    _invoke(id, functions.takeBackRequest);
   }
 
   @override
-  Future<void> unblock(String id) async {
-    await _invoke(id, functions.unblock);
+  void unblock(String id) async {
+    _invoke(id, functions.unblock);
   }
 
   @override
-  Future<void> unfriend(String id) async {
-    await _invoke(id, functions.unfriend);
+  void unfriend(String id) async {
+    _invoke(id, functions.unfriend);
   }
 
-  Future<void> _invoke(String id, String function) async {
+  /// Base method for invoking a RPC with error handling
+  void _invoke(String id, String function) async {
     final response = await _client.rpc(function, params: {"_id": id}).execute();
     if (response.error != null) {
       if (response.error!.message.startsWith("SocketException")) {
@@ -238,6 +245,7 @@ class RelationsRepository extends IRelationsRepository {
     close();
   }
 
+  /// Close streams
   @override
   void close() {
     _relationsStreamController.close();

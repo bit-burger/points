@@ -56,7 +56,7 @@ void main() {
 
       expect(
         sut2.tryAutoSignIn(),
-        throwsA(TypeMatcher<AuthAutoSignFailedError>()),
+        throwsA(TypeMatcher<AuthAutoSignInFailedError>()),
       );
     });
 
@@ -81,7 +81,7 @@ void main() {
 
       expect(
         sut2.tryAutoSignIn(),
-        throwsA(TypeMatcher<AuthAutoSignFailedError>()),
+        throwsA(TypeMatcher<AuthAutoSignInFailedError>()),
       );
     }, skip: true);
   });
