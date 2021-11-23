@@ -1,9 +1,10 @@
+/// Given back if logged in
 class AccountCredentials {
-  final String id;
+  final String userId;
   final String email;
 
   AccountCredentials({
-    required this.id,
+    required this.userId,
     required this.email,
   });
 }

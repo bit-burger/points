@@ -1,1 +1,0 @@
-class AuthAutoSignFailedError implements Exception {}

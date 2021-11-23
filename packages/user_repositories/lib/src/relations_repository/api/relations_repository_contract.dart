@@ -1,21 +1,35 @@
+import 'package:user_repositories/relations_repository.dart';
+
 import '../domain/user_relations.dart';
 
+/// Change and view updates of relations in points
 abstract class IRelationsRepository {
+  /// Updates of relations
   Stream<UserRelations> get relationsStream;
 
-  Future<void> accept(String id);
+  /// All mutations of relations can throw a [PointsIllegalRelationError]
 
-  Future<void> block(String id);
+  /// Accept friend request
+  void accept(String id);
 
-  Future<void> reject(String id);
+  /// Block user
+  void block(String id);
 
-  Future<void> request(String id);
+  /// Reject friend request
+  void reject(String id);
 
-  Future<void> cancelRequest(String id);
+  /// Send friend request
+  void request(String id);
 
-  Future<void> unblock(String id);
+  /// Cancel a already sent friend request
+  void cancelRequest(String id);
 
-  Future<void> unfriend(String id);
+  /// Unblock user
+  void unblock(String id);
 
+  /// Unfriend user
+  void unfriend(String id);
+
+  /// Cleanup
   void close();
 }
