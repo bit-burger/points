@@ -1,3 +1,4 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -288,31 +289,45 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            body: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: NeumorphicBox(
-                      reverseHeight: true,
-                      listPadding: true,
-                      child: ListView(
-                        children: [
-                          SizedBox(height: 24),
-                          _buildIcon(formBloc),
-                          SizedBox(height: 16),
-                          ..._buildTextFields(formBloc),
-                          SizedBox(height: 16),
-                          _buildColorButtonRows(formBloc),
-                          SizedBox(height: 24),
-                          _buildSubmitButtons(formBloc),
-                          SizedBox(height: 24),
-                        ],
+            body: WillPopScope(
+              onWillPop: () async {
+                if (!formBloc.hasChanges()) {
+                  return true;
+                }
+                final result = await showOkCancelAlertDialog(
+                  title: "Warning",
+                  message: "You have unsaved changes, "
+                      "do you want to throw them away?",
+                  context: context,
+                );
+                return result == OkCancelResult.ok;
+              },
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: NeumorphicBox(
+                        reverseHeight: true,
+                        listPadding: true,
+                        child: ListView(
+                          children: [
+                            SizedBox(height: 24),
+                            _buildIcon(formBloc),
+                            SizedBox(height: 16),
+                            ..._buildTextFields(formBloc),
+                            SizedBox(height: 16),
+                            _buildColorButtonRows(formBloc),
+                            SizedBox(height: 24),
+                            _buildSubmitButtons(formBloc),
+                            SizedBox(height: 24),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  _buildPreviewUserListTile(formBloc),
-                ],
+                    _buildPreviewUserListTile(formBloc),
+                  ],
+                ),
               ),
             ),
           );
