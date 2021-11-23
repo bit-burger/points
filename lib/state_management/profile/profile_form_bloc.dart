@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:user_repositories/profile_repository.dart';
-import 'package:async/async.dart';
 import '../../helpers/reg_exp.dart' as regExp;
 
 class ProfileFormBloc extends FormBloc<String, String> {
@@ -19,7 +18,6 @@ class ProfileFormBloc extends FormBloc<String, String> {
 
   final IProfileRepository _profileRepository;
   late final StreamSubscription<User> _profileSub;
-  bool isWaitingForProfileResponse = false;
 
   final nameText = TextFieldBloc<String>(
     validators: [
@@ -61,37 +59,28 @@ class ProfileFormBloc extends FormBloc<String, String> {
       iconSelection,
     ]);
 
+    assert(profileRepository.currentProfile != null);
+
     _profileSub = _profileRepository.profileStream.listen((profile) {
-      if (!this.isWaitingForProfileResponse) {
-        _updateFormsFromProfile(profile);
-      }
+      _updateFormsFromProfile(profile);
+      emitSuccess(canSubmitAgain: true);
     });
-  }
 
-  @override
-  void onLoading() async {
-    isWaitingForProfileResponse = true;
-    late final User profile;
-
-    if (_profileRepository.currentProfile != null) {
-      profile = _profileRepository.currentProfile!;
-    } else {
-      final queue = StreamQueue(_profileRepository.profileStream);
-      profile = await queue.next;
-      queue.cancel(immediate: true);
-    }
+    final profile = _profileRepository.currentProfile!;
 
     nameText.updateInitialValue(profile.name);
     statusText.updateInitialValue(profile.status);
     bioText.updateInitialValue(profile.bio);
     colorSelection.updateInitialValue(profile.color);
     iconSelection.updateInitialValue(profile.icon);
+  }
 
-    emitLoaded();
-
+  @override
+  void onLoading() async {
     super.onLoading();
 
-    isWaitingForProfileResponse = false;
+    _updateFormsFromProfile(_profileRepository.currentProfile!);
+    emitLoaded();
   }
 
   @override
@@ -105,11 +94,8 @@ class ProfileFormBloc extends FormBloc<String, String> {
         icon: iconSelection.value!,
       );
 
-      reload();
     } on PointsConnectionError {
       emitFailure(failureResponse: "Connection failed");
-    } finally {
-      isWaitingForProfileResponse = false;
     }
   }
 

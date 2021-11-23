@@ -288,30 +288,32 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: NeumorphicBox(
-                    reverseHeight: true,
-                    listPadding: true,
-                    child: ListView(
-                      children: [
-                        SizedBox(height: 24),
-                        _buildIcon(formBloc),
-                        SizedBox(height: 16),
-                        ..._buildTextFields(formBloc),
-                        SizedBox(height: 16),
-                        _buildColorButtonRows(formBloc),
-                        SizedBox(height: 24),
-                        _buildSubmitButtons(formBloc),
-                        SizedBox(height: 24),
-                      ],
+            body: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: NeumorphicBox(
+                      reverseHeight: true,
+                      listPadding: true,
+                      child: ListView(
+                        children: [
+                          SizedBox(height: 24),
+                          _buildIcon(formBloc),
+                          SizedBox(height: 16),
+                          ..._buildTextFields(formBloc),
+                          SizedBox(height: 16),
+                          _buildColorButtonRows(formBloc),
+                          SizedBox(height: 24),
+                          _buildSubmitButtons(formBloc),
+                          SizedBox(height: 24),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                _buildPreviewUserListTile(formBloc),
-              ],
+                  _buildPreviewUserListTile(formBloc),
+                ],
+              ),
             ),
           );
         },
