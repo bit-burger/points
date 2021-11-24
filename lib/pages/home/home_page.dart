@@ -85,6 +85,7 @@ class HomePage extends StatelessWidget {
                     ? Loader()
                     : Text(
                         rootUser?.points.toString() ?? "",
+                        key: ValueKey(rootUser?.points),
                         style: Theme.of(context).textTheme.headline4!.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
