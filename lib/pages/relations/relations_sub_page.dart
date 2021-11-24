@@ -5,11 +5,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/relations_action_sheet.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:points/widgets/loader.dart';
+import 'package:points/widgets/neumorphic_icon_button.dart';
 import 'package:points/widgets/user_list_tile.dart';
 import 'package:user_repositories/relations_repository.dart';
+import '../../theme/points_colors.dart' as colors;
+import '../../theme/points_icons.dart' as icons;
 
 class RelationsSubPage extends StatefulWidget {
   @override
@@ -93,6 +97,75 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
     }
   }
 
+  Widget _buildFriendDetailView(BuildContext context, User user) {
+    return NeumorphicTheme(
+      theme: NeumorphicThemeData(
+        baseColor: colors.colors[user.color],
+      ),
+      child: Neumorphic(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    icons.pointsIcons[user.icon],
+                    size: 48,
+                  ),
+                  SizedBox(width: 16),
+                  Text(user.name, style: Theme.of(context).textTheme.headline4)
+                ],
+              ),
+              SizedBox(height: 32),
+              Text(user.status, style: Theme.of(context).textTheme.headline6),
+              SizedBox(height: 32),
+              Text(
+                user.bio,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 48),
+              Row(
+                children: [
+                  Expanded(
+                    child: NeumorphicIconButton(
+                      icon: Icon(Ionicons.chatbox_outline),
+                      text: Text("Chat"),
+                      // TODO: Implement chatting
+                      onPressed: () {},
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: NeumorphicIconButton(
+                      icon: Icon(Ionicons.close_circle_outline),
+                      text: Text("Block"),
+                      onPressed: () {
+                        context.read<RelationsCubit>().block(user.id);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 32),
+            ],
+          ),
+        ),
+        style: NeumorphicStyle(
+          intensity: 1,
+          depth: NeumorphicTheme.depth(context)! * 2,
+          boxShape: NeumorphicBoxShape.roundRect(
+            BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildRelationsListView(UserRelations relations) {
     // Will look if the relations
     // or the _showBlocked have changed,
@@ -118,6 +191,17 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
         ..._listViewFromUsers(
           users: relations.friends,
           key: "friends",
+          onPressed: (user) async {
+            showModalBottomSheet(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+              context: context,
+              isScrollControlled: true,
+              barrierColor: colors.barrierColor,
+              builder: (context) => _buildFriendDetailView(context, user),
+            );
+          },
           onLongPressed: (user) async {
             showRelationsActionSheet(
               context: context,
