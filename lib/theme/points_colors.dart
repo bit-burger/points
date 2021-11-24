@@ -28,3 +28,4 @@ const textColor = Color(0xFF000000);
 const textSelectionColor = Color(0xFFBDBDBD);
 const cursorColor = Color(0xFF424242);
 const errorColor = Color(0xFFC72D2D);
+const barrierColor = Color(0x64DDE6E8);

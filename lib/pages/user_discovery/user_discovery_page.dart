@@ -233,7 +233,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
                 child: Icon(Ionicons.person_add_outline),
                 onPressed: () => showModalBottomSheet(
                   context: context,
-                  barrierColor: colors.white.withAlpha(100),
+                  barrierColor: colors.barrierColor,
                   backgroundColor: Colors.transparent,
                   builder: (_) => InvitePopup(),
                 ),
