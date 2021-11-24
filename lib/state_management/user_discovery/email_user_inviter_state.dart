@@ -33,8 +33,7 @@ class EmailUserInviterFoundUserIsAlreadyRelated extends EmailUserInviterError {
 }
 
 class EmailUserInviterFoundUserIsSelf extends EmailUserInviterError {
-  EmailUserInviterFoundUserIsSelf()
-      : super("This is your own email");
+  EmailUserInviterFoundUserIsSelf() : super("This is your own email");
 }
 
 class EmailUserInviterError extends EmailUserInviterState {

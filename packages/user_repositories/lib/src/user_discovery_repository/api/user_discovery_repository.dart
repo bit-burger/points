@@ -19,8 +19,7 @@ class UserDiscoveryRepository extends IUserDiscoveryRepository {
     required String email,
   }) async {
     final response = await _client
-        .rpc(functions.profileFromEmail, params: {"_email": email})
-        .execute();
+        .rpc(functions.profileFromEmail, params: {"_email": email}).execute();
 
     if (response.error != null) {
       throw PointsConnectionError();
@@ -28,7 +27,7 @@ class UserDiscoveryRepository extends IUserDiscoveryRepository {
 
     assert(response.data.length < 2);
 
-    if(response.data.length == 0) {
+    if (response.data.length == 0) {
       return null;
     }
 

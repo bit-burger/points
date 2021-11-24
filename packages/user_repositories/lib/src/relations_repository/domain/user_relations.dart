@@ -28,9 +28,8 @@ class UserRelations {
 
   int get relationsCount => normalRelationsCount + blockedRelationsCount;
 
-  int get normalRelationsCount => friends.length +
-      requests.length +
-      pending.length;
+  int get normalRelationsCount =>
+      friends.length + requests.length + pending.length;
 
   int get blockedRelationsCount => blocked.length + blockedBy.length;
 

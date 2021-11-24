@@ -93,7 +93,6 @@ class ProfileFormBloc extends FormBloc<String, String> {
         color: colorSelection.value!,
         icon: iconSelection.value!,
       );
-
     } on PointsConnectionError {
       emitFailure(failureResponse: "Connection failed");
     }
