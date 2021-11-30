@@ -19,14 +19,20 @@ class Points extends StatelessWidget {
       client: Supabase.instance.client,
       sessionStore: sessionStore,
     );
-    return NeumorphicApp(
-      title: "points",
-      debugShowCheckedModeBanner: false,
+    return NeumorphicTheme(
+      themeMode: ThemeMode.light,
       theme: pointsTheme.neumorphic,
-      materialTheme: pointsTheme.material,
-      home: BlocProvider<AuthCubit>(
-        create: (_) => AuthCubit(repository: authRepository)..tryToAutoSignIn(),
-        child: AuthNavigator(),
+      child: IconTheme(
+        data: pointsTheme.neumorphic.iconTheme,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeMode.light,
+          theme: pointsTheme.material,
+          home: BlocProvider<AuthCubit>(
+            create: (_) => AuthCubit(repository: authRepository)..tryToAutoSignIn(),
+            child: AuthNavigator(),
+          ),
+        ),
       ),
     );
   }

@@ -82,7 +82,6 @@ class ProfileRepository extends IProfileRepository {
 
   void _error(PointsError error) {
     _profileStreamController.addError(error);
-    close();
   }
 
   /// Close streams and cancel realtime

@@ -52,6 +52,7 @@ class ConnectionNavigator extends StatelessWidget {
                     providers: [
                       BlocProvider(
                         create: (context) => RelationsCubit(
+                          connectionCubit: context.read<ConnectionCubit>(),
                           relationsRepository:
                               context.read<RelationsRepository>(),
                         )..startListening(),
@@ -63,10 +64,7 @@ class ConnectionNavigator extends StatelessWidget {
                         )..startListening(),
                       ),
                     ],
-                    child: BlocProvider(
-                      create: (_) => ConnectionCubit(),
-                      child: HomeNavigator(),
-                    ),
+                    child: HomeNavigator(),
                   ),
                 ),
               ),

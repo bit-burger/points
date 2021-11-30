@@ -46,7 +46,8 @@ class NeumorphicTextField extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: TextField(
           selectionControls: _CustomColorSelectionHandle(
-            Theme.of(context).textSelectionTheme.selectionHandleColor!,
+            // TODO: Fix, this is only temporary
+            Colors.black,
           ),
           controller: controller,
           obscureText: obscureText,

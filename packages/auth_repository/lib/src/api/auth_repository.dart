@@ -27,9 +27,7 @@ class AuthRepository extends IAuthRepository {
     required SupabaseClient client,
     required Box<String> sessionStore,
   })  : _client = client,
-        _sessionStore = sessionStore {
-    _client.auth.autoRefreshToken = false;
-  }
+        _sessionStore = sessionStore;
 
   @override
   Future<AccountCredentials> logIn(String email, String password) async {
@@ -95,8 +93,8 @@ class AuthRepository extends IAuthRepository {
 
   @override
   Future<void> logOut() async {
-    final response = await _client.auth.signOut();
     await _deleteSession();
+    final response = await _client.auth.signOut();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
     }

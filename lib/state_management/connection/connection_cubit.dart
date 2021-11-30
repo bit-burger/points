@@ -7,8 +7,6 @@ class ConnectionCubit extends Cubit<ConnectionState> {
   ConnectionCubit() : super(ConnectionWorkingState());
 
   void reportError() {
-    assert(state is ConnectionWorkingState);
-
     emit(ConnectionFailedState());
   }
 
