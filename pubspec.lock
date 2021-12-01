@@ -691,9 +691,11 @@ packages:
   supabase:
     dependency: "direct dev"
     description:
-      name: supabase
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "4b95c2cc3d9dc122918490d56d4c38d9cd81ab33"
+      url: "https://github.com/offline-first/supabase-dart"
+    source: git
     version: "0.2.9"
   supabase_flutter:
     dependency: "direct main"

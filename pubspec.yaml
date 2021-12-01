@@ -46,6 +46,10 @@ dependencies:
   meta_repository:
     path: ./packages/meta_repository
 
+dependency_overrides:
+  supabase:
+    git: https://github.com/offline-first/supabase-dart
+
 dev_dependencies:
   # Test framework
   bloc_test: ^8.5.0
