@@ -69,6 +69,10 @@ class AuthRepository extends IAuthRepository {
     return AccountCredentials(userId: user.id, email: user.email!);
   }
 
+  bool persistedLogInDataExists() {
+    return _retrieveSession() != null;
+  }
+
   @override
   Future<AccountCredentials> tryAutoSignIn() async {
     final jsonStr = _retrieveSession();
@@ -77,6 +81,10 @@ class AuthRepository extends IAuthRepository {
     }
 
     final response = await _client.auth.recoverSession(jsonStr);
+
+    if(response.data != null) {
+      _saveSession(response.data!);
+    }
     switch (response.error?.message) {
       case null:
         final user = response.user!;
@@ -92,8 +100,10 @@ class AuthRepository extends IAuthRepository {
   }
 
   @override
-  Future<void> logOut() async {
-    await _deleteSession();
+  Future<void> logOut({bool keepPersistedData = false}) async {
+    if (!keepPersistedData) {
+      await _deleteSession();
+    }
     final response = await _client.auth.signOut();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
@@ -102,9 +112,9 @@ class AuthRepository extends IAuthRepository {
 
   @override
   Future<void> deleteAccount() async {
+    await _deleteSession();
     final response = await _client.rpc("delete_user").execute();
     _client.auth.forceSignOut();
-    await _deleteSession();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
     }

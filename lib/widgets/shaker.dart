@@ -48,4 +48,10 @@ class ShakerState extends State<Shaker> with SingleTickerProviderStateMixin {
       child: widget.child,
     );
   }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
 }

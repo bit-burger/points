@@ -1,16 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:points/state_management/connection/connection_cubit.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/relations_repository.dart';
 
 part 'relations_state.dart';
 
 class RelationsCubit extends Cubit<RelationsState> {
   final IRelationsRepository _relationsRepository;
-  final ConnectionCubit connectionCubit;
+  final AuthCubit authCubit;
 
   RelationsCubit({
-    required this.connectionCubit,
+    required this.authCubit,
     required IRelationsRepository relationsRepository,
   })  : _relationsRepository = relationsRepository,
         super(RelationsInitialLoading());
@@ -21,7 +21,7 @@ class RelationsCubit extends Cubit<RelationsState> {
         emit(RelationsData(relations));
       }
     } on PointsError catch(_) {
-      connectionCubit.reportError();
+      authCubit.reportConnectionError();
     }
   }
 

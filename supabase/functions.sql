@@ -1,3 +1,14 @@
+------------------
+-- CONNECTIVITY --
+------------------
+
+CREATE OR REPLACE FUNCTION check_connection() returns boolean $$
+BEGIN
+RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql
+SECURITY DEFINER;
+
 ----------
 -- AUTH --
 ----------

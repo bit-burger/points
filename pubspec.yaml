@@ -36,12 +36,15 @@ dependencies:
   # Supabase
   supabase_flutter: ^0.2.9
   hive_flutter: ^1.1.0
+  connectivity_plus: ^2.1.0
 
   # Own packages
   auth_repository:
     path: ./packages/auth_repository
   user_repositories:
     path: ./packages/user_repositories
+  meta_repository:
+    path: ./packages/meta_repository
 
 dev_dependencies:
   # Test framework

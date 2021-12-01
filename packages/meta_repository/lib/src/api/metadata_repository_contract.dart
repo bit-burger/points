@@ -1,4 +1,5 @@
 /// Read metadata from server (probably only the version)
-abstract class IPointsMetadataRepository {
+abstract class IMetadataRepository {
   Future<String> getVersion();
+  Future<bool> hasConnection();
 }

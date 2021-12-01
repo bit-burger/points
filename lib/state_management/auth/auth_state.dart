@@ -5,7 +5,7 @@ abstract class AuthState {}
 
 class AuthInitialState extends AuthState {}
 
-class LoadingState extends AuthState {}
+class LoadingAuth extends AuthState {}
 
 class LoggedInState extends AuthState {
   final AccountCredentials credentials;
@@ -13,10 +13,14 @@ class LoggedInState extends AuthState {
   LoggedInState(this.credentials);
 }
 
-class LoggedOutState extends AuthState {}
+/// If logged in, but a connection error is recorded by another cubit
+class LoggedInPausedOnConnectionError extends AuthState {
+  final bool retrying;
+  LoggedInPausedOnConnectionError({this.retrying = false}) : super();
+}
 
-class AuthErrorState extends LoggedOutState {
-  final AuthErrorType type;
+class LoggedOutState extends AuthState {
+  final AuthErrorType? logInError;
 
-  AuthErrorState(this.type);
+  LoggedOutState([this.logInError]);
 }
