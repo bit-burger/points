@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
@@ -11,8 +12,10 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
 
   final IUserDiscoveryRepository _userDiscoveryRepository;
   final IRelationsRepository _relationsRepository;
+  final AuthCubit authCubit;
 
   UserDiscoveryCubit({
+    required this.authCubit,
     required IUserDiscoveryRepository userDiscoveryRepository,
     required IRelationsRepository relationsRepository,
   })  : _userDiscoveryRepository = userDiscoveryRepository,
@@ -35,13 +38,14 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
 
   void _updateWasRequested(String id) {
     final state = this.state as UserDiscoveryResult;
-    final users = state.result.toList();
 
-    final i = users.indexWhere((userResult) => userResult.user.id == id);
-    final userResult = users.removeAt(i);
-    users.insert(i, UserResult(userResult.user, true));
-
-    emit(UserDiscoveryResult(users, state.nextPage));
+    emit(
+      UserDiscoveryResult(
+        state.users.toList(),
+        {...state.invitedUserIds, id},
+        state.nextPage,
+      ),
+    );
   }
 
   void clear() {
@@ -58,7 +62,7 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
     int pageIndex = 0,
   }) async {
     try {
-      final previousResult = (state as UserDiscoveryResult).result;
+      final previousUsers = (state as UserDiscoveryResult).users;
 
       final newUsers = (await _userDiscoveryRepository.queryUsers(
         nameQuery: nameQuery,
@@ -67,31 +71,30 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
         pageLength: _resultsPageLength,
       ));
 
-      final newUserResults = newUsers
-          .map((user) => UserResult(user, false))
-          .toList(growable: false);
-
-      assert(newUserResults
-              .map((userResult) => userResult.user.id)
-              .toSet()
-              .length ==
-          newUserResults.length);
-
       final isLastPage = newUsers.length < _resultsPageLength;
       final nextPage = isLastPage ? null : pageIndex + 1;
 
-      final combinedNewResult = <UserResult>[
-        ...previousResult,
-        ...newUserResults
+      final combinedUsers = <User>[
+        ...previousUsers,
+        ...newUsers,
       ];
 
-      if (combinedNewResult.isNotEmpty) {
-        emit(UserDiscoveryResult(combinedNewResult, nextPage));
+      assert(combinedUsers.map((user) => user.id).toSet().length ==
+          combinedUsers.length);
+
+      if (combinedUsers.isNotEmpty) {
+        emit(
+          UserDiscoveryResult(
+            combinedUsers,
+            (state as UserDiscoveryResult).invitedUserIds,
+            nextPage,
+          ),
+        );
       } else {
         emit(UserDiscoveryEmptyResult());
       }
-    } on PointsError catch (e) {
-      emit(UserDiscoveryError(e.message));
+    } on PointsError {
+      authCubit.reportConnectionError();
     }
   }
 }

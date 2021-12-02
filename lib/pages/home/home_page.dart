@@ -4,6 +4,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/pages/relations/relations_sub_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
@@ -47,6 +48,7 @@ class HomePage extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (_) => BlocProvider(
                           create: (_) => UserDiscoveryCubit(
+                            authCubit: context.read<AuthCubit>(),
                             userDiscoveryRepository:
                                 context.read<UserDiscoveryRepository>(),
                             relationsRepository:

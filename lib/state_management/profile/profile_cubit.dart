@@ -1,20 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/profile_repository.dart';
-
-import '../connection/connection_cubit.dart';
 
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final IProfileRepository _profileRepository;
-  final ConnectionCubit _connectionCubit;
+  final AuthCubit _authCubit;
 
   ProfileCubit({
     required IProfileRepository profileRepository,
-    required ConnectionCubit connectionCubit,
+    required AuthCubit connectionCubit,
   })  : _profileRepository = profileRepository,
-        _connectionCubit = connectionCubit,
+        _authCubit = connectionCubit,
         super(ProfileInitialState());
 
   void startListening() async {
@@ -25,7 +24,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         emit(ProfileExistsState(profile));
       }
     } on PointsConnectionError {
-      _connectionCubit.reportError();
+      _authCubit.reportConnectionError();
     }
   }
 

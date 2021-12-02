@@ -26,10 +26,10 @@ class _RelationsUpdateEvent {
 class RelationsRepository extends IRelationsRepository {
   late final String _userId;
   final SupabaseClient _client;
-  late final RealtimeSubscription _sub;
+  RealtimeSubscription? _sub;
 
   final StreamController<UserRelations> _relationsStreamController;
-  late final StreamController<_RelationsUpdateEvent> _updateStreamController;
+  StreamController<_RelationsUpdateEvent>? _updateStreamController;
 
   late final Map<String, List<User>> _currentRelations;
 
@@ -61,7 +61,7 @@ class RelationsRepository extends IRelationsRepository {
         await _client.from("relations").select().eq("id", userId).execute();
 
     if (response.error != null) {
-      _error(PointsConnectionError());
+      throw PointsConnectionError();
     }
 
     for (final rawRelation in response.data) {
@@ -95,7 +95,7 @@ class RelationsRepository extends IRelationsRepository {
         .execute();
 
     if (response.error != null) {
-      _error(PointsConnectionError());
+      throw PointsConnectionError();
     }
 
     final rawUsers = response.data as List;
@@ -118,7 +118,7 @@ class RelationsRepository extends IRelationsRepository {
       final relations = await _fillRelationsWithUsers(relationIds);
       _currentRelations = relations;
       _updateRelations();
-    } on PointsConnectionError catch (e) {
+    } on PointsError catch (e) {
       _relationsStreamController.addError(e);
       return;
     }
@@ -132,14 +132,14 @@ class RelationsRepository extends IRelationsRepository {
         newRecord: payload.newRecord,
         oldRecord: payload.oldRecord,
       );
-      _updateStreamController.add(updateEvent);
+      _updateStreamController?.add(updateEvent);
     }).subscribe((String msg, {String? errorMsg}) {
-      if (errorMsg != null) {
-        _relationsStreamController.addError(PointsConnectionError());
+      if (errorMsg != null || errorMsg == "SUBSCRIPTION_ERROR") {
+        _error(PointsConnectionError());
       }
     });
 
-    await for (final event in _updateStreamController.stream) {
+    await for (final event in _updateStreamController!.stream) {
       await _handleRelationsUpdateEvent(event);
     }
   }
@@ -233,7 +233,7 @@ class RelationsRepository extends IRelationsRepository {
   void _invoke(String id, String function) async {
     final response = await _client.rpc(function, params: {"_id": id}).execute();
     if (response.error != null) {
-      if (response.error!.message.startsWith("SocketException")) {
+      if (response.error!.message.startsWith("4SocketException")) {
         _error(PointsConnectionError());
       }
       _error(PointsIllegalRelationError());
@@ -242,14 +242,15 @@ class RelationsRepository extends IRelationsRepository {
 
   void _error(PointsError error) {
     _relationsStreamController.addError(error);
-    close();
   }
 
   /// Close streams
   @override
   void close() {
     _relationsStreamController.close();
-    _updateStreamController.close();
-    _client.removeSubscription(_sub);
+    _updateStreamController?.close();
+    if(_sub != null) {
+      _client.removeSubscription(_sub!);
+    }
   }
 }

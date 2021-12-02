@@ -1,20 +1,27 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/relations_repository.dart';
 
 part 'relations_state.dart';
 
 class RelationsCubit extends Cubit<RelationsState> {
   final IRelationsRepository _relationsRepository;
+  final AuthCubit authCubit;
 
   RelationsCubit({
+    required this.authCubit,
     required IRelationsRepository relationsRepository,
   })  : _relationsRepository = relationsRepository,
         super(RelationsInitialLoading());
 
   void startListening() async {
-    await for (final relations in _relationsRepository.relationsStream) {
-      emit(RelationsData(relations));
+    try {
+      await for (final relations in _relationsRepository.relationsStream) {
+        emit(RelationsData(relations));
+      }
+    } on PointsError catch(_) {
+      authCubit.reportConnectionError();
     }
   }
 

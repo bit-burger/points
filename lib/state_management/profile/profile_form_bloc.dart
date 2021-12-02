@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/profile_repository.dart';
 import '../../helpers/reg_exp.dart' as regExp;
 
@@ -15,6 +16,8 @@ class ProfileFormBloc extends FormBloc<String, String> {
       }
     };
   }
+
+  final AuthCubit authCubit;
 
   final IProfileRepository _profileRepository;
   late final StreamSubscription<User> _profileSub;
@@ -48,6 +51,7 @@ class ProfileFormBloc extends FormBloc<String, String> {
   final iconSelection = InputFieldBloc<int, dynamic>();
 
   ProfileFormBloc({
+    required this.authCubit,
     required IProfileRepository profileRepository,
   })  : this._profileRepository = profileRepository,
         super(isLoading: true) {
@@ -94,7 +98,7 @@ class ProfileFormBloc extends FormBloc<String, String> {
         icon: iconSelection.value!,
       );
     } on PointsConnectionError {
-      emitFailure(failureResponse: "Connection failed");
+      authCubit.reportConnectionError();
     }
   }
 

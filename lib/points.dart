@@ -2,6 +2,7 @@ import 'package:auth_repository/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:meta_repository/meta_repository.dart';
 import 'package:points/theme/points_theme.dart' as pointsTheme;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,20 +14,44 @@ class Points extends StatelessWidget {
 
   Points({required this.sessionStore}) : super();
 
+  Widget _buildHome() {
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (_) => AuthRepository(
+            client: Supabase.instance.client,
+            sessionStore: sessionStore,
+          ),
+        ),
+        RepositoryProvider(
+          create: (_) => MetadataRepository(
+            client: Supabase.instance.client,
+          ),
+        ),
+      ],
+      child: BlocProvider<AuthCubit>(
+        create: (context) => AuthCubit(
+          metadataRepository: context.read<MetadataRepository>(),
+          authRepository: context.read<AuthRepository>(),
+        )..tryToAutoSignIn(),
+        child: AuthNavigator(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authRepository = AuthRepository(
-      client: Supabase.instance.client,
-      sessionStore: sessionStore,
-    );
-    return NeumorphicApp(
-      title: "points",
-      debugShowCheckedModeBanner: false,
+    return NeumorphicTheme(
+      themeMode: ThemeMode.light,
       theme: pointsTheme.neumorphic,
-      materialTheme: pointsTheme.material,
-      home: BlocProvider<AuthCubit>(
-        create: (_) => AuthCubit(repository: authRepository)..tryToAutoSignIn(),
-        child: AuthNavigator(),
+      child: IconTheme(
+        data: pointsTheme.neumorphic.iconTheme,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: ThemeMode.light,
+          theme: pointsTheme.material,
+          home: _buildHome(),
+        ),
       ),
     );
   }

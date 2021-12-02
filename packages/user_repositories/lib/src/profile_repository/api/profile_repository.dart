@@ -41,13 +41,28 @@ class ProfileRepository extends IProfileRepository {
         .limit(1)
         .execute()
         .listen(_handleUpdate, onError: (_) {
-      _error(PointsConnectionError());
+      _error(
+        PointsConnectionError(),
+      );
     });
   }
 
   // TODO: Handle with error, when no profile is found/0 rows
   void _handleUpdate(final List<Map<String, dynamic>> users) async {
     if (users.isNotEmpty) {
+      // TODO: Temp fix
+      if (users[0]["color"] is String) {
+        users[0]["color"] = int.parse(users[0]["color"]);
+      }
+      if (users[0]["icon"] is String) {
+        users[0]["icon"] = int.parse(users[0]["icon"]);
+      }
+      if (users[0]["points"] is String) {
+        users[0]["points"] = int.parse(users[0]["points"]);
+      }
+      if (users[0]["gives"] is String) {
+        users[0]["gives"] = int.parse(users[0]["gives"]);
+      }
       _addToStream(User.fromJson(users[0]));
     }
   }
@@ -82,7 +97,6 @@ class ProfileRepository extends IProfileRepository {
 
   void _error(PointsError error) {
     _profileStreamController.addError(error);
-    close();
   }
 
   /// Close streams and cancel realtime

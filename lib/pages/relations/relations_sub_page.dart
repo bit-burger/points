@@ -72,8 +72,8 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
                 onLongPressed: onLongPressed == null && onPressed == null
                     ? null
                     : () {
-                  (onLongPressed ?? onPressed)!.call(user);
-                },
+                        (onLongPressed ?? onPressed)!.call(user);
+                      },
                 margin: EdgeInsets.symmetric(horizontal: 16).copyWith(
                   top: 8,
                   bottom: 24,
@@ -98,69 +98,72 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
   }
 
   Widget _buildFriendDetailView(BuildContext context, User user) {
-    return NeumorphicTheme(
-      theme: NeumorphicThemeData(
-        baseColor: colors.colors[user.color],
-      ),
-      child: Neumorphic(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    icons.pointsIcons[user.icon],
-                    size: 48,
-                  ),
-                  SizedBox(width: 16),
-                  Text(user.name, style: Theme.of(context).textTheme.headline4)
-                ],
-              ),
-              SizedBox(height: 32),
-              Text(user.status, style: Theme.of(context).textTheme.headline6),
-              SizedBox(height: 32),
-              Text(
-                user.bio,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 48),
-              Row(
-                children: [
-                  Expanded(
-                    child: NeumorphicIconButton(
-                      icon: Icon(Ionicons.chatbox_outline),
-                      text: Text("Chat"),
-                      // TODO: Implement chatting
-                      onPressed: () {},
+    final color = colors.colors[user.color];
+    return Neumorphic(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icons.pointsIcons[user.icon],
+                  size: 48,
+                ),
+                SizedBox(width: 16),
+                Text(user.name, style: Theme.of(context).textTheme.headline4)
+              ],
+            ),
+            SizedBox(height: 32),
+            Text(user.status, style: Theme.of(context).textTheme.headline6),
+            SizedBox(height: 32),
+            Text(
+              user.bio,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 48),
+            Row(
+              children: [
+                Expanded(
+                  child: NeumorphicIconButton(
+                    icon: Icon(Ionicons.chatbox_outline),
+                    text: Text("Chat"),
+                    // TODO: Implement chatting
+                    onPressed: () {},
+                    style: NeumorphicStyle(
+                      color: color,
                     ),
                   ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: NeumorphicIconButton(
-                      icon: Icon(Ionicons.close_circle_outline),
-                      text: Text("Block"),
-                      onPressed: () {
-                        context.read<RelationsCubit>().block(user.id);
-                        Navigator.pop(context);
-                      },
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: NeumorphicIconButton(
+                    icon: Icon(Ionicons.close_circle_outline),
+                    text: Text("Block"),
+                    onPressed: () {
+                      context.read<RelationsCubit>().block(user.id);
+                      Navigator.pop(context);
+                    },
+                    style: NeumorphicStyle(
+                      color: color,
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 32),
-            ],
-          ),
+                ),
+              ],
+            ),
+            SizedBox(height: 32),
+          ],
         ),
-        style: NeumorphicStyle(
-          intensity: 1,
-          depth: NeumorphicTheme.depth(context)! * 2,
-          boxShape: NeumorphicBoxShape.roundRect(
-            BorderRadius.vertical(top: Radius.circular(32)),
-          ),
+      ),
+      style: NeumorphicStyle(
+        intensity: 1,
+        depth: NeumorphicTheme.depth(context)! * 2,
+        color: color,
+        boxShape: NeumorphicBoxShape.roundRect(
+          BorderRadius.vertical(top: Radius.circular(32)),
         ),
       ),
     );

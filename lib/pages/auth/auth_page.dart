@@ -195,11 +195,11 @@ class _AuthPageState extends State<AuthPage> {
             // Don't update the UI on LoadingState,
             // because errors will go away for the loading time,
             // but come back if nothing changed
-            buildWhen: (oldState, newState) => newState is! LoadingState,
+            buildWhen: (oldState, newState) => newState is! LoadingAuth,
             builder: (context, state) {
               AuthErrorType? errorType;
-              if (state is AuthErrorState) {
-                errorType = state.type;
+              if (state is LoggedOutState) {
+                errorType = state.logInError;
               }
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -220,19 +220,19 @@ class _AuthPageState extends State<AuthPage> {
             buildWhen: (oldState, newState) => newState is! LoggedInState,
             builder: (context, state) {
               AuthErrorType? errorType;
-              if (state is AuthErrorState) {
-                errorType = state.type;
+              if (state is LoggedOutState) {
+                errorType = state.logInError;
               }
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildLoginButton(state is LoadingState),
+                  _buildLoginButton(state is LoadingAuth),
                   SizedBox(
                     height: 16,
                   ),
                   _buildFooter(
                     errorType == AuthErrorType.connection,
-                    state is LoadingState,
+                    state is LoadingAuth,
                   ),
                 ],
               );
@@ -264,8 +264,8 @@ class _AuthPageState extends State<AuthPage> {
             ),
             BlocListener<AuthCubit, AuthState>(
               listener: (_, state) {
-                if (state is AuthErrorState) {
-                  authErrorHandler(state.type);
+                if (state is LoggedOutState && state.logInError != null) {
+                  authErrorHandler(state.logInError!);
                 }
                 if (state is LoggedInState) {
                   loggedInHandler(state.credentials);
@@ -273,8 +273,18 @@ class _AuthPageState extends State<AuthPage> {
               },
               child: Shaker(
                 key: _shakerKey,
-                child: NeumorphicBox(
-                  child: _buildForm(),
+                child: BlocBuilder<AuthCubit, AuthState>(
+                  buildWhen: (oldState, newState) {
+                    return oldState is LoadingAuth || newState is LoadingAuth;
+                  },
+                  builder: (context, state) {
+                    return IgnorePointer(
+                      ignoring: state is LoadingAuth,
+                      child: NeumorphicBox(
+                        child: _buildForm(),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -326,7 +336,7 @@ class _AuthPageState extends State<AuthPage> {
   /// and the [Shaker] widget will be shaken
   void logInOrSignUp() {
     final authCubit = context.read<AuthCubit>();
-    if (authCubit.state is LoadingState) {
+    if (authCubit.state is LoadingAuth) {
       return;
     }
     if (_form.currentState!.validate()) {

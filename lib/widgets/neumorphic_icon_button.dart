@@ -5,11 +5,13 @@ class NeumorphicIconButton extends StatelessWidget {
   final Widget icon;
   final Widget text;
   final VoidCallback onPressed;
+  final NeumorphicStyle? style;
 
   const NeumorphicIconButton({
     required this.icon,
     required this.text,
     required this.onPressed,
+    this.style,
   }) : super();
 
   @override
@@ -29,7 +31,7 @@ class NeumorphicIconButton extends StatelessWidget {
         ],
       ),
       onPressed: onPressed,
-      style: NeumorphicStyle(
+      style: (style ?? NeumorphicStyle()).copyWith(
         boxShape: NeumorphicBoxShape.stadium(),
       ),
     );

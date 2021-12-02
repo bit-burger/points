@@ -17,6 +17,7 @@ import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_field.dart';
 import 'package:points/widgets/user_list_tile.dart';
+import 'package:user_repositories/user_discovery_repository.dart';
 import '../../theme/points_colors.dart' as colors;
 
 class UserDiscoveryPage extends StatefulWidget {
@@ -28,7 +29,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
   final _searchTextController = TextEditingController();
   final _searchFocusNode = FocusNode();
 
-  final _pagingController = PagingController<int, UserResult>(
+  final _pagingController = PagingController<int, User>(
     firstPageKey: 0,
   );
 
@@ -105,7 +106,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
   }
 
   Widget _buildUserList() {
-    return PagedListView<int, UserResult>(
+    return PagedListView<int, User>(
       padding: MediaQuery.of(context).padding.add(EdgeInsets.only(
             top: 80,
             bottom: 80,
@@ -114,15 +115,17 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
         animateTransitions: true,
         firstPageProgressIndicatorBuilder: (_) => Loader(),
         newPageProgressIndicatorBuilder: (_) => Loader(),
-        itemBuilder: (context, userResult, index) {
-          final user = userResult.user;
+        itemBuilder: (context, user, index) {
           return UserListTile(
             name: user.name,
             status: user.status,
             color: user.color,
             icon: user.icon,
             points: user.points,
-            onPressed: userResult.wasRequested
+            onPressed: (context.read<UserDiscoveryCubit>().state
+                        as UserDiscoveryResult)
+                    .invitedUserIds
+                    .contains(user.id)
                 ? null
                 : () => _showUserActions(user.id),
           );
@@ -169,14 +172,6 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
         ],
       );
     }
-    if (state is UserDiscoveryError) {
-      return Text(
-        state.message,
-        style: TextStyle(
-          color: Theme.of(context).errorColor,
-        ),
-      );
-    }
     return _buildUserList();
   }
 
@@ -188,7 +183,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
           _pagingController.value = PagingState(
             nextPageKey: state.nextPage,
             itemList:
-                (state is UserDiscoveryAwaitingPages) ? null : state.result,
+                (state is UserDiscoveryAwaitingPages) ? null : state.users,
           );
         }
       },

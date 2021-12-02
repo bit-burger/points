@@ -7,7 +7,8 @@ environment:
   sdk: ">=2.14.3 <3.0.0"
 
 dependencies:
-  supabase: ^0.2.9
+  supabase:
+    git: https://github.com/offline-first/supabase-dart
   hive: ^2.0.4
 
 dev_dependencies:

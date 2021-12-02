@@ -265,6 +265,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ProfileFormBloc(
+        authCubit: context.read<AuthCubit>(),
         profileRepository: context.read<ProfileRepository>(),
       ),
       child: Builder(

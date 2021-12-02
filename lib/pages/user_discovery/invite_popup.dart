@@ -75,10 +75,8 @@ class InvitePopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<EmailUserInviterCubit>(
       create: (context) {
-        final credentials =
-            (context.read<AuthCubit>().state as LoggedInState).credentials;
         return EmailUserInviterCubit(
-          credentials: credentials,
+          authCubit: context.read<AuthCubit>(),
           userDiscoveryRepository: context.read<UserDiscoveryRepository>(),
           relationsRepository: context.read<RelationsRepository>(),
         );

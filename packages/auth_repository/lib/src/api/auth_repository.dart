@@ -27,9 +27,7 @@ class AuthRepository extends IAuthRepository {
     required SupabaseClient client,
     required Box<String> sessionStore,
   })  : _client = client,
-        _sessionStore = sessionStore {
-    _client.auth.autoRefreshToken = false;
-  }
+        _sessionStore = sessionStore;
 
   @override
   Future<AccountCredentials> logIn(String email, String password) async {
@@ -55,6 +53,7 @@ class AuthRepository extends IAuthRepository {
     final response = await _client.auth.signUp(email, password);
     if (response.error != null) {
       switch (response.error!.message) {
+        case "User already registered":
         case "Thanks for registering, " +
             "now check your email to complete the process.":
         case "A user with this email address has already been registered":
@@ -71,6 +70,10 @@ class AuthRepository extends IAuthRepository {
     return AccountCredentials(userId: user.id, email: user.email!);
   }
 
+  bool persistedLogInDataExists() {
+    return _retrieveSession() != null;
+  }
+
   @override
   Future<AccountCredentials> tryAutoSignIn() async {
     final jsonStr = _retrieveSession();
@@ -79,6 +82,10 @@ class AuthRepository extends IAuthRepository {
     }
 
     final response = await _client.auth.recoverSession(jsonStr);
+
+    if(response.data != null) {
+      _saveSession(response.data!);
+    }
     switch (response.error?.message) {
       case null:
         final user = response.user!;
@@ -94,9 +101,11 @@ class AuthRepository extends IAuthRepository {
   }
 
   @override
-  Future<void> logOut() async {
+  Future<void> logOut({bool keepPersistedData = false}) async {
+    if (!keepPersistedData) {
+      await _deleteSession();
+    }
     final response = await _client.auth.signOut();
-    await _deleteSession();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
     }
@@ -104,9 +113,9 @@ class AuthRepository extends IAuthRepository {
 
   @override
   Future<void> deleteAccount() async {
+    await _deleteSession();
     final response = await _client.rpc("delete_user").execute();
     _client.auth.forceSignOut();
-    await _deleteSession();
     if (response.error != null) {
       throw AuthError(AuthErrorType.connection);
     }

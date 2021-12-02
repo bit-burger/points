@@ -1,6 +1,7 @@
 import 'package:auth_repository/auth_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 import 'package:async/async.dart';
@@ -10,15 +11,16 @@ import 'package:equatable/equatable.dart';
 part 'email_user_inviter_state.dart';
 
 class EmailUserInviterCubit extends Cubit<EmailUserInviterState> {
+  final AuthCubit authCubit;
   final UserDiscoveryRepository _userDiscoveryRepository;
   final RelationsRepository _relationsRepository;
   final AccountCredentials _credentials;
 
   EmailUserInviterCubit({
-    required AccountCredentials credentials,
+    required this.authCubit,
     required UserDiscoveryRepository userDiscoveryRepository,
     required RelationsRepository relationsRepository,
-  })  : _credentials = credentials,
+  })  : _credentials = (authCubit.state as LoggedInState).credentials,
         _userDiscoveryRepository = userDiscoveryRepository,
         _relationsRepository = relationsRepository,
         super(EmailUserInviterInitial());
@@ -38,8 +40,8 @@ class EmailUserInviterCubit extends Cubit<EmailUserInviterState> {
     try {
       await relationsQueue.next;
       emit(EmailUserInviterFinished());
-    } on PointsConnectionError catch (e) {
-      emit(EmailUserInviterError(e.message));
+    } on PointsConnectionError {
+      authCubit.reportConnectionError();
     }
   }
 
@@ -63,8 +65,8 @@ class EmailUserInviterCubit extends Cubit<EmailUserInviterState> {
       } else {
         _handleUserExists(foundUser, email);
       }
-    } on PointsConnectionError catch (e) {
-      emit(EmailUserInviterError(e.message));
+    } on PointsConnectionError {
+      authCubit.reportConnectionError();
     }
   }
 
