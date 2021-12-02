@@ -18,9 +18,3 @@ class UserDiscoveryAwaitingPages extends UserDiscoveryResult {
 }
 
 class UserDiscoveryEmptyResult extends UserDiscoveryState {}
-
-class UserDiscoveryError extends UserDiscoveryState {
-  final String message;
-
-  UserDiscoveryError(this.message);
-}

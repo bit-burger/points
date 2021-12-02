@@ -172,14 +172,6 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
         ],
       );
     }
-    if (state is UserDiscoveryError) {
-      return Text(
-        state.message,
-        style: TextStyle(
-          color: Theme.of(context).errorColor,
-        ),
-      );
-    }
     return _buildUserList();
   }
 

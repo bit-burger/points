@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
@@ -11,8 +12,10 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
 
   final IUserDiscoveryRepository _userDiscoveryRepository;
   final IRelationsRepository _relationsRepository;
+  final AuthCubit authCubit;
 
   UserDiscoveryCubit({
+    required this.authCubit,
     required IUserDiscoveryRepository userDiscoveryRepository,
     required IRelationsRepository relationsRepository,
   })  : _userDiscoveryRepository = userDiscoveryRepository,
@@ -90,8 +93,8 @@ class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
       } else {
         emit(UserDiscoveryEmptyResult());
       }
-    } on PointsError catch (e) {
-      emit(UserDiscoveryError(e.message));
+    } on PointsError {
+      authCubit.reportConnectionError();
     }
   }
 }

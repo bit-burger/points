@@ -36,7 +36,7 @@ class EmailUserInviterFoundUserIsSelf extends EmailUserInviterError {
   EmailUserInviterFoundUserIsSelf() : super("This is your own email");
 }
 
-class EmailUserInviterError extends EmailUserInviterState {
+abstract class EmailUserInviterError extends EmailUserInviterState {
   final String message;
 
   EmailUserInviterError(this.message);
