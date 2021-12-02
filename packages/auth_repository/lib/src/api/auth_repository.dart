@@ -53,6 +53,7 @@ class AuthRepository extends IAuthRepository {
     final response = await _client.auth.signUp(email, password);
     if (response.error != null) {
       switch (response.error!.message) {
+        case "User already registered":
         case "Thanks for registering, " +
             "now check your email to complete the process.":
         case "A user with this email address has already been registered":
