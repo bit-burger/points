@@ -153,14 +153,16 @@ class RelationsRepository extends IRelationsRepository {
     // broadcast them to the _updateStreamController
     final searchParam = "relations:id=eq.$_userId";
     _updateEventQueue = new StreamController();
-    _relationsSub =
-        _client.from(searchParam).on(SupabaseEventTypes.all, (payload) {
-      final updateEvent = _RelationsUpdateEvent(
-        newRecord: payload.newRecord,
-        oldRecord: payload.oldRecord,
-      );
-      _updateEventQueue?.add(updateEvent);
-    }).subscribe((String msg, {String? errorMsg}) {
+    _relationsSub = _client.from(searchParam).on(
+      SupabaseEventTypes.all,
+      (payload) {
+        final updateEvent = _RelationsUpdateEvent(
+          newRecord: payload.newRecord,
+          oldRecord: payload.oldRecord,
+        );
+        _updateEventQueue?.add(updateEvent);
+      },
+    ).subscribe((String msg, {String? errorMsg}) {
       if (errorMsg != null) {
         _error(PointsConnectionError());
       }
@@ -171,8 +173,8 @@ class RelationsRepository extends IRelationsRepository {
         await _handleRelationsUpdateEvent(event);
       } else {
         _handleFriendProfileUpdateEvent(event as _ProfileUpdateEvent);
-        _updateRelations();
       }
+      _updateRelations();
     }
   }
 
