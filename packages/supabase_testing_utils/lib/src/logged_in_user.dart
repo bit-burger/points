@@ -33,9 +33,9 @@ class LoggedInUser {
   );
 
   Future<void> close() async {
-    await auth.logOut();
     profile.close();
     relations.close();
+    await auth.logOut();
   }
 
   static Future<LoggedInUser> getRandom({String? name}) async {

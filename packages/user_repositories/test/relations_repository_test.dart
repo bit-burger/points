@@ -189,4 +189,9 @@ void main() {
     user1.profile.close();
     user2.profile.close();
   });
+
+  tearDown(() {
+    user1.close();
+    user2.close();
+  });
 }
