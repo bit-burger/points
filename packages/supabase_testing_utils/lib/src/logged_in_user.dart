@@ -13,23 +13,30 @@ import 'configure_supabase_client.dart';
 
 class LoggedInUser {
   final SupabaseClient client;
-  final User user;
   final String id, email, password;
   final AuthRepository auth;
   final ProfileRepository profile;
   final RelationsRepository relations;
   final UserDiscoveryRepository userDiscovery;
 
+  User get user => profile.currentProfile!;
+
   LoggedInUser._(
     this.client,
-    this.user,
+    this.id,
     this.email,
     this.password,
     this.auth,
     this.profile,
     this.relations,
     this.userDiscovery,
-  ) : id = user.id;
+  );
+
+  Future<void> close() async {
+    profile.close();
+    relations.close();
+    await auth.logOut();
+  }
 
   static Future<LoggedInUser> getRandom({String? name}) async {
     final supabaseClient = await getConfiguredSupabaseClient();
@@ -73,7 +80,7 @@ class LoggedInUser {
 
     return LoggedInUser._(
       supabaseClient,
-      user,
+      user.id,
       email,
       password,
       authRepository,

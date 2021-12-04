@@ -84,6 +84,15 @@ void main() {
         throwsA(TypeMatcher<AuthAutoSignInFailedError>()),
       );
     }, skip: true);
+
+    tearDown(() async {
+      try {
+        await sut1.logOut();
+      } on Exception {}
+      try {
+        await sut2.logOut();
+      } on Exception {}
+    });
   });
 
   group("Auth flow", () {
@@ -137,6 +146,12 @@ void main() {
       final password = faker.internet.password(length: 5);
 
       expect(sut.signUp(email, password), throwsA(TypeMatcher<AuthError>()));
+    });
+
+    tearDown(() async {
+      try {
+        await sut.logOut();
+      } on Exception {}
     });
   });
 }

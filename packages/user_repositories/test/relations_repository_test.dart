@@ -1,7 +1,8 @@
+import 'package:faker/faker.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:test/test.dart';
 
-import '../../supabase_testing_utils/lib/src/logged_in_user.dart';
+import 'package:supabase_testing_utils/supabase_testing_utils.dart';
 import 'package:async/async.dart';
 
 void main() {
@@ -13,8 +14,9 @@ void main() {
     user2 = await LoggedInUser.getRandom();
   });
 
-  test("request, accept, unfriend, block, unblock", () async {
+  test("request, accept, update profile, unfriend, block, unblock", () async {
     final relationsStream1 = StreamQueue(user1.relations.relationsStream);
+    final profileStream1 = StreamQueue(user1.profile.profileStream);
     final relationsStream2 = StreamQueue(user2.relations.relationsStream);
 
     if (user1.relations.currentUserRelations == null) {
@@ -42,7 +44,6 @@ void main() {
 
     // user2 accepts the request of user1
     user2.relations.accept(user1.id);
-    // await w();
 
     final b1 = await relationsStream1.next;
     expect(
@@ -53,6 +54,18 @@ void main() {
     final b2 = await relationsStream2.next;
     expect(
       b2,
+      UserRelations([user1.user], [], [], [], []),
+    );
+
+    // user1 changes profile
+    final newName = faker.randomPointsName();
+    user1.profile.updateAccount(name: newName);
+
+    await profileStream1.next;
+
+    final b3 = await relationsStream2.next;
+    expect(
+      b3,
       UserRelations([user1.user], [], [], [], []),
     );
 
@@ -175,5 +188,10 @@ void main() {
 
     user1.profile.close();
     user2.profile.close();
+  });
+
+  tearDown(() {
+    user1.close();
+    user2.close();
   });
 }
