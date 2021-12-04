@@ -70,6 +70,7 @@ class AuthRepository extends IAuthRepository {
     return AccountCredentials(userId: user.id, email: user.email!);
   }
 
+  @override
   bool persistedLogInDataExists() {
     return _retrieveSession() != null;
   }
@@ -83,7 +84,7 @@ class AuthRepository extends IAuthRepository {
 
     final response = await _client.auth.recoverSession(jsonStr);
 
-    if(response.data != null) {
+    if (response.data != null) {
       _saveSession(response.data!);
     }
     switch (response.error?.message) {

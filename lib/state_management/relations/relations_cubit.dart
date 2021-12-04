@@ -20,7 +20,7 @@ class RelationsCubit extends Cubit<RelationsState> {
       await for (final relations in _relationsRepository.relationsStream) {
         emit(RelationsData(relations));
       }
-    } on PointsError catch(_) {
+    } on PointsError catch (_) {
       authCubit.reportConnectionError();
     }
   }
