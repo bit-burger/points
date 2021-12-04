@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
 
-cd packages/auth_repository
+cd packages/auth_repository || exit
 flutter pub get
-cd ..
+cd .. || exit
 
-cd chat_repository
+cd chat_repository || exit
 flutter pub get
-cd ..
+cd .. || exit
 
-cd hive_test
+cd hive_test || exit
 flutter pub get
-cd ..
+cd .. || exit
 
-cd meta_repository
+cd meta_repository || exit
 flutter pub get
-cd ..
+cd .. || exit
 
-cd supabase_testing_utils
+cd supabase_testing_utils || exit
 flutter pub get
-cd ..
+cd .. || exit
 
-cd user_repositories
+cd user_repositories || exit
 flutter pub get
-cd ../..
+cd ../.. || exit
 
 flutter pub get
