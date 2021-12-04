@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:ionicons/ionicons.dart';
 import '../theme/points_colors.dart' show colors;
+import '../theme/points_icons.dart';
 
 class UserListTile extends StatelessWidget {
   final String name;
@@ -38,7 +38,7 @@ class UserListTile extends StatelessWidget {
         onPressed: onPressed,
         child: Row(
           children: [
-            Icon(Ionicons.copy_outline),
+            Icon(pointsIcons[icon]),
             SizedBox(width: 16),
             Text(name.padRight(8)),
             SizedBox(width: 16),
