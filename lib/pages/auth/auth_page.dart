@@ -363,9 +363,10 @@ class _AuthPageState extends State<AuthPage> {
   /// and update the button (via the [_formIsValidNotifier])
   void checkIfFormValid() async {
     Future.microtask(() {
-      final emailValid = (_emailForm.currentState?.isValid ?? false);
-      final passwordValid = (_passwordForm.currentState?.isValid ?? false);
-      final isValid = emailValid && passwordValid;
+      final email = _emailForm.currentState?.value;
+      final password = _passwordForm.currentState?.value;
+      final isValid =
+          email != "" && email != null && password != "" && password != null;
       _formIsValidNotifier.value = isValid;
     });
   }
