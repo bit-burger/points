@@ -19,7 +19,10 @@ class LoggedInUser {
   final RelationsRepository relations;
   final UserDiscoveryRepository userDiscovery;
 
-  User get user => profile.currentProfile!;
+  RelatedUser get user => RelatedUser.fromJson(
+        profile.currentProfile!.toJson(),
+        chatId: "",
+      );
 
   LoggedInUser._(
     this.client,

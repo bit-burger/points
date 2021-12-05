@@ -1,7 +1,7 @@
 -- Delete all tables and types to create and replace them again --
-drop table if exists profiles, relations, audit_log, greek_alphabet;
-drop domain if exists points, color, icon;
-drop type if exists relationship_state;
+drop table if exists profiles, relations, audit_log, greek_alphabet cascade;
+drop domain if exists points, color, icon cascade;
+drop type if exists relationship_state cascade;
 drop trigger if exists on_auth_user_created on auth.users cascade;
 
 -- profiles --
@@ -90,9 +90,9 @@ create type relationship_state as enum (
 );
 
 create table public.relations(
---chat_id serial not null unique,
   id uuid not null references auth.users (id) on delete cascade,
   other_id uuid not null references auth.users (id) on delete cascade,
+  chat_id uuid not null,
   state relationship_state not null,
   primary key (id, other_id),
   foreign key (id, other_id) references relations(other_id, id)
@@ -120,3 +120,7 @@ begin;
   create publication supabase_realtime;
 commit;
 alter publication supabase_realtime add table profiles, relations;
+
+-- TODO: TEMP FIX REQUIRES ALL RLS TO BE TURNED OFF AND THE FOLLOWING QUERY TO BE RUN:
+--GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA realtime TO postgres;
+--GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA realtime TO postgres;
