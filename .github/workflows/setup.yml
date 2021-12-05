@@ -24,7 +24,8 @@ jobs:
           cd hive_test && pub install && cd ..
           cd meta_repository && pub install && cd ..
           cd supabase_testing_utils && pub install && cd ..
-          cd user_repositories && pub install
+          cd user_repositories && pub install && cd ..
+          cd chat_repository && pub install
 
   secrets:
     runs-on: ubuntu-latest

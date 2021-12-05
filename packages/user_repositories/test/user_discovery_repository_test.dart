@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   test("Finds user via email", () async {
-    final user1 = await LoggedInUser.getRandom();
-    final user2 = await LoggedInUser.getRandom();
+    final user1 = await LoggedInUser.get();
+    final user2 = await LoggedInUser.get();
 
     final result = await user2.userDiscovery.getUserByEmail(email: user1.email);
 
@@ -24,7 +24,7 @@ void main() {
         "olevenba",
       ];
       for (final name in names) {
-        final user = await LoggedInUser.getRandom(name: name);
+        final user = await LoggedInUser.get(name: name);
         users.add(user);
       }
     });

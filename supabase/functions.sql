@@ -88,7 +88,19 @@ returns setof public.profiles as $func$
 $func$
 LANGUAGE sql;
 
-
+----------
+-- CHAT --
+----------
+CREATE OR REPLACE FUNCTION send_message(chat_id uuid, other_id uuid, content text)
+returns void as
+$$
+BEGIN
+insert into messages(chat_id, sender, receiver, content)
+values (chat_id, auth.uid(), other_id, content);
+END;
+$$
+language plpgsql
+SECURITY DEFINER;
 
 ---------------
 -- RELATIONS --
@@ -124,6 +136,8 @@ declare
 chat_id uuid;
 begin
 select uuid_generate_v4() into chat_id;
+
+insert into chats values (chat_id);
 
 insert into relations values
 (id, other_id, chat_id, state),

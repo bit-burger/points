@@ -17,3 +17,5 @@ dependencies:
     path: ../auth_repository
   user_repositories:
     path: ../user_repositories
+  chat_repository:
+    path: ../chat_repository

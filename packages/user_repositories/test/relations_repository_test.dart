@@ -10,8 +10,8 @@ void main() {
   late LoggedInUser user2;
 
   setUp(() async {
-    user1 = await LoggedInUser.getRandom();
-    user2 = await LoggedInUser.getRandom();
+    user1 = await LoggedInUser.get();
+    user2 = await LoggedInUser.get();
   });
 
   test("request, accept, update profile, unfriend, block, unblock", () async {
