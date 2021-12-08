@@ -1,10 +1,12 @@
 import 'dart:async';
 
-import 'package:chat_repository/src/errors/messages_error.dart';
 import 'package:supabase/supabase.dart';
 
 import 'chat_repository_contract.dart';
+
+import '../errors/messages_error.dart';
 import '../domain/message.dart';
+import '../domain/chat.dart';
 
 class ChatRepository extends IChatRepository {
   final SupabaseClient _client;
@@ -17,9 +19,9 @@ class ChatRepository extends IChatRepository {
 
   String? _specificMessageChatId;
   RealtimeSubscription? _specificMessagesSub;
-  StreamController<List<Message>>? _specificMessagesStreamController;
-  List<Message>? _currentMessagesFromSpecificChat;
-  Stream<List<Message>>? get messagesFromSpecificChat =>
+  StreamController<Chat>? _specificMessagesStreamController;
+  Chat? _currentMessagesFromSpecificChat;
+  Stream<Chat>? get messagesFromSpecificChat =>
       _specificMessagesStreamController?.stream;
 
   ChatRepository({required SupabaseClient client}) : _client = client {
@@ -53,9 +55,9 @@ class ChatRepository extends IChatRepository {
     );
   }
 
-  void _addToSpecificChatStream(List<Message> messages) {
-    _currentMessagesFromSpecificChat = messages;
-    _specificMessagesStreamController!.add(messages);
+  void _addToSpecificChatStream(Chat chat) {
+    _currentMessagesFromSpecificChat = chat;
+    _specificMessagesStreamController!.add(chat);
   }
 
   @override
@@ -68,7 +70,12 @@ class ChatRepository extends IChatRepository {
         chatId: chatId,
         limit: startMaxMessageCount,
       );
-      _addToSpecificChatStream(initialMessages);
+      _addToSpecificChatStream(
+        Chat(
+          initialMessages,
+          initialMessages.length < startMaxMessageCount,
+        ),
+      );
     } on MessageConnectionError catch (e) {
       _specificMessagesStreamController!.addError(e);
       close();
@@ -91,7 +98,10 @@ class ChatRepository extends IChatRepository {
         final message = Message.fromJson(rawMessage);
 
         _addToSpecificChatStream(
-            [message, ..._currentMessagesFromSpecificChat!]);
+          _currentMessagesFromSpecificChat!.copyWithMessages(
+            [message, ..._currentMessagesFromSpecificChat!.messages],
+          ),
+        );
       },
     ).subscribe(
       (_, {String? errorMsg}) {
@@ -105,18 +115,25 @@ class ChatRepository extends IChatRepository {
 
   @override
   void fetchMoreMessages({int howMany = 20}) async {
+    if(_currentMessagesFromSpecificChat!.allMessagesFetched) {
+      return;
+    }
+
     if (_specificMessagesSub != null) {
       try {
         final messages = await _fetchMessages(
           chatId: _specificMessageChatId!,
           limit: howMany,
-          offset: _currentMessagesFromSpecificChat!.length,
+          offset: _currentMessagesFromSpecificChat!.messages.length,
         );
         _addToSpecificChatStream(
-          [
-            ..._currentMessagesFromSpecificChat!,
-            ...messages,
-          ],
+          Chat(
+            [
+              ..._currentMessagesFromSpecificChat!.messages,
+              ...messages,
+            ],
+            messages.length < howMany,
+          ),
         );
       } on MessageConnectionError catch (e) {
         _specificMessagesStreamController!.addError(e);
@@ -127,7 +144,7 @@ class ChatRepository extends IChatRepository {
 
   @override
   void stopListeningToSpecificChat() {
-    if (_specificMessagesSub == null) {
+    if (_specificMessagesSub != null) {
       _client.removeSubscription(_specificMessagesSub!);
       _specificMessagesStreamController!.close();
 

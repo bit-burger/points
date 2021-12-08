@@ -76,6 +76,7 @@ class AuthCubit extends Cubit<AuthState> {
       try {
         final userId = await _authRepository.tryAutoSignIn();
         emit(LoggedInState(userId));
+        print("Signed in from persisted: $userId");
       } on AuthAutoSignInFailedError {
         emit(LoggedOutState());
       } on AuthError {
@@ -98,6 +99,7 @@ class AuthCubit extends Cubit<AuthState> {
       ]);
       final userId = res[0];
 
+      print("Logged in: $userId");
       emit(LoggedInState(userId));
     } on AuthError catch (e) {
       emit(LoggedOutState(e.type));

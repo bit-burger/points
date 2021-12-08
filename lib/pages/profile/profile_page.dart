@@ -6,6 +6,7 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
 import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart';
+import 'package:points/pages/profile/icon_picker_page.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/profile/profile_form_bloc.dart';
@@ -72,10 +73,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         });
                       },
                       onTapUp: (details) async {
-                        await Navigator.pushNamed(
+                        await Navigator.push(
                           context,
-                          "icons",
-                          arguments: formBloc.iconSelection,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BlocProvider(
+                                create: (_) => formBloc.iconSelection,
+                                child: IconPickerPage(),
+                              );
+                            },
+                          ),
                         );
                         setState(() {
                           isOnIconPage = false;

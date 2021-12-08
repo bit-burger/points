@@ -86,11 +86,15 @@ void main() {
   test("Sending messages between two users", () async {
     user1.chat.listenToSpecificChat(chatId);
     final messageQueue1 = StreamQueue(user1.chat.messagesFromSpecificChat!);
-    expect(await messageQueue1.next, []);
+    final user1Messages1 = await messageQueue1.next;
+    expect(user1Messages1.allMessagesFetched, true);
+    expect(user1Messages1.messages, []);
 
     user2.chat.listenToSpecificChat(chatId);
     final messageQueue2 = StreamQueue(user2.chat.messagesFromSpecificChat!);
-    expect(await messageQueue2.next, []);
+    final user2Messages1 = await messageQueue2.next;
+    expect(user2Messages1.allMessagesFetched, true);
+    expect(user2Messages1.messages, []);
 
     final messageContent = faker.lorem.sentence();
     user1.chat.sendMessage(
@@ -106,11 +110,13 @@ void main() {
       receiverId: user2.id,
     );
 
-    final user1Message = await messageQueue1.next;
-    expect(user1Message, [expectedMessage]);
+    final user1Messages2 = await messageQueue1.next;
+    expect(user1Messages2.allMessagesFetched, true);
+    expect(user1Messages2.messages, [expectedMessage]);
 
-    final user2Message = await messageQueue2.next;
-    expect(user2Message, [expectedMessage]);
+    final user2Messages2 = await messageQueue2.next;
+    expect(user2Messages2.allMessagesFetched, true);
+    expect(user2Messages2.messages, [expectedMessage]);
   });
 
   test("Error on on sending a message to self", () {
@@ -162,15 +168,18 @@ void main() {
 
     // slowly load all of the messages
     final messages1 = await messageQueue.next;
-    expect(messages1, actualMessages.sublist(0, 2));
+    expect(messages1.allMessagesFetched, false);
+    expect(messages1.messages, actualMessages.sublist(0, 2));
 
     newUser1.chat.fetchMoreMessages(howMany: 2);
     final messages2 = await messageQueue.next;
-    expect(messages2, actualMessages.sublist(0, 4));
+    expect(messages2.allMessagesFetched, false);
+    expect(messages2.messages, actualMessages.sublist(0, 4));
 
     newUser1.chat.fetchMoreMessages(howMany: 100);
     final messages3 = await messageQueue.next;
-    expect(messages3, actualMessages.sublist(0, 5));
+    expect(messages3.allMessagesFetched, true);
+    expect(messages3.messages, actualMessages.sublist(0, 5));
 
     // Send another message and expect it to also show up
     final longMessageContent =
@@ -180,8 +189,10 @@ void main() {
       receiverId: user1.id,
       content: longMessageContent,
     );
+    final messages4 = await messageQueue.next;
+    expect(messages4.allMessagesFetched, true);
     expect(
-      await messageQueue.next,
+      messages4.messages,
       [
         MessageMatcher(
           chatId: chatId,

@@ -19,9 +19,6 @@ class _IconPickerPageState extends State<IconPickerPage> {
   Widget build(BuildContext context) {
     final iconSize =
         (MediaQuery.of(context).size.width / howManyOnEachRow) * (2 / 3);
-    // TODO: better solution than RouteSettings
-    final inputFieldBloc = ModalRoute.of(context)!.settings.arguments
-        as InputFieldBloc<int, dynamic>;
 
     return NeumorphicScaffold(
       extendBodyBehindAppBar: true,
@@ -75,7 +72,6 @@ class _IconPickerPageState extends State<IconPickerPage> {
             ),
           )),
       body: BlocBuilder<InputFieldBloc<int, dynamic>, InputFieldBlocState>(
-        bloc: inputFieldBloc,
         builder: (context, state) {
           return GridView.builder(
             itemCount: pointsIcons.length,
@@ -86,7 +82,9 @@ class _IconPickerPageState extends State<IconPickerPage> {
               return TextButton(
                 key: ValueKey(index),
                 onPressed: () {
-                  inputFieldBloc.updateValue(index);
+                  context
+                      .read<InputFieldBloc<int, dynamic>>()
+                      .updateValue(index);
                 },
                 child: Icon(
                   pointsIcons[index],

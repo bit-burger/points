@@ -7,6 +7,9 @@ abstract class IRelationsRepository {
   /// Updates of relations
   Stream<UserRelations> get relationsStream;
 
+  /// Current relations (last that were added to the [relationsStream]
+  UserRelations? get currentUserRelations;
+
   /// All mutations of relations can throw a [PointsIllegalRelationError]
 
   /// Accept friend request

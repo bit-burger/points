@@ -1,4 +1,5 @@
 import '../domain/message.dart';
+import '../domain/chat.dart';
 
 /// Repository for chatting and getting chat notifications
 abstract class IChatRepository {
@@ -8,7 +9,7 @@ abstract class IChatRepository {
 
   /// [Message]s from a specific chat
   /// that has to be configured via [listenToSpecificChat]
-  Stream<List<Message>>? get messagesFromSpecificChat;
+  Stream<Chat>? get messagesFromSpecificChat;
 
   /// Send message to chat with the chat_id [chatId].
   ///
