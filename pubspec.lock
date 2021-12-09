@@ -56,14 +56,14 @@ packages:
       name: bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.2.1"
+    version: "8.0.1"
   bloc_test:
     dependency: "direct dev"
     description:
       name: bloc_test
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "8.5.0"
+    version: "9.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -250,7 +250,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.3.3"
+    version: "8.0.0"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -264,7 +264,7 @@ packages:
       name: flutter_form_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.20.6"
+    version: "0.29.3"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -318,7 +318,7 @@ packages:
       name: form_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.20.6"
+    version: "0.29.1"
   frontend_server_client:
     dependency: transitive
     description:
@@ -620,13 +620,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  quiver:
-    dependency: transitive
-    description:
-      name: quiver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1+1"
   realtime_client:
     dependency: transitive
     description:
@@ -733,12 +726,10 @@ packages:
   supabase:
     dependency: "direct dev"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "4b95c2cc3d9dc122918490d56d4c38d9cd81ab33"
-      url: "https://github.com/offline-first/supabase-dart"
-    source: git
-    version: "0.2.9"
+      name: supabase
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.10"
   supabase_flutter:
     dependency: "direct main"
     description:
