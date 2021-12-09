@@ -5,13 +5,13 @@ class NeumorphicBox extends StatelessWidget {
   final Widget child;
   final bool reverseHeight;
   final bool listPadding;
-  final Color? color;
+  final NeumorphicStyle? style;
 
   const NeumorphicBox({
     required this.child,
     this.reverseHeight = false,
     this.listPadding = false,
-    this.color,
+    this.style,
   }) : super();
 
   @override
@@ -23,10 +23,9 @@ class NeumorphicBox extends StatelessWidget {
           : EdgeInsets.all(20),
       child: child,
       style: !reverseHeight
-          ? null
-          : NeumorphicStyle(
+          ? style
+          : (style ?? NeumorphicStyle()).copyWith(
               depth: -NeumorphicTheme.depth(context)!,
-              color: color,
             ),
     );
   }

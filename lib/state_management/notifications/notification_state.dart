@@ -4,7 +4,7 @@ part of 'notification_cubit.dart';
 abstract class Notification {}
 
 class MessageNotification extends Notification {
-  final RelatedUser? sender;
+  final RelatedUser sender;
   final Message message;
 
   MessageNotification(this.sender, this.message);

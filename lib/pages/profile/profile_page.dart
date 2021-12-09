@@ -230,6 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // TODO: Preview should be directly under the icon inside the NeumorphicBox
   Widget _buildPreviewUserListTile(ProfileFormBloc formBloc) {
     return IgnorePointer(
       ignoring: true,

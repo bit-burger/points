@@ -24,15 +24,14 @@ class NotificationCubit extends Cubit<Notification?> {
   void startListening() {
     _notificationSub = chatRepository.messagesNotificationStream.listen(
       (message) {
-        final senderIndex =
-            relationsRepository.currentUserRelations!.all.indexWhere(
+        final relations = relationsRepository.currentUserRelations!.all;
+        final senderIndex = relations.indexWhere(
           (friend) => friend.id == message.senderId,
         );
-        final sender = senderIndex == -1
-            ? null
-            : relationsRepository.currentUserRelations!.all[senderIndex];
-
-        emit(MessageNotification(sender, message));
+        if (senderIndex != -1) {
+          final sender = relations[senderIndex];
+          emit(MessageNotification(sender, message));
+        }
       },
     );
   }

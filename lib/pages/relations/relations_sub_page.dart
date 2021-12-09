@@ -158,7 +158,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
                 ),
               ],
             ),
-            SizedBox(height: 32),
+            SizedBox(height: 32 + MediaQuery.of(context).viewPadding.bottom),
           ],
         ),
       ),

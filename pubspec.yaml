@@ -26,7 +26,6 @@ dependencies:
   in_app_notification: ^1.0.1
   flutter_parsed_text: ^2.2.1
   dash_chat: ^1.1.16
-  scrollable_positioned_list: ^0.2.3
 
   # State management
   flutter_form_bloc: ^0.20.6
