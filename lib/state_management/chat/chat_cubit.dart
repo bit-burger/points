@@ -47,17 +47,17 @@ class ChatCubit extends Cubit<ChatState> {
             ),
           );
         } else {
-          final currentRelations =
-              relationsRepository.currentUserRelations!.all;
+          final currentFriends =
+              relationsRepository.currentUserRelations!.friends;
 
-          final relatedUserIndex = currentRelations
+          final relatedUserIndex = currentFriends
               .indexWhere((relatedUser) => relatedUser.id == userId);
           if (relatedUserIndex == -1) {
             await _close();
             return;
           }
 
-          final user = currentRelations[relatedUserIndex];
+          final user = currentFriends[relatedUserIndex];
           emit(
             MessagesData(
               messages: chat.messages,
@@ -81,14 +81,14 @@ class ChatCubit extends Cubit<ChatState> {
 
     _relationsSub =
         relationsRepository.relationsStream.listen((userRelations) async {
-      final relatedUserIndex = userRelations.all
+      final relatedUserIndex = userRelations.friends
           .indexWhere((relatedUser) => relatedUser.id == userId);
       if (relatedUserIndex == -1) {
         await _close();
         return;
       }
       if (state is MessagesData) {
-        final relatedUser = userRelations.all[relatedUserIndex];
+        final relatedUser = userRelations.friends[relatedUserIndex];
         if ((state as MessagesData).other != relatedUser) {
           emit((state as MessagesData).copyWith(other: relatedUser));
         }
