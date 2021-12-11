@@ -137,7 +137,7 @@ void main() {
     final messageNotificationQueue =
         StreamQueue(user2.chat.messagesNotificationStream);
 
-    final expectedMessages = [];
+    var expectedMessages = [];
     for (var i = 0; i < 5; i++) {
       final messageContent = faker.lorem.sentence();
 
@@ -159,7 +159,9 @@ void main() {
       await Future.delayed(Duration(seconds: 1));
     }
 
-    final actualMessages = await messageNotificationQueue.lookAhead(5);
+    expectedMessages = expectedMessages.reversed.toList();
+
+    final actualMessages = (await messageNotificationQueue.lookAhead(5)).reversed.toList();
     expect(actualMessages, expectedMessages);
 
     final newUser1 = await user1.copyAndRefresh();
@@ -179,7 +181,7 @@ void main() {
     newUser1.chat.fetchMoreMessages(howMany: 100);
     final messages3 = await messageQueue.next;
     expect(messages3.allMessagesFetched, true);
-    expect(messages3.messages, actualMessages.sublist(0, 5));
+    expect(messages3.messages, actualMessages);
 
     // Send another message and expect it to also show up
     final longMessageContent =
@@ -200,7 +202,7 @@ void main() {
           senderId: user2.id,
           receiverId: user1.id,
         ),
-        ...expectedMessages.sublist(0, 5),
+        ...expectedMessages,
       ],
     );
 

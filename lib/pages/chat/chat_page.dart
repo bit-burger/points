@@ -71,7 +71,6 @@ class _ChatPageState extends State<ChatPage> {
     final self = messagesData.self.toChatUser();
     final other = messagesData.other.toChatUser();
 
-    // TODO: fix order of messages
     final messages = messagesData.messages.map((message) {
       final isSelf = message.senderId == messagesData.self.id;
 

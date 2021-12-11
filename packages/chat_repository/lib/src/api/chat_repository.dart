@@ -164,7 +164,7 @@ class ChatRepository extends IChatRepository {
         .from("messages")
         .select("sender, receiver, content, created_at")
         .eq("chat_id", chatId)
-        .order("created_at", ascending: true);
+        .order("created_at", ascending: false);
 
     if (offset != null) {
       query.range(offset, offset + limit - 1);
