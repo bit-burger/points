@@ -35,4 +35,12 @@ class Message {
         'receiverId: $receiverId'
         '}';
   }
+
+  @override
+  int get hashCode => Object.hash(
+        chatId,
+        timestamp,
+        content,
+        senderId,
+      );
 }

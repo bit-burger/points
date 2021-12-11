@@ -115,7 +115,7 @@ class ChatRepository extends IChatRepository {
 
   @override
   void fetchMoreMessages({int howMany = 20}) async {
-    if(_currentMessagesFromSpecificChat!.allMessagesFetched) {
+    if (_currentMessagesFromSpecificChat!.allMessagesFetched) {
       return;
     }
 

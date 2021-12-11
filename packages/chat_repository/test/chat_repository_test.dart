@@ -3,8 +3,6 @@ import 'package:chat_repository/src/errors/messages_error.dart';
 import 'package:faker/faker.dart';
 
 import 'package:supabase_testing_utils/supabase_testing_utils.dart';
-import 'package:test/expect.dart';
-import 'package:test/scaffolding.dart';
 import 'package:test/test.dart';
 
 import 'message_matcher.dart';
@@ -161,7 +159,8 @@ void main() {
 
     expectedMessages = expectedMessages.reversed.toList();
 
-    final actualMessages = (await messageNotificationQueue.lookAhead(5)).reversed.toList();
+    final actualMessages =
+        (await messageNotificationQueue.lookAhead(5)).reversed.toList();
     expect(actualMessages, expectedMessages);
 
     final newUser1 = await user1.copyAndRefresh();

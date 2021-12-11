@@ -1,7 +1,4 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
@@ -89,12 +86,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         });
                       },
                       child: NeumorphicIcon(
-                        pointsIcons[formBloc.iconSelection.value ?? 0],
+                        pointsIcons[formBloc.iconSelection.value],
                         size: constraints.maxWidth * (17 / 24),
                         curve: Curves.easeOut,
                         style: NeumorphicStyle(
                           color: pointsColors
-                              .colors[formBloc.colorSelection.value ?? 9],
+                              .colors[formBloc.colorSelection.value ?? 0],
                           disableDepth: isOnIconPage,
                         ),
                       ),
@@ -238,8 +235,8 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (_, state) {
           return BlocBuilder<ProfileFormBloc, FormBlocState<String, String>>(
             builder: (__, ___) {
-              var name = (formBloc.nameText.value ?? "...").padRight(1);
-              var status = (formBloc.statusText.value ?? "...").padRight(1);
+              var name = (formBloc.nameText.value).padRight(1);
+              var status = (formBloc.statusText.value).padRight(1);
               name = name.substring(0, name.length.clamp(0, 8));
               status = status.substring(0, status.length.clamp(0, 16));
               return AnimatedSwitcher(
@@ -259,7 +256,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: formBloc.colorSelection.value ?? 9,
                   points:
                       state is ProfileExistsState ? state.profile.points : 0,
-                  icon: formBloc.iconSelection.value ?? 0,
+                  icon: formBloc.iconSelection.value,
                 ),
               );
             },

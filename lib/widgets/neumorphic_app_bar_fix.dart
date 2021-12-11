@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 /// Taken and modified from https://github.com/Idean/Flutter-Neumorphic/blob/master/lib/src/widget/app_bar.dart

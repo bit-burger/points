@@ -18,52 +18,55 @@ class AuthNavigator extends StatelessWidget {
   Page _buildHome() {
     return MaterialPage(
       key: ValueKey("HomePageNavigator"),
-      child: MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider(
-            create: (_) => ProfileRepository(
-              client: Supabase.instance.client,
-            ),
-          ),
-          RepositoryProvider(
-            create: (_) => RelationsRepository(
-              client: Supabase.instance.client,
-            ),
-          ),
-          RepositoryProvider(
-            create: (_) => UserDiscoveryRepository(
-              client: Supabase.instance.client,
-            ),
-          ),
-          RepositoryProvider(
-            create: (_) => ChatRepository(
-              client: Supabase.instance.client,
-            ),
-          ),
-        ],
-        child: MultiBlocProvider(
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: MultiRepositoryProvider(
           providers: [
-            BlocProvider(
-              create: (context) => RelationsCubit(
-                authCubit: context.read<AuthCubit>(),
-                relationsRepository: context.read<RelationsRepository>(),
-              )..startListening(),
+            RepositoryProvider(
+              create: (_) => ProfileRepository(
+                client: Supabase.instance.client,
+              ),
             ),
-            BlocProvider(
-              create: (context) => ProfileCubit(
-                profileRepository: context.read<ProfileRepository>(),
-                connectionCubit: context.read<AuthCubit>(),
-              )..startListening(),
+            RepositoryProvider(
+              create: (_) => RelationsRepository(
+                client: Supabase.instance.client,
+              ),
             ),
-            BlocProvider(
-              create: (context) => NotificationCubit(
-                relationsRepository: context.read<RelationsRepository>(),
-                chatRepository: context.read<ChatRepository>(),
-                authCubit: context.read<AuthCubit>(),
-              )..startListening(),
+            RepositoryProvider(
+              create: (_) => UserDiscoveryRepository(
+                client: Supabase.instance.client,
+              ),
+            ),
+            RepositoryProvider(
+              create: (_) => ChatRepository(
+                client: Supabase.instance.client,
+              ),
             ),
           ],
-          child: HomeNavigator(),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => RelationsCubit(
+                  authCubit: context.read<AuthCubit>(),
+                  relationsRepository: context.read<RelationsRepository>(),
+                )..startListening(),
+              ),
+              BlocProvider(
+                create: (context) => ProfileCubit(
+                  profileRepository: context.read<ProfileRepository>(),
+                  connectionCubit: context.read<AuthCubit>(),
+                )..startListening(),
+              ),
+              BlocProvider(
+                create: (context) => NotificationCubit(
+                  relationsRepository: context.read<RelationsRepository>(),
+                  chatRepository: context.read<ChatRepository>(),
+                  authCubit: context.read<AuthCubit>(),
+                )..startListening(),
+              ),
+            ],
+            child: HomeNavigator(),
+          ),
         ),
       ),
     );

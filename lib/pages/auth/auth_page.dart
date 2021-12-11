@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:auth_repository/auth_repository.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -15,7 +14,6 @@ import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_form_field.dart';
 import 'package:points/widgets/shaker.dart';
-import 'package:provider/provider.dart';
 import '../../helpers/reg_exp.dart' as regExp;
 
 class AuthPage extends StatefulWidget {

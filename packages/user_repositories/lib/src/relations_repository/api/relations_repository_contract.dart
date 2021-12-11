@@ -1,7 +1,5 @@
 import 'package:user_repositories/relations_repository.dart';
 
-import '../domain/user_relations.dart';
-
 /// Change and view updates of relations in points
 abstract class IRelationsRepository {
   /// Updates of relations

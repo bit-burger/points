@@ -1,9 +1,5 @@
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/state_management/chat/chat_cubit.dart';
@@ -12,7 +8,6 @@ import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
-import 'package:provider/provider.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:points/theme/points_colors.dart' as pointColors;
 import 'package:points/theme/points_icons.dart' as pointIcons;

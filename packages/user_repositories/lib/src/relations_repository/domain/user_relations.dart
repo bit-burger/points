@@ -44,6 +44,15 @@ class UserRelations {
       other.blockedBy.equals(blockedBy);
 
   @override
+  int get hashCode => Object.hash(
+        friends,
+        requests,
+        pending,
+        blocked,
+        blockedBy,
+      );
+
+  @override
   String toString() {
     return "friends: $friends\n"
         "requests: $requests\n"

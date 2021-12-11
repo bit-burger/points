@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import '../../theme/points_icons.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class IconPickerPage extends StatefulWidget {
   @override

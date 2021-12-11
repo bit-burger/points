@@ -11,9 +11,7 @@ dependencies:
   # Flutter and extensions
   flutter:
     sdk: flutter
-  flutter_neumorphic:
-    git:
-      url: https://github.com/tsvillain/Flutter-Neumorphic.git
+  flutter_neumorphic: ^3.2.0
 
   # Icons and fonts
   cupertino_icons: ^1.0.4
