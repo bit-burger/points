@@ -95,6 +95,8 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
     }
   }
 
+  /// TODO: Put this in own widget that listens to relations and pops accordingly
+  /// TODO: Add buttons "give points" and "unfriend"
   Widget _buildFriendDetailView(BuildContext context, RelatedUser user) {
     final color = colors.colors[user.color];
     return Neumorphic(

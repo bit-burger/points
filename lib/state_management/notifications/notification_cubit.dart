@@ -33,6 +33,9 @@ class NotificationCubit extends Cubit<Notification?> {
           emit(MessageNotification(sender, message));
         }
       },
+      onError: (_) {
+        authCubit.reportConnectionError();
+      }
     );
   }
 

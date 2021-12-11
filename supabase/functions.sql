@@ -119,7 +119,7 @@ table (
   state relationship_state
 )
 AS $$
-  SELECT profiles.*, relations.id as chat_id, relations.state
+  SELECT profiles.*, relations.chat_id as chat_id, relations.state
   FROM relations
   left join profiles on relations.other_id = profiles.id
   where relations.id = auth.uid()
