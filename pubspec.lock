@@ -186,9 +186,11 @@ packages:
   dash_chat:
     dependency: "direct main"
     description:
-      name: dash_chat
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: ee5675ae8ec6ef46fbf5251c73804917a13150f8
+      url: "https://github.com/bit-burger/dash_chat.git"
+    source: git
     version: "1.1.16"
   dbus:
     dependency: transitive

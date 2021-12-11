@@ -75,6 +75,7 @@ class _ChatPageState extends State<ChatPage> {
         text: message.content,
       );
     });
+
     return Stack(
       children: [
         SingleChildScrollView(
@@ -104,7 +105,6 @@ class _ChatPageState extends State<ChatPage> {
               SafeArea(
                 minimum: EdgeInsets.only(bottom: 16),
                 top: false,
-                // TODO: Fix widget error caused by being a Flexible
                 child: MessageListView(
                   scrollController: ScrollController(),
                   // TODO: Parsing of things like **bold**, *italic*
@@ -152,6 +152,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: ValueListenableBuilder<TextEditingValue>(
                   builder: (context, text, child) {
                     return ChatInputToolbar(
+                      scrollController: _scrollController,
                       focusNode: _chatNode,
                       onTextChange: (_) {},
                       inputMaxLines: 16,
