@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import '../theme/points_colors.dart' show colors;
 import '../theme/points_icons.dart';

@@ -16,6 +16,10 @@ jobs:
         run: |
           cd packages/auth_repository
           dart test
+      - name: test chat_repository
+        run: |
+          cd packages/chat_repository
+          dart test
       - name: test user_repositories
         run: |
           cd packages/user_repositories

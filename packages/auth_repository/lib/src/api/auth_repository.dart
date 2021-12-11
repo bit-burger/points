@@ -1,14 +1,5 @@
 import 'package:auth_repository/auth_repository.dart';
 import 'package:supabase/supabase.dart';
-
-import '../errors/auth_auto_sign_in_failed_error.dart';
-import '../errors/auth_error.dart';
-
-import '../domain/account_credentials.dart';
-
-import 'auth_repository_contract.dart';
-
-import 'package:gotrue/gotrue.dart';
 import 'package:hive/hive.dart';
 
 extension on GoTrueClient {

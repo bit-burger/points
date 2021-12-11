@@ -1,15 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 class NeumorphicBox extends StatelessWidget {
   final Widget child;
   final bool reverseHeight;
   final bool listPadding;
+  final NeumorphicStyle? style;
 
   const NeumorphicBox({
     required this.child,
     this.reverseHeight = false,
     this.listPadding = false,
+    this.style,
   }) : super();
 
   @override
@@ -21,8 +22,8 @@ class NeumorphicBox extends StatelessWidget {
           : EdgeInsets.all(20),
       child: child,
       style: !reverseHeight
-          ? null
-          : NeumorphicStyle(
+          ? style
+          : (style ?? NeumorphicStyle()).copyWith(
               depth: -NeumorphicTheme.depth(context)!,
             ),
     );

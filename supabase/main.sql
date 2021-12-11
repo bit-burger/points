@@ -1,8 +1,9 @@
 -- Delete all tables and types to create and replace them again --
-drop table if exists profiles, relations, audit_log, greek_alphabet;
-drop domain if exists points, color, icon;
-drop type if exists relationship_state;
+drop table if exists profiles, relations, chats, messages, audit_log, greek_alphabet cascade;
+drop domain if exists points, color, icon cascade;
+drop type if exists relationship_state cascade;
 drop trigger if exists on_auth_user_created on auth.users cascade;
+drop trigger if exists delete_chat on public.relations;
 
 -- profiles --
 create domain points as bigint check (value >= 0);
@@ -79,7 +80,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- relations --
+-- relations and chatting--
 
 create type relationship_state as enum (
 'friends',
@@ -89,13 +90,19 @@ create type relationship_state as enum (
 'requesting'
 );
 
+create table public.chats(
+  id uuid primary key
+);
+
 create table public.relations(
---chat_id serial not null unique,
   id uuid not null references auth.users (id) on delete cascade,
   other_id uuid not null references auth.users (id) on delete cascade,
+  chat_id uuid not null references chats(id),
   state relationship_state not null,
   primary key (id, other_id),
-  foreign key (id, other_id) references relations(other_id, id)
+  foreign key (id, other_id) references relations(other_id, id),
+  unique(id, other_id, chat_id),
+  foreign key (id, other_id, chat_id) references relations(other_id, id, chat_id)
 );
 
 alter table public.relations enable row level security;
@@ -104,6 +111,33 @@ CREATE POLICY read_own_relations ON public.relations
     FOR SELECT USING (
       auth.uid() = id
     );
+
+create table public.messages(
+  id uuid primary key not null default uuid_generate_v4(),
+  sender uuid not null,
+  receiver uuid not null,
+  chat_id uuid not null,
+  content text not null,
+  created_at timestamp not null default now(),
+  foreign key (sender, receiver, chat_id) references relations(id, other_id, chat_id) on delete cascade
+);
+
+
+create or replace function chat_delete()
+returns trigger as
+$$
+begin
+delete from chats where chats.id = old.chat_id;
+return old;
+end;
+$$
+language plpgsql security definer;
+
+create trigger delete_chat
+after delete on relations
+for each row
+execute procedure chat_delete();
+
 
 -- audit log --
 
@@ -119,4 +153,8 @@ begin;
   drop publication if exists supabase_realtime;
   create publication supabase_realtime;
 commit;
-alter publication supabase_realtime add table profiles, relations;
+alter publication supabase_realtime add table profiles, relations, messages;
+
+-- TODO: TEMP FIX REQUIRES ALL RLS TO BE TURNED OFF AND THE FOLLOWING QUERY TO BE RUN:
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA realtime TO postgres;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA realtime TO postgres;

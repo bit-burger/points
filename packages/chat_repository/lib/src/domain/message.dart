@@ -1,30 +1,46 @@
-enum Sender {
-  self,
-  other,
-}
-
 class Message {
-  final int id;
+  final String chatId;
   final DateTime timestamp;
   final String content;
-  final Sender sender;
+  final String senderId;
+  final String receiverId;
 
-  Message(this.id, this.timestamp, this.content, this.sender);
+  Message(this.chatId, this.timestamp, this.content, this.senderId,
+      this.receiverId);
 
   @override
   bool operator ==(Object other) =>
       other is Message &&
-      other.id == id &&
+      other.chatId == chatId &&
       other.timestamp == timestamp &&
       other.content == content &&
-      other.sender == sender;
+      other.senderId == senderId;
 
-  factory Message.fromJson(Map<String, dynamic> json, String selfId) {
+  factory Message.fromJson(Map<String, dynamic> json, {String? chatId}) {
     return Message(
-      json["id"],
-      json["created_at"],
+      chatId ?? json["chat_id"],
+      DateTime.parse(json["created_at"]),
       json["content"],
-      json["sender"] == selfId ? Sender.self : Sender.other,
+      json["sender"],
+      json["receiver"],
     );
   }
+
+  @override
+  String toString() {
+    return 'Message{'
+        'chatId: $chatId, '
+        'content: $content, '
+        'senderId: $senderId, '
+        'receiverId: $receiverId'
+        '}';
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        chatId,
+        timestamp,
+        content,
+        senderId,
+      );
 }

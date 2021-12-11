@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import '../../theme/points_icons.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class IconPickerPage extends StatefulWidget {
   @override
@@ -19,9 +17,6 @@ class _IconPickerPageState extends State<IconPickerPage> {
   Widget build(BuildContext context) {
     final iconSize =
         (MediaQuery.of(context).size.width / howManyOnEachRow) * (2 / 3);
-    // TODO: better solution than RouteSettings
-    final inputFieldBloc = ModalRoute.of(context)!.settings.arguments
-        as InputFieldBloc<int, dynamic>;
 
     return NeumorphicScaffold(
       extendBodyBehindAppBar: true,
@@ -75,7 +70,6 @@ class _IconPickerPageState extends State<IconPickerPage> {
             ),
           )),
       body: BlocBuilder<InputFieldBloc<int, dynamic>, InputFieldBlocState>(
-        bloc: inputFieldBloc,
         builder: (context, state) {
           return GridView.builder(
             itemCount: pointsIcons.length,
@@ -86,7 +80,9 @@ class _IconPickerPageState extends State<IconPickerPage> {
               return TextButton(
                 key: ValueKey(index),
                 onPressed: () {
-                  inputFieldBloc.updateValue(index);
+                  context
+                      .read<InputFieldBloc<int, dynamic>>()
+                      .updateValue(index);
                 },
                 child: Icon(
                   pointsIcons[index],

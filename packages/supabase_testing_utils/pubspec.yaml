@@ -7,8 +7,7 @@ environment:
   sdk: '>=2.14.3 <3.0.0'
 
 dependencies:
-  supabase:
-    git: https://github.com/offline-first/supabase-dart
+  supabase: ^0.2.10
   dotenv: ^3.0.0
   faker: ^2.0.0
   hive_test:
@@ -17,3 +16,5 @@ dependencies:
     path: ../auth_repository
   user_repositories:
     path: ../user_repositories
+  chat_repository:
+    path: ../chat_repository

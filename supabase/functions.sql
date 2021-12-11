@@ -2,7 +2,7 @@
 -- CONNECTIVITY --
 ------------------
 
-CREATE OR REPLACE FUNCTION check_connection() returns boolean $$
+CREATE OR REPLACE FUNCTION check_connection() returns boolean as $$
 BEGIN
 RETURN TRUE;
 END;
@@ -88,11 +88,64 @@ returns setof public.profiles as $func$
 $func$
 LANGUAGE sql;
 
-
+----------
+-- CHAT --
+----------
+CREATE OR REPLACE FUNCTION send_message(chat_id uuid, other_id uuid, content text)
+returns void as
+$$
+BEGIN
+insert into messages(chat_id, sender, receiver, content)
+values (chat_id, auth.uid(), other_id, content);
+END;
+$$
+language plpgsql
+SECURITY DEFINER;
 
 ---------------
 -- RELATIONS --
 ---------------
+CREATE OR REPLACE FUNCTION get_relations() returns
+table (
+  id uuid,
+  name varchar,
+  status varchar,
+  bio varchar,
+  color int,
+  icon int,
+  points int,
+  gives int,
+  chat_id uuid,
+  state relationship_state
+)
+AS $$
+  SELECT profiles.*, relations.chat_id as chat_id, relations.state
+  FROM relations
+  left join profiles on relations.other_id = profiles.id
+  where relations.id = auth.uid()
+$$
+LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION insert_relation(
+  id uuid,
+  other_id uuid,
+  state relationship_state,
+  other_state relationship_state
+) returns void as $$
+declare
+chat_id uuid;
+begin
+select uuid_generate_v4() into chat_id;
+
+insert into chats values (chat_id);
+
+insert into relations values
+(id, other_id, chat_id, state),
+(other_id, id, chat_id, other_state);
+end;
+$$
+language plpgsql;
+
 
 CREATE OR REPLACE FUNCTION relations_accept(_id uuid) returns void AS $$
 DECLARE
@@ -148,9 +201,7 @@ else
     set state = 'blocked_by'
     where id = _id and other_id = auth.uid();
   else
-    insert into relations(id, other_id, state) values
-    (auth.uid(), _id, 'blocked'),
-    (_id, auth.uid(), 'blocked_by');
+    perform insert_relation(auth.uid(), _id, 'blocked', 'blocked_by');
   end if;
 end if;
 END;
@@ -195,9 +246,7 @@ if relations_between_found = 1 then
   RAISE EXCEPTION 'relation_already_exists';
 end if;
 
-insert into relations(id, other_id, state) VALUES
-(auth.uid(), _id, 'requesting'),
-(_id, auth.uid(), 'request_pending');
+perform insert_relation(auth.uid(), _id, 'requesting', 'request_pending');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;

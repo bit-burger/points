@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:gotrue/gotrue.dart';
 import 'package:faker/faker.dart';
 import 'package:hive/hive.dart';
 import 'package:supabase/supabase.dart';

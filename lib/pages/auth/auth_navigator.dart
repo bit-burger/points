@@ -1,3 +1,4 @@
+import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:points/pages/auth/auth_initial_page.dart';
@@ -5,6 +6,7 @@ import 'package:points/pages/auth/auth_page.dart';
 import 'package:points/pages/auth/connection_error_page.dart';
 import 'package:points/pages/home/home_navigator.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
+import 'package:points/state_management/notifications/notification_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,6 +15,63 @@ import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
 class AuthNavigator extends StatelessWidget {
+  Page _buildHome() {
+    return MaterialPage(
+      key: ValueKey("HomePageNavigator"),
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: MultiRepositoryProvider(
+          providers: [
+            RepositoryProvider(
+              create: (_) => ProfileRepository(
+                client: Supabase.instance.client,
+              ),
+            ),
+            RepositoryProvider(
+              create: (_) => RelationsRepository(
+                client: Supabase.instance.client,
+              ),
+            ),
+            RepositoryProvider(
+              create: (_) => UserDiscoveryRepository(
+                client: Supabase.instance.client,
+              ),
+            ),
+            RepositoryProvider(
+              create: (_) => ChatRepository(
+                client: Supabase.instance.client,
+              ),
+            ),
+          ],
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => RelationsCubit(
+                  authCubit: context.read<AuthCubit>(),
+                  relationsRepository: context.read<RelationsRepository>(),
+                )..startListening(),
+              ),
+              BlocProvider(
+                create: (context) => ProfileCubit(
+                  profileRepository: context.read<ProfileRepository>(),
+                  connectionCubit: context.read<AuthCubit>(),
+                )..startListening(),
+              ),
+              BlocProvider(
+                create: (context) => NotificationCubit(
+                  relationsRepository: context.read<RelationsRepository>(),
+                  chatRepository: context.read<ChatRepository>(),
+                  authCubit: context.read<AuthCubit>(),
+                )..startListening(),
+              ),
+            ],
+            child: HomeNavigator(),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthCubit, AuthState>(
@@ -41,47 +100,7 @@ class AuthNavigator extends StatelessWidget {
                   child: ConnectionErrorPage(),
                 ),
               ),
-            if (state is LoggedInState)
-              MaterialPage(
-                key: ValueKey("HomePageNavigator"),
-                child: MultiRepositoryProvider(
-                  providers: [
-                    RepositoryProvider(
-                      create: (_) => ProfileRepository(
-                        client: Supabase.instance.client,
-                      ),
-                    ),
-                    RepositoryProvider(
-                      create: (_) => RelationsRepository(
-                        client: Supabase.instance.client,
-                      ),
-                    ),
-                    RepositoryProvider(
-                      create: (_) => UserDiscoveryRepository(
-                        client: Supabase.instance.client,
-                      ),
-                    ),
-                  ],
-                  child: MultiBlocProvider(
-                    providers: [
-                      BlocProvider(
-                        create: (context) => RelationsCubit(
-                          authCubit: context.read<AuthCubit>(),
-                          relationsRepository:
-                              context.read<RelationsRepository>(),
-                        )..startListening(),
-                      ),
-                      BlocProvider(
-                        create: (context) => ProfileCubit(
-                          profileRepository: context.read<ProfileRepository>(),
-                          connectionCubit: context.read<AuthCubit>(),
-                        )..startListening(),
-                      ),
-                    ],
-                    child: HomeNavigator(),
-                  ),
-                ),
-              ),
+            if (state is LoggedInState) _buildHome(),
           ],
           onPopPage: (route, result) {
             return route.didPop(result);

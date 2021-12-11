@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:auth_repository/auth_repository.dart';
+import 'package:chat_repository/chat_repository.dart';
 import 'package:faker/faker.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:supabase/supabase.dart' hide User;
@@ -18,8 +19,12 @@ class LoggedInUser {
   final ProfileRepository profile;
   final RelationsRepository relations;
   final UserDiscoveryRepository userDiscovery;
+  final ChatRepository chat;
 
-  User get user => profile.currentProfile!;
+  RelatedUser get user => RelatedUser.fromJson(
+        profile.currentProfile!.toJson(),
+        chatId: "",
+      );
 
   LoggedInUser._(
     this.client,
@@ -30,25 +35,46 @@ class LoggedInUser {
     this.profile,
     this.relations,
     this.userDiscovery,
+    this.chat,
   );
 
   Future<void> close() async {
     profile.close();
     relations.close();
+    chat.close();
     await auth.logOut();
   }
 
-  static Future<LoggedInUser> getRandom({String? name}) async {
+  Future<LoggedInUser> copyAndRefresh() {
+    return get(
+      signIn: true,
+      email: email,
+      password: password,
+    );
+  }
+
+  static Future<LoggedInUser> get({
+    String? name,
+    bool signIn = false,
+    String? email,
+    String? password,
+  }) async {
     final supabaseClient = await getConfiguredSupabaseClient();
-    final email = faker.internet.email();
-    final password = faker.internet.password(length: 8);
+
+    email ??= faker.internet.email();
+    password ??= faker.internet.password(length: 8);
 
     final sessionStore = FakeHiveBox<String>();
     final authRepository = AuthRepository(
       client: supabaseClient,
       sessionStore: sessionStore,
     );
-    await authRepository.signUp(email, password);
+
+    if (signIn) {
+      await authRepository.logIn(email, password);
+    } else {
+      await authRepository.signUp(email, password);
+    }
 
     final profileRepository = ProfileRepository(
       client: supabaseClient,
@@ -78,6 +104,10 @@ class LoggedInUser {
       client: supabaseClient,
     );
 
+    final chatRepository = ChatRepository(
+      client: supabaseClient,
+    );
+
     return LoggedInUser._(
       supabaseClient,
       user.id,
@@ -87,6 +117,7 @@ class LoggedInUser {
       profileRepository,
       relationsRepository,
       userDiscoverRepository,
+      chatRepository,
     );
   }
 }

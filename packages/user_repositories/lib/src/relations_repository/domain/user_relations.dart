@@ -1,21 +1,21 @@
-import '../../domain_shared/user.dart';
+import 'related_user.dart';
 
 /// Represents the relations a user in points has
 class UserRelations {
   /// All friends of the user
-  final List<User> friends;
+  final List<RelatedUser> friends;
 
   /// All the requests to the user
-  final List<User> requests;
+  final List<RelatedUser> requests;
 
   /// All requests the user has sent
-  final List<User> pending;
+  final List<RelatedUser> pending;
 
   /// All Users that the user blocked
-  final List<User> blocked;
+  final List<RelatedUser> blocked;
 
   /// All users that have blocked this user
-  final List<User> blockedBy;
+  final List<RelatedUser> blockedBy;
 
   UserRelations(
       this.friends, this.requests, this.pending, this.blocked, this.blockedBy);
@@ -24,7 +24,8 @@ class UserRelations {
     return UserRelations([], [], [], [], []);
   }
 
-  List<User> get all => friends + requests + pending + blocked + blockedBy;
+  List<RelatedUser> get all =>
+      friends + requests + pending + blocked + blockedBy;
 
   int get relationsCount => normalRelationsCount + blockedRelationsCount;
 
@@ -41,6 +42,15 @@ class UserRelations {
       other.pending.equals(pending) &&
       other.blocked.equals(blocked) &&
       other.blockedBy.equals(blockedBy);
+
+  @override
+  int get hashCode => Object.hash(
+        friends,
+        requests,
+        pending,
+        blocked,
+        blockedBy,
+      );
 
   @override
   String toString() {

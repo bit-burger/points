@@ -1,6 +1,5 @@
 import 'package:supabase/supabase.dart' hide User;
 import 'package:user_repositories/profile_repository.dart';
-import '../../domain_shared/user.dart';
 
 import '../user_discovery_function_names.dart' as functions;
 

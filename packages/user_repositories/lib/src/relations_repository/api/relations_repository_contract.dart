@@ -1,11 +1,12 @@
 import 'package:user_repositories/relations_repository.dart';
 
-import '../domain/user_relations.dart';
-
 /// Change and view updates of relations in points
 abstract class IRelationsRepository {
   /// Updates of relations
   Stream<UserRelations> get relationsStream;
+
+  /// Current relations (last that were added to the [relationsStream]
+  UserRelations? get currentUserRelations;
 
   /// All mutations of relations can throw a [PointsIllegalRelationError]
 

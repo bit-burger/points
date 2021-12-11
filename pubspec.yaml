@@ -11,9 +11,7 @@ dependencies:
   # Flutter and extensions
   flutter:
     sdk: flutter
-  flutter_neumorphic:
-    git:
-      url: https://github.com/tsvillain/Flutter-Neumorphic.git
+  flutter_neumorphic: ^3.2.0
 
   # Icons and fonts
   cupertino_icons: ^1.0.4
@@ -23,11 +21,15 @@ dependencies:
   # Widgets
   adaptive_dialog: ^1.2.0
   infinite_scroll_pagination: ^3.1.0
+  in_app_notification: ^1.0.1
+  flutter_parsed_text: ^2.2.1
+  dash_chat:
+    git: https://github.com/bit-burger/dash_chat.git
 
   # State management
-  flutter_form_bloc: ^0.20.6
-  flutter_bloc: ^7.3.3
-  bloc: ^7.2.1
+  flutter_form_bloc: ^0.29.1
+  flutter_bloc: ^8.0.0
+  bloc: ^8.0.1
   provider: ^6.0.1
 
   # Configuration
@@ -45,19 +47,17 @@ dependencies:
     path: ./packages/user_repositories
   meta_repository:
     path: ./packages/meta_repository
-
-dependency_overrides:
-  supabase:
-    git: https://github.com/offline-first/supabase-dart
+  chat_repository:
+    path: ./packages/chat_repository
 
 dev_dependencies:
   # Test framework
-  bloc_test: ^8.5.0
+  bloc_test: ^9.0.1
   flutter_test:
     sdk: flutter
 
   # Raw packages (without Flutter)
-  supabase: ^0.2.9
+  supabase: ^0.2.10
   hive: ^2.0.4
 
   # Mocking and faking

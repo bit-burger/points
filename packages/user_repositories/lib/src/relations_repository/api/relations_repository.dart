@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:supabase/supabase.dart' hide User;
 
-import '../../domain_shared/user.dart';
 import '../../errors_shared/points_connection_error.dart';
 import '../../errors_shared/points_error.dart';
 import '../domain/user_relations.dart';
 import '../errors/points_illegal_relation_error.dart';
 import '../relations_function_names.dart' as functions;
+import '../domain/related_user.dart';
 import 'relations_repository_contract.dart';
 
 /// Represents one change in supabase realtime
@@ -24,7 +24,7 @@ class _RelationsUpdateEvent extends _UpdateEvent {
 }
 
 class _ProfileUpdateEvent extends _UpdateEvent {
-  final User profile;
+  final RelatedUser profile;
 
   _ProfileUpdateEvent({required this.profile});
 }
@@ -45,13 +45,13 @@ class RelationsRepository extends IRelationsRepository {
   /// All relations that could
   /// not be fit inside the [_relationsProfileSubs]
   ///
-  /// The user id is mapped to the [User]
+  /// The user id is mapped to the [RelatedUser]
   final Set<String> _friendsProfilesSubsExcess = Set();
 
   late final StreamController<UserRelations> _relationsStreamController;
   StreamController<_UpdateEvent>? _updateEventQueue;
 
-  late final Map<String, List<User>> _currentRelations;
+  late final Map<String, List<RelatedUser>> _currentRelations;
 
   UserRelations? currentUserRelations;
 
@@ -67,77 +67,36 @@ class RelationsRepository extends IRelationsRepository {
     _userId = _client.auth.user()!.id;
   }
 
-  Future<Map<String, Set<String>>> _getRelationUserIds() async {
-    final userId = _client.auth.user()!.id;
-
-    final Map<String, Set<String>> relationIds = {
-      "friends": {},
-      "blocked": {},
-      "blocked_by": {},
-      "requesting": {},
-      "request_pending": {},
+  Future<Map<String, List<RelatedUser>>> _fetchInitialRelations() async {
+    final initialRelations = <String, List<RelatedUser>>{
+      "friends": [],
+      "blocked": [],
+      "blocked_by": [],
+      "requesting": [],
+      "request_pending": [],
     };
-
-    final response =
-        await _client.from("relations").select().eq("id", userId).execute();
-
+    final response = await _client.rpc("get_relations").execute();
     if (response.error != null) {
       throw PointsConnectionError();
     }
-
-    for (final rawRelation in response.data) {
-      final relationId = rawRelation["other_id"];
-      relationIds[rawRelation["state"]]!.add(relationId);
+    final rawRelatedUsers = response.data as List;
+    for (final rawRelatedUser in rawRelatedUsers) {
+      final relationState = rawRelatedUser["state"];
+      initialRelations[relationState]!.add(
+        RelatedUser.fromJson(
+          rawRelatedUser,
+          chatId: rawRelatedUser["friend_id"],
+        ),
+      );
     }
-
-    return relationIds;
-  }
-
-  Future<Map<String, List<User>>> _fillRelationsWithUsers(
-    Map<String, Set<String>> relationIds,
-  ) async {
-    final allRelationIds = <String>[];
-
-    for (final relations in relationIds.values) {
-      allRelationIds.addAll(relations);
-    }
-
-    assert(
-      allRelationIds.toSet().length == allRelationIds.length,
-      "allRelationIds contains duplicates",
-    );
-
-    final Map<String, List<User>> relations = {};
-
-    final response = await _client
-        .from("profiles")
-        .select()
-        .in_("id", allRelationIds)
-        .execute();
-
-    if (response.error != null) {
-      throw PointsConnectionError();
-    }
-
-    final rawUsers = response.data as List;
-    final users = rawUsers.map<User>((rawUser) => User.fromJson(rawUser));
-
-    relationIds.forEach((relationType, relationOfRelationTypeIds) {
-      relations[relationType] = relationOfRelationTypeIds
-          .map<User>((userId) => users.firstWhere((user) => user.id == userId))
-          .toList();
-    });
-
-    return relations;
+    return initialRelations;
   }
 
   /// First fetch all data with
   /// [_getRelationUserIds] and [_fillRelationsWithUsers]
   void _startStreaming() async {
     try {
-      final relationIds = await _getRelationUserIds();
-      final relations = await _fillRelationsWithUsers(relationIds);
-      _currentRelations = relations;
+      _currentRelations = await _fetchInitialRelations();
       _updateRelations();
     } on PointsError catch (e) {
       _relationsStreamController.addError(e);
@@ -146,11 +105,12 @@ class RelationsRepository extends IRelationsRepository {
 
     // Subscribe to friends, requests and pending profiles
     for (final user in _currentRelations["friends"]!) {
-      _handlerAddFriend(user.id);
+      _handlerAddFriendListener(user.id, user.chatId);
     }
 
     // Subscribe to the updates of the table and
-    // broadcast them to the _updateStreamController
+    // broadcast them to the _updateEventQueue
+
     final searchParam = "relations:id=eq.$_userId";
     _updateEventQueue = new StreamController();
     _relationsSub = _client.from(searchParam).on(
@@ -168,6 +128,8 @@ class RelationsRepository extends IRelationsRepository {
       }
     });
 
+    // handle each event of the _updateEventQueue and
+    // update the relations after the handling
     await for (final event in _updateEventQueue!.stream) {
       if (event is _RelationsUpdateEvent) {
         await _handleRelationsUpdateEvent(event);
@@ -179,7 +141,7 @@ class RelationsRepository extends IRelationsRepository {
   }
 
   /// fetch a user and handle the error appropriately
-  Future<User> fetchUser(String userId) async {
+  Future<RelatedUser> fetchRelatedUser(String userId, String chatId) async {
     final response = await _client
         .from("profiles")
         .select()
@@ -189,13 +151,13 @@ class RelationsRepository extends IRelationsRepository {
     if (response.error != null) {
       throw PointsConnectionError();
     }
-    return User.fromJson(response.data);
+    return RelatedUser.fromJson(response.data, chatId: chatId);
   }
 
   /// Handle the removal of a friend by trying to removing its listener,
   /// it also starts listening to the next friend in line,
   /// if there wasn't the capacity in the past (because of the [realtimeLimit])
-  Future<void> _handleRemoveFriend(String id) async {
+  Future<void> _handleRemoveFriendListener(String id) async {
     if (_friendsProfilesSubs[id] != null) {
       _client.removeSubscription(_friendsProfilesSubs[id]!);
       _friendsProfilesSubs.remove(id);
@@ -205,9 +167,12 @@ class RelationsRepository extends IRelationsRepository {
         final userId = _friendsProfilesSubsExcess.first;
         _friendsProfilesSubsExcess.remove(userId);
         try {
-          final user = await fetchUser(userId);
+          final chatId = currentUserRelations!.all
+              .firstWhere((user) => user.id == userId)
+              .chatId;
+          final user = await fetchRelatedUser(userId, chatId);
           _updateEventQueue!.add(_ProfileUpdateEvent(profile: user));
-          _handlerAddFriend(userId);
+          _handlerAddFriendListener(userId, chatId);
         } on PointsError catch (e) {
           _error(e);
         }
@@ -218,27 +183,33 @@ class RelationsRepository extends IRelationsRepository {
   /// Handle the adding of a friend by listening to its profile,
   /// if that is not possible, because the [realtimeLimit] would be broken,
   /// add it to the [_friendsProfilesSubsExcess]
-  void _handlerAddFriend(String userId) async {
+  void _handlerAddFriendListener(String userId, String chatId) async {
     if (_friendsProfilesSubs.length < realtimeLimit) {
       _friendsProfilesSubs[userId] = _client.from("profiles:id=eq.$userId").on(
         SupabaseEventTypes.update,
         (payload) {
-          final user = payload.newRecord!;
+          final rawUser = payload.newRecord!;
           // TODO: Temp fix
-          if (user["color"] is String) {
-            user["color"] = int.parse(user["color"]);
+          if (rawUser["color"] is String) {
+            rawUser["color"] = int.parse(rawUser["color"]);
           }
-          if (user["icon"] is String) {
-            user["icon"] = int.parse(user["icon"]);
+          if (rawUser["icon"] is String) {
+            rawUser["icon"] = int.parse(rawUser["icon"]);
           }
-          if (user["points"] is String) {
-            user["points"] = int.parse(user["points"]);
+          if (rawUser["points"] is String) {
+            rawUser["points"] = int.parse(rawUser["points"]);
           }
-          if (user["gives"] is String) {
-            user["gives"] = int.parse(user["gives"]);
+          if (rawUser["gives"] is String) {
+            rawUser["gives"] = int.parse(rawUser["gives"]);
           }
-          _updateEventQueue!
-              .add(_ProfileUpdateEvent(profile: User.fromJson(user)));
+          _updateEventQueue!.add(
+            _ProfileUpdateEvent(
+              profile: RelatedUser.fromJson(
+                rawUser,
+                chatId: chatId,
+              ),
+            ),
+          );
         },
       ).subscribe((String msg, {String? errorMsg}) {
         if (errorMsg != null) {
@@ -279,7 +250,7 @@ class RelationsRepository extends IRelationsRepository {
 
     // If the newRecords does not exist,
     // try to remove a listener on the users profile
-    late final User user;
+    late final RelatedUser user;
     if (event.oldRecord != null) {
       _currentRelations.values.forEach((relations) {
         relations.removeWhere((user_) {
@@ -292,7 +263,7 @@ class RelationsRepository extends IRelationsRepository {
       });
     } else {
       try {
-        user = await fetchUser(userId);
+        user = await fetchRelatedUser(userId, event.newRecord!["chat_id"]);
       } on PointsError catch (e) {
         _error(e);
       }
@@ -301,30 +272,30 @@ class RelationsRepository extends IRelationsRepository {
       final relationsType = event.newRecord!["state"]!;
       _currentRelations[relationsType]!.add(user);
       if (relationsType == "friends") {
-        _handlerAddFriend(userId);
+        _handlerAddFriendListener(userId, user.chatId);
       } else {
-        await _handleRemoveFriend(userId);
+        await _handleRemoveFriendListener(userId);
       }
     } else {
-      await _handleRemoveFriend(userId);
+      await _handleRemoveFriendListener(userId);
     }
   }
 
   /// Create a new [UserRelations] with the [_currentRelations] sorted
   void _updateRelations() {
     final userRelations = UserRelations(
-      _sortUserList(_currentRelations["friends"]!),
-      _sortUserList(_currentRelations["request_pending"]!),
-      _sortUserList(_currentRelations["requesting"]!),
-      _sortUserList(_currentRelations["blocked"]!),
-      _sortUserList(_currentRelations["blocked_by"]!),
+      _sortFriendList(_currentRelations["friends"]!),
+      _sortFriendList(_currentRelations["request_pending"]!),
+      _sortFriendList(_currentRelations["requesting"]!),
+      _sortFriendList(_currentRelations["blocked"]!),
+      _sortFriendList(_currentRelations["blocked_by"]!),
     );
     _relationsStreamController.add(userRelations);
     currentUserRelations = userRelations;
   }
 
   /// Sort [User]s into a new list by name
-  List<User> _sortUserList(List<User> list) {
+  List<RelatedUser> _sortFriendList(List<RelatedUser> list) {
     return [...list]..sort((user1, user2) => user1.name.compareTo(user2.name));
   }
 
@@ -367,7 +338,7 @@ class RelationsRepository extends IRelationsRepository {
   void _invoke(String id, String function) async {
     final response = await _client.rpc(function, params: {"_id": id}).execute();
     if (response.error != null) {
-      if (response.error!.message.startsWith("4SocketException")) {
+      if (response.error!.message.startsWith("SocketException")) {
         _error(PointsConnectionError());
       }
       _error(PointsIllegalRelationError());

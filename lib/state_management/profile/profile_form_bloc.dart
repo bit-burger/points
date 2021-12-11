@@ -26,7 +26,7 @@ class ProfileFormBloc extends FormBloc<String, String> {
     validators: [
       lengthCheck("Name", maxLength: 8),
       (name) {
-        if (regExp.pointsNameHyphenSpaceCheck.hasMatch(name!)) {
+        if (regExp.pointsNameHyphenSpaceCheck.hasMatch(name)) {
           return "'-' should not be at the begging or end of the name";
         } else if (!regExp.pointsSimpleName.hasMatch(name)) {
           // hyphens means '-'
@@ -48,7 +48,7 @@ class ProfileFormBloc extends FormBloc<String, String> {
   final colorSelection = SelectFieldBloc<int, dynamic>(
     items: List.generate(10, (i) => i),
   );
-  final iconSelection = InputFieldBloc<int, dynamic>();
+  final iconSelection = InputFieldBloc<int, dynamic>(initialValue: 0);
 
   ProfileFormBloc({
     required this.authCubit,
@@ -91,11 +91,11 @@ class ProfileFormBloc extends FormBloc<String, String> {
   void onSubmitting() async {
     try {
       await _profileRepository.updateAccount(
-        name: nameText.value!,
-        status: statusText.value!,
-        bio: bioText.value!,
-        color: colorSelection.value!,
-        icon: iconSelection.value!,
+        name: nameText.value,
+        status: statusText.value,
+        bio: bioText.value,
+        color: colorSelection.value,
+        icon: iconSelection.value,
       );
     } on PointsConnectionError {
       authCubit.reportConnectionError();

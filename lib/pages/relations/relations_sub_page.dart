@@ -1,8 +1,6 @@
 import 'dart:io' show Platform;
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
@@ -30,13 +28,13 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
   }
 
   Iterable<Widget> _listViewFromUsers({
-    required List<User> users,
+    required List<RelatedUser> users,
     String? name,
     String? key,
-    void Function(User user)? onPressed,
-    void Function(User user)? onLongPressed,
-    Future<bool> Function(User user)? confirmDismiss,
-    void Function(User user)? onDismissed,
+    void Function(RelatedUser user)? onPressed,
+    void Function(RelatedUser user)? onLongPressed,
+    Future<bool> Function(RelatedUser user)? confirmDismiss,
+    void Function(RelatedUser user)? onDismissed,
   }) sync* {
     assert((name != null) != (key != null));
     if (users.isNotEmpty) {
@@ -97,7 +95,9 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
     }
   }
 
-  Widget _buildFriendDetailView(BuildContext context, User user) {
+  /// TODO: Put this in own widget that listens to relations and pops accordingly
+  /// TODO: Add buttons "give points" and "unfriend"
+  Widget _buildFriendDetailView(BuildContext context, RelatedUser user) {
     final color = colors.colors[user.color];
     return Neumorphic(
       child: Padding(
@@ -131,8 +131,12 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
                   child: NeumorphicIconButton(
                     icon: Icon(Ionicons.chatbox_outline),
                     text: Text("Chat"),
-                    // TODO: Implement chatting
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        "/chat/${user.chatId}/${user.id}",
+                      );
+                    },
                     style: NeumorphicStyle(
                       color: color,
                     ),
@@ -154,7 +158,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
                 ),
               ],
             ),
-            SizedBox(height: 32),
+            SizedBox(height: 32 + MediaQuery.of(context).viewPadding.bottom),
           ],
         ),
       ),

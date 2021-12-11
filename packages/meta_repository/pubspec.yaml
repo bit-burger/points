@@ -7,8 +7,7 @@ environment:
   sdk: '>=2.14.3 <3.0.0'
 
 dependencies:
-  supabase: ^0.2.9
+  supabase: ^0.2.10
 
 dev_dependencies:
-  lints: ^1.0.0
   test: ^1.16.0

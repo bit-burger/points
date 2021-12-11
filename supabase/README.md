@@ -10,4 +10,4 @@
 
 4. Copy paste main.sql into it and click on run
 
-5. Make another new query but copy and run functions.sql in it
+5. Make another new query but copy and run functions.sql in it on run

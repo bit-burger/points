@@ -7,4 +7,9 @@ class AccountCredentials {
     required this.userId,
     required this.email,
   });
+
+  @override
+  String toString() {
+    return '{user-ID: $userId, email: $email}';
+  }
 }
