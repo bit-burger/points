@@ -24154,7 +24154,7 @@ if($.J==null)A.aie()
 $.J.toString
 A.aMh(B.OR)
 s=2
-return A.D($.ay9().xW(0,".env"),$async$x_)
+return A.D($.ay9().xW(0,"env"),$async$x_)
 case 2:s=3
 return A.D(A.asX(),$async$x_)
 case 3:q=$.qT()
