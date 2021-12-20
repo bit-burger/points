@@ -155,6 +155,7 @@ class ChatRepository extends IChatRepository {
     }
   }
 
+  // TODO: Instead of offset use timestamp of last message
   Future<List<Message>> _fetchMessages({
     required String chatId,
     required int limit,
@@ -164,7 +165,7 @@ class ChatRepository extends IChatRepository {
         .from("messages")
         .select("sender, receiver, content, created_at")
         .eq("chat_id", chatId)
-        .order("created_at", ascending: false);
+        .order("created_at");
 
     if (offset != null) {
       query.range(offset, offset + limit - 1);

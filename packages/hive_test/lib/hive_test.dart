@@ -149,4 +149,9 @@ class FakeHiveBox<E> extends Box<E> {
     // TODO: implement watch
     throw UnimplementedError();
   }
+
+  @override
+  noSuchMethod(Invocation invocation) {
+    return super.noSuchMethod(invocation);
+  }
 }

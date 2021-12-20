@@ -18,3 +18,5 @@ dependencies:
     path: ../user_repositories
   chat_repository:
     path: ../chat_repository
+  notification_repository:
+    path: ../notification_repository

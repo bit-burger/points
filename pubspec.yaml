@@ -49,6 +49,8 @@ dependencies:
     path: ./packages/meta_repository
   chat_repository:
     path: ./packages/chat_repository
+  notification_repository:
+    path: ./packages/notification_repository
 
 dev_dependencies:
   # Test framework
@@ -68,5 +70,4 @@ flutter:
   assets:
     - .env
     - google_fonts/
-
   uses-material-design: true
