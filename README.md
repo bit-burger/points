@@ -52,7 +52,7 @@ A mock social media app
 ### To run the project:
 1. Clone the project
 2. First you must run the script `pub-installer.sh`
-3. Setup a supabase project ([instructions](supabase/README.md))
+3. Setup the supabase project with the matching settings and tables ([instructions](supabase/README.md))
 4. Then create a new text file in the root directory called .env
 5. In .env write your supabase credentials,
    that you get from your new project (Settings > API) in such a form:
