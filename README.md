@@ -2,7 +2,7 @@
 
 A mock social media app, written in dart with Flutter, supabase is used as a backend
 
-<img src=".github/home.png">
+<img src=".github/home.png" width="30%">
 
 <p float="center">
     <img src=".github/sign-in-demo.gif" width="30%">
