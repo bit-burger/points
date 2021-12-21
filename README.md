@@ -7,7 +7,7 @@ A mock social media app
 <br>
 
 <p align="center">
-    Written in <a href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as state managment, in the backend <a href="https://supabase.com">supabase</a> is used
+    Written in <a href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as state managment, in the backend <a href="https://supabase.com">supabase</a> is used for auth, data storage, and realtime syncing
 </p>
 
 <p float="center">
@@ -45,16 +45,21 @@ A mock social media app
  
 ### Backend
 - [supabase](https://supabase.com) powered by a [PostgreSQL](https://postgresql.org) database
+
 ## Getting started
 
 ### To run the project:
-1. First you must run:
- `flutter pub install`
-3. Then make a new text file in the root directory called .env
-4. In .env write your supabase credentials in such a form:
+1. Clone the project
+2. First you must run the script `pub-installer.sh`
+3. Setup a supabase project ([instructions](supabase/README.md))
+4. Then create a new text file in the root directory called .env
+5. In .env write your supabase credentials,
+   that you get from your new project (Settings > API) in such a form:
 ```shell script
 SUPABASE_URL="YOUR_SUPABASE_URL"
 SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
 ```
-2. Run the app with:
- 
+5. Run the app on your preferred device with:
+```shell script
+flutter run
+```
