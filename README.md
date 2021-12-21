@@ -7,8 +7,8 @@ A mock social media app
 <br>
 
 <p align="center">
-    Written in frontend with <a Dart and href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as state managment<br>
-    In the backend <a href="https://supabase.com">supabase</a> is used for auth, data storage, and realtime syncing
+    Written in frontend with <a Dart and href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as state managment,<br> 
+    in the backend <a href="https://supabase.com">supabase</a> is used for auth, data storage, and realtime syncing
 </p>
 
 <p float="center">
