@@ -1,13 +1,23 @@
-# points
+<h1 align="center">points</h1>
 
-A mock social media app, written in dart with Flutter, supabase is used as a backend
+<p align="center">
+A mock social media app
+</p>
 
-<img align="center" src=".github/home.png" width="30%">
+<br>
+
+<p align="center">
+    Written in <a href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as state managment, in the backend <a href="https://supabase.com">supabase</a> is used
+</p>
 
 <p float="center">
-    <img src=".github/sign-in-demo.gif" width="30%">
-    <img src=".github/sign-up-demo.gif" width="30%">
+  <img src=".github/home.png" width="24%">
+  <img src=".github/user-profile.png" width="24%">
+  <img src=".github/chat.png" width="24%">
+  <img src=".github/user-discovery.png" width="24%">  
 </p>
+
+<br>
 
 ## Features
 ### Sign up/Log in
