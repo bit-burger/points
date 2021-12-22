@@ -25,16 +25,29 @@ A mock social media app
 <details open>
   <summary>Demos</summary>
   
-  | **Sign in** | **Sign up** | **Profile** |
-  | :---: | :---: | :---: |
-  | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/sign-up-demo.gif"/></kbd> | <kbd><img src=".github/profile-demo.gif"/></kbd> |
-    
   | **Updating friends** | **Chat** |
   | :---: | :---: |
   | <kbd><img src=".github/relations-demo.gif"/></kbd> | <kbd><img src=".github/chat-demo.gif"/></kbd>
 </details>
 
-</br>
+<details>
+    <summary>More demos</summary>
+    
+   | **Sign in** | **Sign up** | **Profile** |
+   | :---: | :---: | :---: |
+   | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/sign-up-demo.gif"/></kbd> | <kbd><img src=".github/profile-demo.gif"/></kbd> |
+     
+</details>
+
+<details>
+  <summary>More images</summary>
+  
+  | **Sign in** | **Home** | **Profile** |
+  | :---: | :---: | :---: |
+  | <kbd><img src=".github/log-in.png"/></kbd> | <kbd><img src=".github/home.png"/></kbd> | <kbd><img src=".github/user-profile.png"/></kbd> |
+  | **Invite friend by email** | **Chat** | **Search for user** |
+  | <kbd><img src=".github/user-email.png"/></kbd> | <kbd><img src=".github/chat.png"/></kbd> | <kbd><img src=".github/user-discovery.png"/></kbd> |
+</details>
 
 ## Technologies
 ### Frontend
@@ -51,10 +64,10 @@ A mock social media app
 
 ### To run the project:
 1. Clone the project
-2. First you must run the script `pub-installer.sh`
+2. Run the script [`pub-installer.sh`](https://github.com/bit-burger/points/blob/develop/pub-installer.sh) to install the packages
 3. Setup the supabase project with the matching settings and tables ([instructions](supabase/README.md))
-4. Then create a new text file in the root directory called .env
-5. In .env write your supabase credentials,
+4. Then create a new text file in the root directory called `.env`
+5. In `.env` write your supabase credentials,
    that you get from your new project (Settings > API) in such a form:
 ```shell script
 SUPABASE_URL="YOUR_SUPABASE_URL"
