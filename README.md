@@ -73,7 +73,7 @@ A mock social media app
 SUPABASE_URL="YOUR_SUPABASE_URL"
 SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
 ```
-5. Run the app on your preferred device with:
+6. Run the app on your preferred device with:
 ```shell script
 flutter run
 ```
