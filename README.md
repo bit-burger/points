@@ -40,13 +40,13 @@ A mock social media app
 </details>
 
 <details>
-  <summary>More images</summary>
+  <summary>Gallery</summary>
   
   | **Sign in** | **Home** | **Profile** |
   | :---: | :---: | :---: |
   | <kbd><img src=".github/log-in.png"/></kbd> | <kbd><img src=".github/home.png"/></kbd> | <kbd><img src=".github/user-profile.png"/></kbd> |
-  | **Invite friend by email** | **Chat** | **Search for user** |
-  | <kbd><img src=".github/user-email.png"/></kbd> | <kbd><img src=".github/chat.png"/></kbd> | <kbd><img src=".github/user-discovery.png"/></kbd> |
+  | **Invite friend by email** | **Chat** | **Clicked on user** |
+  | <kbd><img src=".github/user-email.png"/></kbd> | <kbd><img src=".github/chat.png"/></kbd> | <kbd><img src=".github/user-close.png"/></kbd> |
 </details>
 
 ## Technologies
