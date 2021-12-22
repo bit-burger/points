@@ -20,7 +20,7 @@ A mock social media app
 
 <br>
 
-<details>
+<details open>
   <summary>Demos</summary>
   
   | **Sign in** | **Sign up** | **Profile** |
