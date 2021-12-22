@@ -28,9 +28,13 @@ A mock social media app
   | **Sign in** | **Sign up** | **Profile** |
   | :---: | :---: | :---: |
   | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/sign-up-demo.gif"/></kbd> | <kbd><img src=".github/profile-demo.gif"/></kbd> |
-  | **Updating friends** | **Chat** | **Notifications** |
-  | <kbd><img src=".github/relations-demo.gif"/></kbd> | <kbd><img src=".github/chat-demo.gif"/></kbd> | <kbd><img src=""/></kbd> |
+    
+  | **Updating friends** | **Chat** |
+  | :---: | :---: |
+  | <kbd><img src=".github/relations-demo.gif"/></kbd> | <kbd><img src=".github/chat-demo.gif"/></kbd>
 </details>
+
+</br>
 
 ## Technologies
 ### Frontend
@@ -42,24 +46,6 @@ A mock social media app
  
 ### Backend
 - [supabase](https://supabase.com) powered by a [PostgreSQL](https://postgresql.org) database
-
-
-## Features
-### Sign up/Log in
-<p float="left">
-    <img src=".github/sign-in-demo.gif" width="30%">
-    <img src=".github/sign-up-demo.gif" width="30%">
-</p>
-
-### Live updates to the profile
-<img src=".github/profile-update-demo.gif" width="60%">
-
-### Updating relationships
-<img src=".github/relations-demo.gif" width="60%">
-
-### Chatting
-<img src=".github/chatting-demo.gif" width="60%">
-
 
 ## Getting started
 
