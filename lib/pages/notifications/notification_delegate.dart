@@ -69,7 +69,7 @@ class NotificationDelegate extends SingleChildStatelessWidget {
             child: _buildMessageNotification(context, notification),
             onTap: () {
               final message = notification.message;
-              chatOpenCallback(message.chatId, message.receiverId);
+              chatOpenCallback(message.chatId, message.senderId);
             },
           );
         }
