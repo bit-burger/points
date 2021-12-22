@@ -20,6 +20,28 @@ A mock social media app
 
 <br>
 
+<details>
+  <summary>Demos</summary>
+  
+  | **Sign in** | **Sign up** | **Profile** |
+  | :---: | :---: | :---: |
+  | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/sign-up-demo.gif"/></kbd> | <kbd><img src=".github/profile-update-demo.gif"/></kbd> |
+  | **Menu** | **Trends** | **Tweet search filter** |
+  | <kbd><img src="media/drawer.jpg"/></kbd> | <kbd><img src="media/trends.jpg"/></kbd> | <kbd><img src="media/tweet_search_filter.jpg"/></kbd> |
+</details>
+
+## Technologies
+### Frontend
+- [Flutter](https://flutter.dev) as the main UI framework
+- [flutter_neumorphic](https://pub.dev/packages/flutter_neumorphic) for the neumorphic look
+- [ionicons](https://pub.dev/packages/ionicons) for the icons and [Courier Prime](https://fonts.google.com/specimen/Courier+Prime) for the font
+- [supabase](https://pub.dev/packages/supabase) to connect to the supabase backend
+- [flutter_bloc](https://pub.dev/packages/flutter_bloc) for the state_management
+ 
+### Backend
+- [supabase](https://supabase.com) powered by a [PostgreSQL](https://postgresql.org) database
+
+
 ## Features
 ### Sign up/Log in
 <p float="left">
@@ -36,16 +58,6 @@ A mock social media app
 ### Chatting
 <img src=".github/chatting-demo.gif" width="60%">
 
-## Technologies
-### Frontend
-- [Flutter](https://flutter.dev) as the main UI framework
-- [flutter_neumorphic](https://pub.dev/packages/flutter_neumorphic) for the neumorphic look
-- [ionicons](https://pub.dev/packages/ionicons) for the icons and [Courier Prime](https://fonts.google.com/specimen/Courier+Prime) for the font
-- [supabase](https://pub.dev/packages/supabase) to connect to the supabase backend
-- [flutter_bloc](https://pub.dev/packages/flutter_bloc) for the state_management
- 
-### Backend
-- [supabase](https://supabase.com) powered by a [PostgreSQL](https://postgresql.org) database
 
 ## Getting started
 
