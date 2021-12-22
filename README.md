@@ -20,14 +20,16 @@ A mock social media app
 
 <br>
 
+<!--- Inspired by: https://github.com/robertodoering/harpy/blob/master/README.md --->
+
 <details open>
   <summary>Demos</summary>
   
   | **Sign in** | **Sign up** | **Profile** |
   | :---: | :---: | :---: |
-  | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/sign-up-demo.gif"/></kbd> | <kbd><img src=".github/profile-update-demo.gif"/></kbd> |
-  | **Menu** | **Trends** | **Tweet search filter** |
-  | <kbd><img src="media/drawer.jpg"/></kbd> | <kbd><img src="media/trends.jpg"/></kbd> | <kbd><img src="media/tweet_search_filter.jpg"/></kbd> |
+  | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/sign-up-demo.gif"/></kbd> | <kbd><img src=".github/profile-demo.gif"/></kbd> |
+  | **Updating friends** | **Chat** | **Notifications** |
+  | <kbd><img src=".github/relations-demo.gif"/></kbd> | <kbd><img src=".github/chat-demo.gif"/></kbd> | <kbd><img src=""/></kbd> |
 </details>
 
 ## Technologies
