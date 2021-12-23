@@ -42,6 +42,7 @@ class LoggedInUser {
   );
 
   Future<void> close() async {
+    notifications.close();
     profile.close();
     relations.close();
     chat.close();

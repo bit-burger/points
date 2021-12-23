@@ -1,4 +1,3 @@
-import 'dart:convert' as c;
 class Notification {
   final int id;
   final String selfId;
@@ -40,7 +39,7 @@ class Notification {
       json['notification_type'],
       json['message_data'],
       json['has_read'],
-      json['created_at'],
+      DateTime.parse(json['created_at']),
     );
   }
 }

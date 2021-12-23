@@ -117,6 +117,7 @@ class NotificationRepository implements INotificationRepository {
             updatedNotifications,
             _currentNotifications!.allNotificationsFetched,
           );
+          _notificationsPagingStreamController!.add(_currentNotifications!);
         }
       },
     ).subscribe(
@@ -148,6 +149,7 @@ class NotificationRepository implements INotificationRepository {
         olderNotifications: notifications,
         allNotificationsFetched: notifications.length < howMany,
       );
+      _notificationsPagingStreamController!.add(_currentNotifications!);
     } on NotificationConnectionError catch (e) {
       _notificationsPagingStreamController!.addError(e);
       close();
@@ -168,11 +170,14 @@ class NotificationRepository implements INotificationRepository {
 
   @override
   Future<void> markAllNotificationsRead() async {
-    final response = await _client.rpc('mark_all_messages_read').execute();
-
-    if (response.error != null) {
-      throw NotificationConnectionError();
-    }
+    // final response = await _client.rpc('mark_all_messages_read').execute();
+    //
+    // if (response.error != null) {
+    //   throw NotificationConnectionError();
+    // }
+    throw UnimplementedError(
+      "Cannot be implemented due to supabase limitations",
+    );
   }
 
   @override
@@ -212,7 +217,7 @@ class NotificationRepository implements INotificationRepository {
 
   @override
   void close() {
-    startListeningToPagingStream();
+    stopListeningToPagingStream();
     _client.removeSubscription(_notificationsInsertSub);
     _notificationStreamController.close();
     _notificationsPagingStreamController = null;

@@ -36,11 +36,31 @@ class NotificationMatcher extends Matcher {
     if (item is! Notification) {
       return false;
     }
+
+    expect(item.messageData, messageData);
+
     return item.selfId == selfId &&
         item.firstActorId == firstActorId &&
         item.secondActorId == secondActorId &&
         item.type == type &&
-        item.messageData == messageData &&
         item.hasRead == hasRead;
+  }
+
+  NotificationMatcher copyWith({
+    String? selfId,
+    String? firstActorId,
+    String? secondActorId,
+    String? type,
+    Map<String, dynamic>? messageData,
+    bool? hasRead,
+  }) {
+    return NotificationMatcher(
+      selfId: selfId ?? this.selfId,
+      firstActorId: firstActorId ?? this.firstActorId,
+      secondActorId: secondActorId ?? this.secondActorId,
+      type: type ?? this.type,
+      messageData: messageData ?? this.messageData,
+      hasRead: hasRead ?? this.hasRead,
+    );
   }
 }
