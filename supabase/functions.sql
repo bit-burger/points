@@ -9,6 +9,7 @@ END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
 
+
 ----------
 -- AUTH --
 ----------
@@ -19,6 +20,7 @@ delete from auth.users where id = auth.uid();
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
+
 
 ----------------------
 -- PROFILE UPDATING --
@@ -39,7 +41,6 @@ where (id = auth.uid());
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
-
 
 
 ---------------------
@@ -76,6 +77,7 @@ create or replace function query_profiles_name(_name varchar(8))
 returns setof public.profiles as $func$
   SELECT *
   FROM query_profiles() as profiles
+  where levenshtein(_name, profiles.name) < 4
   order by levenshtein(_name, profiles.name) + levenshtein(substring(_name, 0, 1), substring(profiles.name, 0, 1)) * 2;
 $func$
 LANGUAGE sql;
@@ -87,6 +89,7 @@ returns setof public.profiles as $func$
   order by levenshtein(_name, profiles.name) / 10, profiles.points;
 $func$
 LANGUAGE sql;
+
 
 ----------
 -- CHAT --
@@ -101,6 +104,27 @@ END;
 $$
 language plpgsql
 SECURITY DEFINER;
+
+-------------------
+-- NOTIFICATIONS --
+-------------------
+
+create or replace function mark_message_read(message_id int)
+returns void as $$
+begin
+update notifications set has_read=true where id = message_id and user_id = auth.uid();
+end;
+$$
+language plpgsql security definer;
+
+create or replace function mark_all_messages_read()
+returns void as $$
+begin
+update notifications set has_read=true where user_id = auth.uid();
+end;
+$$
+language plpgsql security definer;
+
 
 ---------------
 -- RELATIONS --
@@ -146,26 +170,61 @@ end;
 $$
 language plpgsql;
 
+/*
+change_type:
+ - blocked
+ - accepted
+ - requested
+ - rejected
+ - cancelled
+ - unblocked
+ - unfriended
+*/
+create or replace function notify_users(
+  changer_id uuid,
+  other_id uuid,
+  change_type varchar
+) returns void as $$
+declare
+message_data jsonb;
+begin
+message_data := concat('{"change_type": "', change_type, '"}')::jsonb;
+
+insert into notifications(
+    user_id,
+    first_actor,
+    second_actor,
+    notification_type,
+    message_data,
+    has_read
+  ) values
+    (changer_id, changer_id, other_id, 'changed_relation', message_data, true),
+    (other_id, changer_id, other_id, 'changed_relation', message_data, false);
+end;
+$$
+language plpgsql;
+
 
 CREATE OR REPLACE FUNCTION relations_accept(_id uuid) returns void AS $$
 DECLARE
 relations_between_found INT;
 BEGIN
+  SELECT count(*)
+  into relations_between_found
+  from relations
+  where relations.id = auth.uid() and other_id = _id and state = 'request_pending';
 
-SELECT count(*)
-into relations_between_found
-from relations
-where relations.id = auth.uid() and other_id = _id and state = 'request_pending';
+  if relations_between_found <> 1 then
+    RAISE EXCEPTION 'no_request_between_found';
+  end if;
 
-if relations_between_found <> 1 then
-  RAISE EXCEPTION 'no_request_between_found';
-end if;
+  update relations set
+  state = 'friends'
+  where
+  (id = auth.uid() and other_id = _id) or
+  (id = _id and other_id = auth.uid());
 
-update relations set
-state = 'friends'
-where
-(id = auth.uid() and other_id = _id) or
-(id = _id and other_id = auth.uid());
+  perform notify_users(auth.uid(), _id, 'accepted');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
@@ -176,34 +235,35 @@ DECLARE
 blocked_relations_by_id_found INT;
 relations_by_id_found INT;
 BEGIN
+  SELECT count(*)
+  into blocked_relations_by_id_found
+  from relations
+  where relations.other_id = auth.uid() and relations.id = _id and state = 'blocked';
 
-SELECT count(*)
-into blocked_relations_by_id_found
-from relations
-where relations.other_id = auth.uid() and relations.id = _id and state = 'blocked';
+  SELECT count(*)
+  into relations_by_id_found
+  from relations
+  where relations.other_id = auth.uid() and relations.id = _id;
 
-SELECT count(*)
-into relations_by_id_found
-from relations
-where relations.other_id = auth.uid() and relations.id = _id;
-
-if blocked_relations_by_id_found = 1 then
-  update relations
-  set state = 'blocked'
-  where id = auth.uid() and other_id = _id;
-else
-  if(relations_by_id_found > 0) then
+  if blocked_relations_by_id_found = 1 then
     update relations
     set state = 'blocked'
     where id = auth.uid() and other_id = _id;
-
-    update relations
-    set state = 'blocked_by'
-    where id = _id and other_id = auth.uid();
   else
-    perform insert_relation(auth.uid(), _id, 'blocked', 'blocked_by');
+    if(relations_by_id_found > 0) then
+      update relations
+      set state = 'blocked'
+      where id = auth.uid() and other_id = _id;
+
+      update relations
+      set state = 'blocked_by'
+      where id = _id and other_id = auth.uid();
+    else
+      perform insert_relation(auth.uid(), _id, 'blocked', 'blocked_by');
+    end if;
   end if;
-end if;
+
+  perform notify_users(auth.uid(), _id, 'blocked');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
@@ -213,20 +273,21 @@ CREATE OR REPLACE FUNCTION relations_reject(_id uuid) returns void AS $$
 DECLARE
 relations_between_found INT;
 BEGIN
+  SELECT count(*)
+  into relations_between_found
+  from relations
+  where relations.id = auth.uid() and other_id = _id and state = 'request_pending';
 
-SELECT count(*)
-into relations_between_found
-from relations
-where relations.id = auth.uid() and other_id = _id and state = 'request_pending';
+  if relations_between_found <> 1 then
+    RAISE EXCEPTION 'no_request_between_found';
+  end if;
 
-if relations_between_found <> 1 then
-  RAISE EXCEPTION 'no_request_between_found';
-end if;
+  delete from relations
+  where
+  (id = auth.uid() and other_id = _id) or
+  (id = _id and other_id = auth.uid());
 
-delete from relations
-where
-(id = auth.uid() and other_id = _id) or
-(id = _id and other_id = auth.uid());
+  perform notify_users(auth.uid(), _id, 'rejected');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
@@ -236,17 +297,17 @@ CREATE OR REPLACE FUNCTION relations_request(_id uuid) returns void AS $$
 DECLARE
 relations_between_found INT;
 BEGIN
+  SELECT count(*)
+  into relations_between_found
+  from relations
+  where relations.id = auth.uid() and other_id = _id;
 
-SELECT count(*)
-into relations_between_found
-from relations
-where relations.id = auth.uid() and other_id = _id;
+  if relations_between_found = 1 then
+    RAISE EXCEPTION 'relation_already_exists';
+  end if;
 
-if relations_between_found = 1 then
-  RAISE EXCEPTION 'relation_already_exists';
-end if;
-
-perform insert_relation(auth.uid(), _id, 'requesting', 'request_pending');
+  perform insert_relation(auth.uid(), _id, 'requesting', 'request_pending');
+  perform notify_users(auth.uid(), _id, 'requested');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
@@ -256,20 +317,21 @@ CREATE OR REPLACE FUNCTION relations_take_back_request(_id uuid) returns void AS
 DECLARE
 relations_between_found INT;
 BEGIN
+  SELECT count(*)
+  into relations_between_found
+  from relations
+  where relations.id = auth.uid() and other_id = _id and state = 'requesting';
 
-SELECT count(*)
-into relations_between_found
-from relations
-where relations.id = auth.uid() and other_id = _id and state = 'requesting';
+  if relations_between_found <> 1 then
+    RAISE EXCEPTION 'no_request_between_found';
+  end if;
 
-if relations_between_found <> 1 then
-  RAISE EXCEPTION 'no_request_between_found';
-end if;
+  delete from relations
+  where
+  (id = auth.uid() and other_id = _id) or
+  (id = _id and other_id = auth.uid());
 
-delete from relations
-where
-(id = auth.uid() and other_id = _id) or
-(id = _id and other_id = auth.uid());
+  perform notify_users(auth.uid(), _id, 'cancelled');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
@@ -311,6 +373,7 @@ BEGIN
       (id = _id and other_id = auth.uid());
   end if;
 
+  perform notify_users(auth.uid(), _id, 'unblocked');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;
@@ -320,19 +383,20 @@ CREATE OR REPLACE FUNCTION relations_unfriend(_id uuid) returns void AS $$
 DECLARE
 relations_between_found INT;
 BEGIN
+  SELECT count(*)
+  into relations_between_found
+  from relations
+  where relations.id = auth.uid() and other_id = _id and state = 'friends';
 
-SELECT count(*)
-into relations_between_found
-from relations
-where relations.id = auth.uid() and other_id = _id and state = 'friends';
+  if relations_between_found <> 1 then
+    RAISE EXCEPTION 'not_friends';
+  end if;
 
-if relations_between_found <> 1 then
-  RAISE EXCEPTION 'not_friends';
-end if;
-
-delete from relations
+  delete from relations
   where (id = _id and other_id = auth.uid()) or
-    (id = auth.uid() and other_id = _id);
+  (id = auth.uid() and other_id = _id);
+
+  perform notify_users(auth.uid(), _id, 'unfriend');
 END;
 $$ LANGUAGE plpgsql
 SECURITY DEFINER;

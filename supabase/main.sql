@@ -1,9 +1,12 @@
--- Delete all tables and types to create and replace them again --
-drop table if exists profiles, relations, chats, messages, audit_log, greek_alphabet cascade;
+-- Delete all tables and types to create and replace them again
+drop table if exists profiles, relations, chats, messages, notifications, greek_alphabet cascade;
 drop domain if exists points, color, icon cascade;
-drop type if exists relationship_state cascade;
+drop type if exists relationship_state, notification_type cascade;
 drop trigger if exists on_auth_user_created on auth.users cascade;
 drop trigger if exists delete_chat on public.relations;
+
+-- Delete all users, as they will not have a profile in the profiles table
+delete from auth.users where true;
 
 -- profiles --
 create domain points as bigint check (value >= 0);
@@ -71,6 +74,18 @@ begin
     newname,
     concat('Hi im ', newname)
   );
+
+  insert into public.notifications (
+    user_id,
+    first_actor,
+    notification_type,
+    message_data
+  ) values (
+    new.id,
+    new.id,
+    'system_message',
+    '{"message": "Hi, thanks for joining points"}'::jsonb
+  );
   return new;
 end;
 $$ language plpgsql security definer;
@@ -111,7 +126,7 @@ CREATE POLICY read_own_relations ON public.relations
     FOR SELECT USING (
       auth.uid() = id
     );
-
+-- TODO: RLS
 create table public.messages(
   id uuid primary key not null default uuid_generate_v4(),
   sender uuid not null,
@@ -119,7 +134,11 @@ create table public.messages(
   chat_id uuid not null,
   content text not null,
   created_at timestamp not null default now(),
-  foreign key (sender, receiver, chat_id) references relations(id, other_id, chat_id) on delete cascade
+  foreign key (sender, receiver, chat_id)
+    references relations(id, other_id, chat_id)
+    on delete cascade,
+  constraint only_one_message_per_chat_per_timestamp
+    unique(chat_id, created_at)
 );
 
 
@@ -139,13 +158,45 @@ for each row
 execute procedure chat_delete();
 
 
--- audit log --
+-- notifications --
 
-create table public.audit_log(
-  created_at timestamp
+create type notification_type as enum (
+'gave_points',
+'points_milestone', -- milestones of reaching points, for example 10,000 points
+'changed_relation',
+'received_message',
+'profile_update',
+'system_message' -- for example when user first joins points, or possibly an update
 );
 
-create index on audit_log_entries (created_at);
+-- TODO: RLS
+create table notifications(
+  id serial primary key,
+  user_id uuid not null references profiles on delete cascade,
+  first_actor uuid references profiles on delete cascade,
+  second_actor uuid references profiles on delete cascade,
+  notification_type notification_type not null,
+  message_data jsonb not null,
+  has_read boolean not null default false,
+  created_at timestamp not null default now(),
+  constraint has_to_be_one_actor
+    check ((not first_actor is null) or (not second_actor is null)),
+  constraint one_actor_has_to_be_user
+    check (user_id = first_actor or user_id = second_actor),
+  constraint user_can_only_have_one_notification_per_timestamp
+    unique(user_id, created_at)
+);
+
+create index user_access on notifications(user_id);
+
+create index sort_by_timestamp on notifications(created_at);
+
+alter table notifications enable row level security;
+
+create policy access_own_notifications
+  on notifications
+  for select using (auth.uid() = user_id);
+
 
 -- Realtime --
 
@@ -153,7 +204,9 @@ begin;
   drop publication if exists supabase_realtime;
   create publication supabase_realtime;
 commit;
-alter publication supabase_realtime add table profiles, relations, messages;
+
+alter publication supabase_realtime
+  add table profiles, relations, messages, notifications;
 
 -- TODO: TEMP FIX REQUIRES ALL RLS TO BE TURNED OFF AND THE FOLLOWING QUERY TO BE RUN:
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA realtime TO postgres;
