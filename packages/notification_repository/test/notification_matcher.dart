@@ -5,7 +5,7 @@ class NotificationMatcher extends Matcher {
   final String selfId;
   final String? firstActorId;
   final String? secondActorId;
-  final String type;
+  final NotificationType type;
   final Map<String, dynamic> messageData;
   final bool hasRead;
 
@@ -22,7 +22,7 @@ class NotificationMatcher extends Matcher {
     return NotificationMatcher(
       selfId: selfId,
       messageData: {"message": "Hi, thanks for joining points"},
-      type: "system_message",
+      type: NotificationType.systemMessage,
     );
   }
 
@@ -50,7 +50,7 @@ class NotificationMatcher extends Matcher {
     String? selfId,
     String? firstActorId,
     String? secondActorId,
-    String? type,
+    NotificationType? type,
     Map<String, dynamic>? messageData,
     bool? hasRead,
   }) {

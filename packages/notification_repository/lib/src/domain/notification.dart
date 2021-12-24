@@ -1,9 +1,11 @@
+import 'notification_type.dart';
+
 class Notification {
   final int id;
   final String selfId;
   final String? firstActorId;
   final String? secondActorId;
-  final String type;
+  final NotificationType type;
   final Map<String, dynamic> messageData;
   final bool hasRead;
   final DateTime createdAt;
@@ -26,8 +28,42 @@ class Notification {
     return firstActorId;
   }
 
-  String getNotificationMessage(String otherName) {
-    return messageData.toString();
+  String _firstName(String? otherName) {
+    if (firstActorId == selfId) {
+      return "You";
+    }
+    return otherName!;
+  }
+
+  String _secondName(String? otherName) {
+    if (secondActorId == selfId) {
+      return "you";
+    }
+    return otherName!;
+  }
+
+  String getNotificationMessage([String? otherName]) {
+    switch (type) {
+      case NotificationType.systemMessage:
+        return messageData["message"];
+      case NotificationType.changedRelation:
+        return _firstName(otherName) +
+            " ${messageData["change_type"]} " +
+            _secondName(otherName);
+      case NotificationType.pointsMilestone:
+        return _firstName(otherName) +
+            " ha${firstActorId == selfId ? "ve" : "s"} "
+                "reached ${messageData["points"]} points";
+      case NotificationType.gavePoints:
+        return _firstName(otherName) +
+            " gave " +
+            _secondName(otherName) +
+            " ${messageData["points"]} points";
+      case NotificationType.receivedMessage:
+      case NotificationType.profileUpdate:
+      default:
+        throw UnimplementedError();
+    }
   }
 
   factory Notification.fromJson(Map<String, dynamic> json) {
@@ -36,7 +72,7 @@ class Notification {
       json['user_id'],
       json['first_actor'],
       json['second_actor'],
-      json['notification_type'],
+      notificationTypeFromString(json['notification_type']),
       json['message_data'],
       json['has_read'],
       DateTime.parse(json['created_at']),

@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:test/test.dart';
 
+import 'package:notification_repository/notification_repository.dart';
 import 'package:supabase_testing_utils/supabase_testing_utils.dart';
 
 import 'notification_matcher.dart';
@@ -52,7 +53,7 @@ void main() {
         NotificationMatcher(
           selfId: user1.id,
           secondActorId: user2.id,
-          type: "changed_relation",
+          type: NotificationType.changedRelation,
           messageData: {
             "change_type": "requested",
           },
@@ -62,7 +63,7 @@ void main() {
           selfId: user1.id,
           firstActorId: user2.id,
           secondActorId: user1.id,
-          type: "changed_relation",
+          type: NotificationType.changedRelation,
           messageData: {
             "change_type": "accepted",
           },
@@ -71,7 +72,7 @@ void main() {
         NotificationMatcher(
           selfId: user1.id,
           secondActorId: user2.id,
-          type: "changed_relation",
+          type: NotificationType.changedRelation,
           messageData: {
             "change_type": "blocked",
           },
@@ -80,7 +81,7 @@ void main() {
         NotificationMatcher(
           selfId: user1.id,
           secondActorId: user2.id,
-          type: "changed_relation",
+          type: NotificationType.changedRelation,
           messageData: {
             "change_type": "unblocked",
           },
