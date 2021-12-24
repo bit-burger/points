@@ -6,6 +6,9 @@ abstract class IUserDiscoveryRepository {
   /// will return null if not found
   Future<User?> getUserByEmail({required String email});
 
+  /// Get a [User] by their id
+  Future<User> getUserById({required String id});
+
   /// Query users by different criteria, criteria include:
   /// * name
   /// * sorting by points
