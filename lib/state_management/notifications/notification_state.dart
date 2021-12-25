@@ -1,13 +1,38 @@
 part of 'notification_cubit.dart';
 
 @immutable
-abstract class Notification {}
+class Notification {
+  final bool important;
 
-class MessageNotification extends Notification {
-  final RelatedUser sender;
-  final Message message;
+  final Color color;
+  final IconData? icon;
+  final String? title;
+  final String message;
 
-  MessageNotification(this.sender, this.message);
+  Notification({
+    this.important = true,
+    required this.color,
+    this.icon,
+    this.title,
+    required this.message,
+  });
 }
 
-class OtherNotification extends Notification {}
+class MessageNotification extends Notification {
+  final String openChatId;
+  final String openChatUserId;
+
+  MessageNotification(
+    this.openChatId,
+    this.openChatUserId, {
+    required Color color,
+    IconData? icon,
+    String? title,
+    required String message,
+  }) : super(
+          color: color,
+          icon: icon,
+          title: title,
+          message: message,
+        );
+}

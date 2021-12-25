@@ -21,7 +21,7 @@ class Notification {
     this.createdAt,
   );
 
-  String? getUnknownUserId() {
+  String? get unknownUserId {
     if (selfId == firstActorId) {
       return secondActorId;
     }

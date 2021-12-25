@@ -1,6 +1,7 @@
 import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notification_repository/notification_repository.dart';
 import 'package:points/pages/auth/auth_initial_page.dart';
 import 'package:points/pages/auth/auth_page.dart';
 import 'package:points/pages/auth/connection_error_page.dart';
@@ -42,6 +43,11 @@ class AuthNavigator extends StatelessWidget {
                 client: Supabase.instance.client,
               ),
             ),
+            RepositoryProvider(
+              create: (_) => NotificationRepository(
+                client: Supabase.instance.client,
+              ),
+            ),
           ],
           child: MultiBlocProvider(
             providers: [
@@ -62,6 +68,11 @@ class AuthNavigator extends StatelessWidget {
                   relationsRepository: context.read<RelationsRepository>(),
                   chatRepository: context.read<ChatRepository>(),
                   authCubit: context.read<AuthCubit>(),
+                  notificationRepository:
+                      context.read<NotificationRepository>(),
+                  userDiscoveryRepository:
+                      context.read<UserDiscoveryRepository>(),
+                  profileRepository: context.read<ProfileRepository>(),
                 )..startListening(),
               ),
             ],

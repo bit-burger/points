@@ -5,9 +5,6 @@ import 'package:points/state_management/notifications/notification_cubit.dart';
 import 'package:points/widgets/neumorphic_box.dart';
 import 'package:provider/single_child_widget.dart';
 
-import 'package:points/theme/points_colors.dart' as pointsColors;
-import 'package:points/theme/points_icons.dart' as pointsIcons;
-
 class NotificationDelegate extends SingleChildStatelessWidget {
   final void Function(String chatId, String userId) chatOpenCallback;
 
@@ -16,9 +13,9 @@ class NotificationDelegate extends SingleChildStatelessWidget {
     required this.chatOpenCallback,
   }) : super(child: child);
 
-  Widget _buildMessageNotification(
+  Widget _buildNotification(
     BuildContext context,
-    MessageNotification notification,
+    Notification notification,
   ) {
     return NeumorphicBox(
       listPadding: true,
@@ -27,7 +24,10 @@ class NotificationDelegate extends SingleChildStatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(pointsIcons.pointsIcons[notification.sender.icon]),
+            if (notification.icon != null)
+              Icon(
+                notification.icon,
+              ),
             SizedBox(
               width: 12,
             ),
@@ -35,12 +35,13 @@ class NotificationDelegate extends SingleChildStatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (notification.title != null)
+                    Text(
+                      notification.title!,
+                      style: Theme.of(context).textTheme.caption,
+                    ),
                   Text(
-                    notification.sender.name,
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                  Text(
-                    notification.message.content,
+                    notification.message,
                     maxLines: 10,
                     overflow: TextOverflow.fade,
                   ),
@@ -51,7 +52,7 @@ class NotificationDelegate extends SingleChildStatelessWidget {
         ),
       ),
       style: NeumorphicStyle(
-        color: pointsColors.colors[notification.sender.color],
+        color: notification.color,
         depth: 8,
       ),
     );
@@ -62,15 +63,21 @@ class NotificationDelegate extends SingleChildStatelessWidget {
     return BlocListener<NotificationCubit, Notification?>(
       child: child,
       listener: (context, notification) {
-        if (notification is MessageNotification) {
+        if (notification != null) {
           InAppNotification.show(
             context: context,
-            duration: Duration(milliseconds: 2500),
-            child: _buildMessageNotification(context, notification),
-            onTap: () {
-              final message = notification.message;
-              chatOpenCallback(message.chatId, message.receiverId);
-            },
+            duration: Duration(
+              milliseconds: notification.important ? 3000 : 1000,
+            ),
+            child: _buildNotification(context, notification),
+            onTap: notification is! MessageNotification
+                ? null
+                : () {
+                    chatOpenCallback(
+                      notification.openChatId,
+                      notification.openChatUserId,
+                    );
+                  },
           );
         }
       },
