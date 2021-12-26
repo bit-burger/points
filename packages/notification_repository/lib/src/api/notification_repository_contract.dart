@@ -5,13 +5,10 @@ import '../domain/notifications.dart';
 /// paging through them, and marking them as read
 abstract class INotificationRepository {
   /// Broadcasts each [Notification] that comes in,
-  /// except when the is an active session
-  /// listening to the [notificationsPagingStream]
   Stream<Notification> get notificationStream;
 
-  /// If this stream is set (and not null),
-  /// the [notificationStream] will not broadcast any new [Notification]s.
-  ///
+  Stream<int> get notificationUnreadCountStream;
+
   /// This stream allows you to listen
   /// to new [Notifications] as well as their changes,
   /// while being able to page through older notifications
@@ -20,8 +17,7 @@ abstract class INotificationRepository {
   /// as well if there are more to fetch
   Stream<Notifications>? get notificationsPagingStream;
 
-  /// Start the [notificationsPagingStream] and
-  /// stop broadcasting to the notificationStream
+  /// Start the [notificationsPagingStream]
   void startListeningToPagingStream({
     bool onlyUnread = false,
     int startMaxNotificationCount = 30,
@@ -37,6 +33,8 @@ abstract class INotificationRepository {
   /// Mark a single [Notification] with the id of [notificationId] as read
   Future<void> markNotificationRead({required int notificationId});
 
+  Future<void> markNotificationUnread({required int notificationId});
+
   /// Mark every single [Notification] as read
   Future<void> markAllNotificationsRead();
 
@@ -48,7 +46,7 @@ abstract class INotificationRepository {
   /// that are needed for the [notificationsPagingStream],
   /// delete the cache of [Notification]s and
   /// set the stream to null
-  void stopListeningToPagingStream();
+  void stopPagingStream();
 
   /// Cleanup
   void close();

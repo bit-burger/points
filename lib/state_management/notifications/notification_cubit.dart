@@ -7,6 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:meta/meta.dart';
 import 'package:notification_repository/notification_repository.dart'
     hide Notification;
+import 'package:points/helpers/notification_type_icon_data.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
@@ -71,22 +72,7 @@ class NotificationCubit extends Cubit<Notification?> {
         if (notification.hasRead) {
           icon = Ionicons.checkmark_circle_outline;
         } else {
-          switch (notification.type) {
-            case NotificationType.gavePoints:
-              icon = Ionicons.person_add_outline;
-              break;
-            case NotificationType.systemMessage:
-              icon = null;
-              break;
-            case NotificationType.pointsMilestone:
-              icon = Ionicons.diamond_outline;
-              break;
-            case NotificationType.changedRelation:
-              icon = Ionicons.people_outline;
-              break;
-            default:
-              throw UnimplementedError();
-          }
+          icon = iconDataFromNotificationType(notification.type);
         }
 
         final firstUser = notification.firstActorId == null
@@ -108,10 +94,11 @@ class NotificationCubit extends Cubit<Notification?> {
 
         emit(
           Notification(
+            id: notification.id,
             important: user.id == notification.selfId ? false : true,
             icon: icon,
             color: user.id == notification.selfId
-                ? Colors.white
+                ? pointsColors.white
                 : pointsColors.colors[user.color],
             message: message,
           ),
@@ -138,6 +125,13 @@ class NotificationCubit extends Cubit<Notification?> {
       return userDiscoveryRepository.getUserById(id: id);
     } catch (e) {
       authCubit.reportConnectionError();
+    }
+  }
+
+  void markAsRead() {
+    if (state != null && state!.id != null) {
+      final id = state!.id!;
+      notificationRepository.markNotificationRead(notificationId: id);
     }
   }
 

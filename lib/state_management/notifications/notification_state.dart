@@ -2,6 +2,7 @@ part of 'notification_cubit.dart';
 
 @immutable
 class Notification {
+  final int? id;
   final bool important;
 
   final Color color;
@@ -10,6 +11,7 @@ class Notification {
   final String message;
 
   Notification({
+    this.id,
     this.important = true,
     required this.color,
     this.icon,

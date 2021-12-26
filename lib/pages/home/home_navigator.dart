@@ -1,19 +1,24 @@
 import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notification_repository/notification_repository.dart';
 import 'package:points/pages/chat/chat_page.dart';
 import 'package:points/pages/notifications/notification_delegate.dart';
+import 'package:points/pages/notifications/notification_page.dart';
 import 'package:points/pages/profile/profile_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/chat/chat_cubit.dart';
+import 'package:points/state_management/notifications/notification_paging_cubit.dart';
 import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
+import 'package:points/theme/points_colors.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
 import 'home_page.dart';
+import 'info_dialog.dart';
 
 class HomeNavigator extends StatefulWidget {
   @override
@@ -28,6 +33,9 @@ class _HomeNavigatorState extends State<HomeNavigator> {
     return NotificationDelegate(
       chatOpenCallback: (String chatId, String userId) {
         _navState.currentState!.pushNamed("/chat/$chatId/$userId");
+      },
+      notificationsOpenCallback: () {
+        _navState.currentState!.pushNamed("/notifications");
       },
       child: Navigator(
         key: _navState,
@@ -44,9 +52,9 @@ class _HomeNavigatorState extends State<HomeNavigator> {
               return MaterialPageRoute(
                 builder: (_) => BlocProvider(
                   create: (_) => UserDiscoveryCubit(
-                    authCubit: context.read<AuthCubit>(),
                     userDiscoveryRepository:
                         context.read<UserDiscoveryRepository>(),
+                    authCubit: context.read<AuthCubit>(),
                     relationsRepository: context.read<RelationsRepository>(),
                   )..awaitPages(),
                   child: UserDiscoveryPage(),
@@ -54,6 +62,27 @@ class _HomeNavigatorState extends State<HomeNavigator> {
               );
             case "profile":
               return MaterialPageRoute(builder: (_) => ProfilePage());
+            case "notifications":
+              return MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                  create: (_) => NotificationPagingCubit(
+                    profileRepository: context.read<ProfileRepository>(),
+                    relationsRepository: context.read<RelationsRepository>(),
+                    userDiscoveryRepository:
+                        context.read<UserDiscoveryRepository>(),
+                    notificationRepository:
+                        context.read<NotificationRepository>(),
+                    authCubit: context.read<AuthCubit>(),
+                  )..startListening(),
+                  child: NotificationPage(),
+                ),
+              );
+            case "info":
+              return DialogRoute(
+                barrierColor: barrierColor,
+                context: context,
+                builder: (_) => InfoDialog(),
+              );
             case "chat":
               if (uri.length < 3) {
                 return null;

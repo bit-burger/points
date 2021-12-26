@@ -8,6 +8,7 @@ import 'package:points/pages/auth/connection_error_page.dart';
 import 'package:points/pages/home/home_navigator.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/notifications/notification_cubit.dart';
+import 'package:points/state_management/notifications/notification_unread_count_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -73,6 +74,13 @@ class AuthNavigator extends StatelessWidget {
                   userDiscoveryRepository:
                       context.read<UserDiscoveryRepository>(),
                   profileRepository: context.read<ProfileRepository>(),
+                )..startListening(),
+              ),
+              BlocProvider(
+                create: (context) => NotificationUnreadCountCubit(
+                  notificationRepository:
+                      context.read<NotificationRepository>(),
+                  authCubit: context.read<AuthCubit>(),
                 )..startListening(),
               ),
             ],

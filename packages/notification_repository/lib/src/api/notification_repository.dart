@@ -18,6 +18,18 @@ class NotificationRepository implements INotificationRepository {
   /// Only needed when there is an active [notificationsPagingStream]
   RealtimeSubscription? _notificationsUpdateSub;
 
+  /// Everything related to the [notificationUnreadCountStream]
+  late final StreamController<int> _notificationUnreadCountStreamController;
+  Stream<int> get notificationUnreadCountStream =>
+      _notificationUnreadCountStreamController.stream;
+  int _currentUnreadCount = 0;
+  void _addToCurrentUnreadCount(int newCount) {
+    if (newCount != 0) {
+      _currentUnreadCount += newCount;
+      _notificationUnreadCountStreamController.add(_currentUnreadCount);
+    }
+  }
+
   /// Everything related to the [notificationsPagingStream]
   ///
   /// Are either all null or all have a value
@@ -27,7 +39,7 @@ class NotificationRepository implements INotificationRepository {
       _notificationsPagingStreamController?.stream;
 
   /// Everything related to the [notificationStream]
-  late StreamController<Notification> _notificationStreamController;
+  late final StreamController<Notification> _notificationStreamController;
   Stream<Notification> get notificationStream =>
       _notificationStreamController.stream;
 
@@ -38,14 +50,33 @@ class NotificationRepository implements INotificationRepository {
     _startListening();
   }
 
+  void _startListeningUnreadCount() async {
+    _notificationUnreadCountStreamController = StreamController.broadcast();
+
+    final response = await _client.rpc("all_unread_messages_count").execute();
+    if (response.error != null) {
+      _notificationUnreadCountStreamController.addError(
+        NotificationConnectionError(),
+      );
+      return;
+    }
+    _addToCurrentUnreadCount(response.data);
+  }
+
   /// Start listening to inserts for the [notificationStream]
   void _startListening() {
+    _startListeningUnreadCount();
+
     _notificationStreamController = StreamController.broadcast();
 
     _notificationsInsertSub = _client
         .from('notifications:user_id=eq.$_userId')
         .on(SupabaseEventTypes.insert, (payload) {
       final newNotification = Notification.fromJson(payload.newRecord!);
+
+      if (!newNotification.hasRead) {
+        _addToCurrentUnreadCount(1);
+      }
 
       if (_notificationsPagingStreamController != null) {
         _currentNotifications = _currentNotifications!.copyWith(
@@ -59,6 +90,44 @@ class NotificationRepository implements INotificationRepository {
       (_, {String? errorMsg}) {
         if (errorMsg != null) {
           _notificationStreamController.addError(
+            NotificationConnectionError(),
+          );
+          close();
+        }
+      },
+    );
+
+    _notificationsUpdateSub =
+        _client.from('notifications:user_id=eq.$_userId').on(
+      SupabaseEventTypes.update,
+      (payload) {
+        _addToCurrentUnreadCount(-1);
+
+        if (_notificationsPagingStreamController != null) {
+          final updatedNotification = Notification.fromJson(payload.newRecord!);
+
+          final updatedNotifications =
+              _currentNotifications!.notifications.map<Notification>(
+            (notification) {
+              if (notification.id == updatedNotification.id) {
+                return updatedNotification;
+              } else {
+                return notification;
+              }
+            },
+          ).toList(growable: false);
+
+          _currentNotifications = Notifications(
+            updatedNotifications,
+            _currentNotifications!.allNotificationsFetched,
+          );
+          _notificationsPagingStreamController!.add(_currentNotifications!);
+        }
+      },
+    ).subscribe(
+      (_, {String? errorMsg}) {
+        if (errorMsg != null) {
+          _notificationsPagingStreamController?.addError(
             NotificationConnectionError(),
           );
           close();
@@ -94,42 +163,6 @@ class NotificationRepository implements INotificationRepository {
     } on NotificationConnectionError catch (e) {
       throw e;
     }
-
-    _notificationsUpdateSub =
-        _client.from('notifications:user_id=eq.$_userId').on(
-      SupabaseEventTypes.update,
-      (payload) {
-        if (_notificationsPagingStreamController != null) {
-          final updatedNotification = Notification.fromJson(payload.newRecord!);
-
-          final updatedNotifications =
-              _currentNotifications!.notifications.map<Notification>(
-            (notification) {
-              if (notification.id == updatedNotification.id) {
-                return updatedNotification;
-              } else {
-                return notification;
-              }
-            },
-          ).toList(growable: false);
-
-          _currentNotifications = Notifications(
-            updatedNotifications,
-            _currentNotifications!.allNotificationsFetched,
-          );
-          _notificationsPagingStreamController!.add(_currentNotifications!);
-        }
-      },
-    ).subscribe(
-      (_, {String? errorMsg}) {
-        if (errorMsg != null) {
-          _notificationsPagingStreamController?.addError(
-            NotificationConnectionError(),
-          );
-          close();
-        }
-      },
-    );
   }
 
   @override
@@ -151,7 +184,7 @@ class NotificationRepository implements INotificationRepository {
       );
       _notificationsPagingStreamController!.add(_currentNotifications!);
     } on NotificationConnectionError catch (e) {
-      _notificationsPagingStreamController!.addError(e);
+      _notificationsPagingStreamController?.addError(e);
       close();
     }
   }
@@ -169,27 +202,33 @@ class NotificationRepository implements INotificationRepository {
   }
 
   @override
-  Future<void> markAllNotificationsRead() async {
-    // final response = await _client.rpc('mark_all_messages_read').execute();
-    //
-    // if (response.error != null) {
-    //   throw NotificationConnectionError();
-    // }
-    throw UnimplementedError(
-      "Cannot be implemented due to supabase limitations",
-    );
+  Future<void> markNotificationUnread({required int notificationId}) async {
+    final response = await _client.rpc(
+      'mark_message_unread',
+      params: {"message_id": notificationId},
+    ).execute();
+
+    if (response.error != null) {
+      throw NotificationConnectionError();
+    }
   }
 
   @override
-  void stopListeningToPagingStream() {
+  Future<void> markAllNotificationsRead() async {
+    final response = await _client.rpc('mark_all_messages_read').execute();
+
+    if (response.error != null) {
+      throw NotificationConnectionError();
+    }
+  }
+
+  @override
+  void stopPagingStream() {
     if (_notificationsPagingStreamController != null) {
       _notificationsPagingStreamController?.close();
 
-      _client.removeSubscription(_notificationsUpdateSub!);
-
       _notificationsPagingStreamController = null;
       _currentNotifications = null;
-      _notificationsUpdateSub = null;
     }
   }
 
@@ -217,9 +256,12 @@ class NotificationRepository implements INotificationRepository {
 
   @override
   void close() {
-    stopListeningToPagingStream();
+    stopPagingStream();
+
     _client.removeSubscription(_notificationsInsertSub);
+    _client.removeSubscription(_notificationsUpdateSub!);
+
     _notificationStreamController.close();
-    _notificationsPagingStreamController = null;
+    _notificationUnreadCountStreamController.close();
   }
 }

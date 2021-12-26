@@ -19,8 +19,13 @@ dependencies:
   ionicons: ^0.1.2
 
   # Widgets
+  badges: ^2.0.2
+  flutter_svg: ^1.0.0
+  package_info_plus: ^1.3.0
+  simple_speed_dial: ^0.1.3
   adaptive_dialog: ^1.2.0
   infinite_scroll_pagination: ^3.1.0
+  scrollable_positioned_list: ^0.2.3
   in_app_notification: ^1.0.1
   flutter_parsed_text: ^2.2.1
   dash_chat:
@@ -52,6 +57,10 @@ dependencies:
   notification_repository:
     path: ./packages/notification_repository
 
+dependency_overrides:
+  supabase:
+    git: https://github.com/bit-burger/supabase-dart
+
 dev_dependencies:
   # Test framework
   bloc_test: ^9.0.1
@@ -70,4 +79,5 @@ flutter:
   assets:
     - .env
     - google_fonts/
+    - assets/
   uses-material-design: true

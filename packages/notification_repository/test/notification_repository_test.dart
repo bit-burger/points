@@ -203,21 +203,10 @@ void main() {
       expect(notifications5.allNotificationsFetched, true);
 
       // Closing
-      user1.notifications.stopListeningToPagingStream();
+      user1.notifications.stopPagingStream();
 
       await user1.close();
       await user2.close();
-
-      // Mark all notifications read
-      // user1.notifications.markAllNotificationsRead();
-      // final notifications5 = await notificationQueue.next;
-      // expect(
-      //   notifications5.notifications,
-      //   user1ExpectedNotificationsInOrder.map(
-      //     (notificationMatcher) => notificationMatcher.copyWith(hasRead: true),
-      //   ).toList(),
-      // );
-      // expect(notifications5.allNotificationsFetched, true);
     },
   );
 }

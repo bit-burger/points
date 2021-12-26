@@ -5,18 +5,22 @@ class NeumorphicBox extends StatelessWidget {
   final bool reverseHeight;
   final bool listPadding;
   final NeumorphicStyle? style;
+  final bool lessSpacing;
 
   const NeumorphicBox({
     required this.child,
     this.reverseHeight = false,
     this.listPadding = false,
+    this.lessSpacing = false,
     this.style,
   }) : super();
 
   @override
   Widget build(BuildContext context) {
     return Neumorphic(
-      margin: EdgeInsets.all(20),
+      margin: lessSpacing
+          ? EdgeInsets.symmetric(horizontal: 20)
+          : EdgeInsets.all(20),
       padding: listPadding
           ? EdgeInsets.symmetric(horizontal: 20)
           : EdgeInsets.all(20),
