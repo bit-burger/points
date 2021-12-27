@@ -56,6 +56,7 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
 
   void loadMore() {
     notificationRepository.fetchMoreNotifications();
+    emit(LoadingMoreNotifications());
   }
 
   void _emitNotifications(

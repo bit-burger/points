@@ -18,3 +18,5 @@ class NotificationPagingData extends NotificationPagingState {
     this.mentionedUsers,
   );
 }
+
+class LoadingMoreNotifications extends NotificationPagingState {}

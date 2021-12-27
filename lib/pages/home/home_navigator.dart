@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:points/pages/chat/chat_page.dart';
 import 'package:points/pages/notifications/notification_delegate.dart';
-import 'package:points/pages/notifications/notification_page.dart';
+import 'package:points/pages/notifications/notifications_page.dart';
 import 'package:points/pages/profile/profile_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
@@ -74,7 +74,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                         context.read<NotificationRepository>(),
                     authCubit: context.read<AuthCubit>(),
                   )..startListening(),
-                  child: NotificationPage(),
+                  child: NotificationsPage(),
                 ),
               );
             case "info":

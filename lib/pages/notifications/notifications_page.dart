@@ -13,12 +13,12 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'notification_widget.dart';
 
-class NotificationPage extends StatefulWidget {
+class NotificationsPage extends StatefulWidget {
   @override
-  State<NotificationPage> createState() => _NotificationPageState();
+  State<NotificationsPage> createState() => _NotificationsPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
+class _NotificationsPageState extends State<NotificationsPage> {
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
 
@@ -107,6 +107,9 @@ class _NotificationPageState extends State<NotificationPage> {
       ),
       extendBodyBehindAppBar: true,
       body: BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
+        buildWhen: (oldState, newState) {
+          return newState is! LoadingMoreNotifications;
+        },
         builder: (context, state) {
           return AnimatedSwitcher(
             duration: Duration(milliseconds: 400),
