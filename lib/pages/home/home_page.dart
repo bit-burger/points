@@ -8,7 +8,7 @@ import 'package:points/pages/relations/relations_sub_page.dart';
 import 'package:points/state_management/notifications/notification_unread_count_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
-import 'package:points/theme/points_colors.dart';
+import 'package:points/theme/points_colors.dart' as pointsColors;
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/points_logo.dart';
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage>
                               end: -6,
                               top: -6,
                             ),
-                            badgeColor: white,
+                            badgeColor: pointsColors.white,
                             badgeContent: Text(unreadCount.toString()),
                             child: NeumorphicButton(
                               tooltip: "Notifications",
@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage>
                       onTap: () {
                         _animationController.reverse();
                       },
-                      child: Container(color: barrierColor),
+                      child: Container(color: pointsColors.barrierColor),
                     ),
                     builder: (context, child) {
                       if (_animationController.isDismissed) {

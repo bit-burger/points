@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart' hide Notification;
-import 'package:meta/meta.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/profile_repository.dart';
@@ -17,6 +15,7 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
   final IUserDiscoveryRepository userDiscoveryRepository;
   final IProfileRepository profileRepository;
   final AuthCubit authCubit;
+
   late final StreamSubscription _notificationPagingSub, _relationsSub;
 
   List<User> _userCache = [];
@@ -27,15 +26,19 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
     required this.relationsRepository,
     required this.userDiscoveryRepository,
     required this.profileRepository,
-  }) : super(NotificationPagingInitial());
+  }) : super(
+          NotificationPagingState(
+            rawNotifications: [],
+            moreToLoad: false,
+            mentionedUsers: [],
+            loading: true,
+          ),
+        );
 
   void startListening() {
     // relations
     _relationsSub = relationsRepository.relationsStream.listen((_) {
-      if (state is NotificationPagingData) {
-        _emitNotifications((state as NotificationPagingData).notifications,
-            (state as NotificationPagingData).moreToLoad);
-      }
+      _emitNotifications(state.rawNotifications, state.moreToLoad);
     });
 
     // notifications
@@ -54,9 +57,13 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
     );
   }
 
+  void toggleShowRead() {
+    emit(state.copyWith(showingRead: !state.showingRead));
+  }
+
   void loadMore() {
     notificationRepository.fetchMoreNotifications();
-    emit(LoadingMoreNotifications());
+    emit(state.copyWith(loading: true));
   }
 
   void _emitNotifications(
@@ -94,10 +101,11 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
     }
 
     emit(
-      NotificationPagingData(
-        notifications,
-        moreToLoad,
-        activeUsers,
+      state.copyWith(
+        rawNotifications: notifications,
+        moreToLoad: moreToLoad,
+        mentionedUsers: activeUsers,
+        loading: false,
       ),
     );
   }

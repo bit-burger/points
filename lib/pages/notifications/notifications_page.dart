@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
@@ -5,6 +6,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart'
 import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/notification_type_icon_data.dart';
 import 'package:points/state_management/notifications/notification_paging_cubit.dart';
+import 'package:points/state_management/notifications/notification_unread_count_cubit.dart';
 import 'package:points/theme/points_colors.dart' as pointsColors;
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
@@ -22,19 +24,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
 
-  Widget _buildListView(NotificationPagingData data) {
+  Widget _buildListView(NotificationPagingState state) {
+    final notifications = state.notifications;
     return ScrollablePositionedList.builder(
       padding: MediaQuery.of(context).viewPadding + EdgeInsets.only(top: 72),
       itemPositionsListener: itemPositionsListener,
-      itemCount: data.notifications.length + (data.moreToLoad ? 1 : 0),
+      itemCount: notifications.length + (state.moreToLoad ? 1 : 0),
       itemBuilder: (BuildContext context, int index) {
-        if (index < data.notifications.length) {
-          final notification = data.notifications[index];
+        if (index < notifications.length) {
+          final notification = notifications[index];
           final unknownUser = notification.unknownUserId == null
               ? null
-              : data.mentionedUsers
+              : state.mentionedUsers
                   .firstWhere((user) => user.id == notification.unknownUserId);
-          final knownUser = data.mentionedUsers
+          final knownUser = state.mentionedUsers
               .firstWhere((user) => user.id == notification.selfId);
 
           final firstUser = notification.firstActorId == unknownUser?.id
@@ -62,6 +65,25 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
 
+  Widget _buildNoNotifications() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32),
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            // There will always be at least one system message
+            "No unread notifications :(",
+            style: Theme.of(context)
+                .textTheme
+                .headline5!
+                .copyWith(color: Theme.of(context).hintColor),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildLoader() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
@@ -73,62 +95,102 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicScaffold(
-      appBar: NeumorphicAppBar(
-        leading: NeumorphicBackButton(
-          style: NeumorphicStyle(
-            boxShape: NeumorphicBoxShape.circle(),
-          ),
-        ),
-        title: Neumorphic(
-          child: SizedBox(
-            height: 56,
-            child: Center(
-              child: Text(
-                "10 Unread",
-                style: Theme.of(context).textTheme.headline6,
+    return BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
+      buildWhen: (oldState, newState) {
+        return oldState.loading != newState.loading;
+      },
+      builder: (context, state) {
+        return IgnorePointer(
+          ignoring: state.loading,
+          child: NeumorphicScaffold(
+            appBar: NeumorphicAppBar(
+              leading: NeumorphicBackButton(
+                style: NeumorphicStyle(
+                  boxShape: NeumorphicBoxShape.circle(),
+                ),
+              ),
+              title: SizedBox(),
+              trailing: BlocBuilder<NotificationUnreadCountCubit, int>(
+                builder: (context, unreadCount) {
+                  return Badge(
+                    showBadge: unreadCount > 0,
+                    position: BadgePosition(
+                      end: -6,
+                      top: -6,
+                    ),
+                    badgeColor: pointsColors.white,
+                    badgeContent: Text(unreadCount.toString()),
+                    child: NeumorphicButton(
+                      tooltip: "Mark all read",
+                      child: SizedBox.fromSize(
+                        size: Size.square(56),
+                        child: Icon(Ionicons.checkmark_done_outline),
+                      ),
+                      style: NeumorphicStyle(
+                        boxShape: NeumorphicBoxShape.circle(),
+                      ),
+                      onPressed: () {
+                        context.read<NotificationPagingCubit>().markAllRead();
+                      },
+                    ),
+                  );
+                },
+              ),
+              secondTrailing:
+                  BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
+                builder: (context, state) {
+                  return NeumorphicButton(
+                    tooltip: state.showingRead
+                        ? "Show read and unread notifications"
+                        : "Only show unread notifications",
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 250),
+                      child: Icon(
+                        state.showingRead
+                            ? Ionicons.eye_off_outline
+                            : Ionicons.eye_outline,
+                        key: ValueKey(state.showingRead),
+                      ),
+                    ),
+                    style: NeumorphicStyle(
+                      boxShape: NeumorphicBoxShape.circle(),
+                    ),
+                    onPressed: () {
+                      context.read<NotificationPagingCubit>().toggleShowRead();
+                    },
+                  );
+                },
               ),
             ),
+            extendBodyBehindAppBar: true,
+            body: BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
+              buildWhen: (oldState, newState) {
+                return oldState.notifications != newState.notifications;
+              },
+              builder: (context, notificationState) {
+                return AnimatedSwitcher(
+                  duration: Duration(milliseconds: 400),
+                  child: notificationState.notifications.isEmpty
+                      ? notificationState.loading
+                          ? _buildLoader()
+                          : _buildNoNotifications()
+                      : _buildListView(notificationState),
+                );
+              },
+            ),
           ),
-          style: NeumorphicStyle(
-            boxShape: NeumorphicBoxShape.stadium(),
-          ),
-        ),
-        trailing: NeumorphicButton(
-          tooltip: "Mark all read",
-          child: Icon(Ionicons.checkmark_done_outline),
-          style: NeumorphicStyle(
-            boxShape: NeumorphicBoxShape.circle(),
-          ),
-          onPressed: () {
-            context.read<NotificationPagingCubit>().markAllRead();
-          },
-        ),
-      ),
-      extendBodyBehindAppBar: true,
-      body: BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
-        buildWhen: (oldState, newState) {
-          return newState is! LoadingMoreNotifications;
-        },
-        builder: (context, state) {
-          return AnimatedSwitcher(
-            duration: Duration(milliseconds: 400),
-            child: state is NotificationPagingData
-                ? _buildListView(state)
-                : _buildLoader(),
-          );
-        },
-      ),
+        );
+      },
     );
   }
 
   void _scrollChanged() {
     final pagingCubit = context.read<NotificationPagingCubit>();
-    if (pagingCubit.state is NotificationPagingData) {
-      final pagingData = (pagingCubit.state as NotificationPagingData);
+    if (!pagingCubit.state.loading) {
       final visible = itemPositionsListener.itemPositions.value;
 
-      if (visible.last.index == pagingData.notifications.length) {
+      // Only happens if the ListView gets an extra item for the Loader
+      if (visible.last.index == pagingCubit.state.notifications.length) {
         pagingCubit.loadMore();
       }
     }
