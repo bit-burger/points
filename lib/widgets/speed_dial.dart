@@ -51,8 +51,6 @@ class NeumorphicSpeedDial extends StatefulWidget {
 class _NeumorphicSpeedDialState extends State<NeumorphicSpeedDial>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<Color?> _backgroundColorAnimation;
-  late Animation<Color?> _foregroundColorAnimation;
   final List<Animation<double>> _speedDialChildAnimations =
       <Animation<double>>[];
 
@@ -66,16 +64,6 @@ class _NeumorphicSpeedDialState extends State<NeumorphicSpeedDial>
         setState(() {});
       }
     });
-
-    _backgroundColorAnimation = ColorTween(
-      begin: widget.closedBackgroundColor,
-      end: widget.openBackgroundColor,
-    ).animate(_animationController);
-
-    _foregroundColorAnimation = ColorTween(
-      begin: widget.closedForegroundColor,
-      end: widget.openForegroundColor,
-    ).animate(_animationController);
 
     final double fractionOfOneSpeedDialChild =
         1.0 / widget.speedDialChildren!.length;
