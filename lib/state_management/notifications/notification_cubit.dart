@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:meta/meta.dart';
 import 'package:notification_repository/notification_repository.dart'
     hide Notification;
 import 'package:points/helpers/notification_type_icon_data.dart';
