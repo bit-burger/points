@@ -120,7 +120,7 @@ language plpgsql security definer;
 create or replace function mark_all_messages_read()
 returns void as $$
 begin
-update notifications set has_read=true where user_id = auth.uid();
+update notifications set has_read=true where user_id = auth.uid() and has_read=false;
 end;
 $$
 language plpgsql security definer;

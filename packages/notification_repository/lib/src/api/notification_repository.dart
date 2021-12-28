@@ -101,6 +101,7 @@ class NotificationRepository implements INotificationRepository {
         _client.from('notifications:user_id=eq.$_userId').on(
       SupabaseEventTypes.update,
       (payload) {
+        // The only thing that should be updated, is the has_read column
         _addToCurrentUnreadCount(-1);
 
         if (_notificationsPagingStreamController != null) {
