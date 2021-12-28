@@ -337,7 +337,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
     if (relationsCount == 0) {
       var text = "No friends :(";
       if (blockedRelationsCount == 0) {
-        text = "No friends and blocks :(";
+        text = "No friends no blocks :(";
       }
       _buildShowBlocksButton(relations);
       return Center(
