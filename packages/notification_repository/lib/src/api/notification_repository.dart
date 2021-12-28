@@ -35,6 +35,7 @@ class NotificationRepository implements INotificationRepository {
   /// Are either all null or all have a value
   StreamController<Notifications>? _notificationsPagingStreamController;
   Notifications? _currentNotifications;
+  bool? _onlyUnread;
   Stream<Notifications>? get notificationsPagingStream =>
       _notificationsPagingStreamController?.stream;
 
@@ -82,6 +83,9 @@ class NotificationRepository implements INotificationRepository {
         _currentNotifications = _currentNotifications!.copyWith(
           earlierNotification: newNotification,
         );
+        if(_onlyUnread! && newNotification.hasRead == true) {
+          return;
+        }
         _notificationsPagingStreamController!.add(_currentNotifications!);
       } else {
         _notificationStreamController.add(newNotification);
@@ -142,12 +146,14 @@ class NotificationRepository implements INotificationRepository {
     bool onlyUnread = false,
     int startMaxNotificationCount = 30,
   }) async {
+    _onlyUnread = onlyUnread;
     _notificationsPagingStreamController = StreamController();
     _currentNotifications = Notifications([], false);
 
     try {
       final initialNotifications = await _fetchNotifications(
         limit: startMaxNotificationCount,
+        onlyUnread: onlyUnread,
       );
 
       // In case when in the short amount of time between
@@ -177,6 +183,7 @@ class NotificationRepository implements INotificationRepository {
         after: _currentNotifications!.notifications.length == 0
             ? null
             : _currentNotifications!.notifications.last.createdAt,
+        onlyUnread: _onlyUnread!,
       );
 
       _currentNotifications = _currentNotifications!.copyWith(
@@ -228,6 +235,7 @@ class NotificationRepository implements INotificationRepository {
     if (_notificationsPagingStreamController != null) {
       _notificationsPagingStreamController?.close();
 
+      _onlyUnread = null;
       _notificationsPagingStreamController = null;
       _currentNotifications = null;
     }
@@ -235,11 +243,16 @@ class NotificationRepository implements INotificationRepository {
 
   Future<List<Notification>> _fetchNotifications({
     required int limit,
+    required bool onlyUnread,
     DateTime? after,
   }) async {
     final query = _client.from('notifications').select().eq("user_id", _userId);
+
     if (after != null) {
       query.lt("created_at", after);
+    }
+    if (onlyUnread) {
+      query.eq("has_read", false);
     }
     query.order('created_at').limit(limit);
 

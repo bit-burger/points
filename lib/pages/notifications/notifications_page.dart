@@ -26,7 +26,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget _buildListView(NotificationPagingState state) {
     final notifications = state.notifications;
     return ScrollablePositionedList.builder(
-      padding: MediaQuery.of(context).viewPadding + EdgeInsets.only(top: 72),
+      padding: MediaQuery.of(context).viewPadding +
+          EdgeInsets.only(
+            top: 80,
+            bottom: 80,
+          ),
       itemPositionsListener: itemPositionsListener,
       itemCount: notifications.length + (state.moreToLoad ? 1 : 0),
       itemBuilder: (BuildContext context, int index) {
@@ -137,6 +141,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ),
               secondTrailing:
                   BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
+                buildWhen: (oldState, newState) {
+                  return oldState.showingRead != newState.showingRead;
+                },
                 builder: (context, state) {
                   return NeumorphicButton(
                     tooltip: state.showingRead
@@ -168,7 +175,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               },
               builder: (context, notificationState) {
                 return AnimatedSwitcher(
-                  duration: Duration(milliseconds: 400),
+                  duration: Duration(milliseconds: 300),
                   child: notificationState.notifications.isEmpty
                       ? notificationState.loading
                           ? _buildLoader()

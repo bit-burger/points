@@ -16,7 +16,8 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
   final IProfileRepository profileRepository;
   final AuthCubit authCubit;
 
-  late final StreamSubscription _notificationPagingSub, _relationsSub;
+  late StreamSubscription _notificationPagingSub;
+  late final StreamSubscription _relationsSub;
 
   List<User> _userCache = [];
 
@@ -45,20 +46,40 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
     notificationRepository.startListeningToPagingStream();
     _notificationPagingSub =
         notificationRepository.notificationsPagingStream!.listen(
-      (notificationPagingData) {
-        _emitNotifications(
-          notificationPagingData.notifications,
-          !notificationPagingData.allNotificationsFetched,
-        );
-      },
+      _onReceiveNotifications,
       onError: (e) {
         authCubit.reportConnectionError();
       },
     );
   }
 
+  void _onReceiveNotifications(Notifications notifications) {
+    _emitNotifications(
+      notifications.notifications,
+      !notifications.allNotificationsFetched,
+    );
+  }
+
   void toggleShowRead() {
-    emit(state.copyWith(showingRead: !state.showingRead));
+    emit(
+      NotificationPagingState(
+        rawNotifications: [],
+        moreToLoad: false,
+        mentionedUsers: [],
+        loading: true,
+        showingRead: !state.showingRead,
+      ),
+    );
+    notificationRepository.startListeningToPagingStream(
+      onlyUnread: !state.moreToLoad,
+    );
+    _notificationPagingSub =
+        notificationRepository.notificationsPagingStream!.listen(
+      _onReceiveNotifications,
+      onError: (e) {
+        authCubit.reportConnectionError();
+      },
+    );
   }
 
   void loadMore() {
