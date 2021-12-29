@@ -71,7 +71,7 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
       ),
     );
     notificationRepository.startListeningToPagingStream(
-      onlyUnread: !state.moreToLoad,
+      onlyUnread: !state.showingRead,
     );
     _notificationPagingSub =
         notificationRepository.notificationsPagingStream!.listen(
@@ -135,6 +135,14 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
     notificationRepository.markAllNotificationsRead();
   }
 
+  void markRead({required int notificationId}) {
+    notificationRepository.markNotificationRead(notificationId: notificationId);
+  }
+
+  void markUnread({required int notificationId}) {
+    notificationRepository.markNotificationUnread(notificationId: notificationId);
+  }
+
   @override
   Future<void> close() async {
     notificationRepository.stopPagingStream();
@@ -142,4 +150,5 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
     await _relationsSub.cancel();
     return super.close();
   }
+
 }

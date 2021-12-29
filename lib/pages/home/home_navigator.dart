@@ -1,11 +1,13 @@
 import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:points/pages/chat/chat_page.dart';
 import 'package:points/pages/notifications/notification_delegate.dart';
 import 'package:points/pages/notifications/notifications_page.dart';
 import 'package:points/pages/profile/profile_page.dart';
+import 'package:points/pages/relations/friend_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/chat/chat_cubit.dart';
@@ -82,6 +84,16 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 barrierColor: barrierColor,
                 context: context,
                 builder: (_) => InfoDialog(),
+              );
+            case "friend":
+              if (uri.length < 2) {
+                return null;
+              }
+              final friendId = uri[1];
+              return ModalBottomSheetRoute(
+                modalBarrierColor: barrierColor,
+                expanded: false,
+                builder: (_) => FriendPage(friendId: friendId),
               );
             case "chat":
               if (uri.length < 3) {

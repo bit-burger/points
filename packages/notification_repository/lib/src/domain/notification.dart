@@ -47,8 +47,13 @@ class Notification {
       case NotificationType.systemMessage:
         return messageData["message"];
       case NotificationType.changedRelation:
+        final changeType = messageData["change_type"];
         return _firstName(otherName) +
-            " ${messageData["change_type"]} " +
+            " " +
+            (changeType == "cancelled"
+                ? "cancelled the friend request of"
+                : changeType) +
+            " " +
             _secondName(otherName);
       case NotificationType.pointsMilestone:
         return _firstName(otherName) +

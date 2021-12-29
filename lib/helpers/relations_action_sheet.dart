@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 
-class _RelationSheetAction extends SheetAction {
+class _RelationSheetAction extends SheetAction<String> {
   _RelationSheetAction({
     required String label,
     required String key,
@@ -41,36 +41,50 @@ final unfriendAction = _RelationSheetAction(
 
 void showRelationsActionSheet({
   required BuildContext context,
-  required List<_RelationSheetAction> actions,
-  required String userId,
+  String? title,
+  required List<SheetAction> actions,
+  String? userId,
+  void Function(String)? alternativeResultCallback,
 }) async {
   final relationsCubit = context.read<RelationsCubit>();
-  final result = await showModalActionSheet(context: context, actions: actions);
-  switch (result) {
-    case "accept":
-      relationsCubit.accept(userId);
-      break;
-    case "block":
-      relationsCubit.block(userId);
-      break;
-    case "cancel_request":
-      relationsCubit.cancelRequest(userId);
-      break;
-    case "reject":
-      relationsCubit.reject(userId);
-      break;
-    case "request":
-      relationsCubit.request(userId);
-      break;
-    case "unblock":
-      relationsCubit.unblock(userId);
-      break;
-    case "unfriend":
-      relationsCubit.unfriend(userId);
-      break;
-    case null:
-      break;
-    default:
-      throw Exception("Not a valid _RelationSheetAction");
+  final result = await showModalActionSheet(
+    context: context,
+    title: title,
+    actions: actions,
+  );
+  if (userId != null) {
+    switch (result) {
+      case "accept":
+        relationsCubit.accept(userId);
+        break;
+      case "block":
+        relationsCubit.block(userId);
+        break;
+      case "cancel_request":
+        relationsCubit.cancelRequest(userId);
+        break;
+      case "reject":
+        relationsCubit.reject(userId);
+        break;
+      case "request":
+        relationsCubit.request(userId);
+        break;
+      case "unblock":
+        relationsCubit.unblock(userId);
+        break;
+      case "unfriend":
+        relationsCubit.unfriend(userId);
+        break;
+      case null:
+        break;
+      default:
+        if (alternativeResultCallback != null) {
+          alternativeResultCallback(result);
+          break;
+        }
+        throw Exception("Not a valid _RelationSheetAction");
+    }
+  } else {
+    alternativeResultCallback!.call(result);
   }
 }

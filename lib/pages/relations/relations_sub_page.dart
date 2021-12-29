@@ -3,15 +3,11 @@ import 'dart:io' show Platform;
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/relations_action_sheet.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:points/widgets/loader.dart';
-import 'package:points/widgets/neumorphic_icon_button.dart';
 import 'package:points/widgets/user_list_tile.dart';
 import 'package:user_repositories/relations_repository.dart';
-import '../../theme/points_colors.dart' as colors;
-import '../../theme/points_icons.dart' as icons;
 
 class RelationsSubPage extends StatefulWidget {
   @override
@@ -95,83 +91,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
     }
   }
 
-  /// TODO: Put this in own widget that listens to relations and pops accordingly
-  /// TODO: Add buttons "give points" and "unfriend"
-  Widget _buildFriendDetailView(BuildContext context, RelatedUser user) {
-    final color = colors.colors[user.color];
-    return Neumorphic(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  icons.pointsIcons[user.icon],
-                  size: 48,
-                ),
-                SizedBox(width: 16),
-                Text(user.name, style: Theme.of(context).textTheme.headline4)
-              ],
-            ),
-            SizedBox(height: 32),
-            Text(user.status, style: Theme.of(context).textTheme.headline6),
-            SizedBox(height: 32),
-            Text(
-              user.bio,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 48),
-            Row(
-              children: [
-                Expanded(
-                  child: NeumorphicIconButton(
-                    icon: Icon(Ionicons.chatbox_outline),
-                    text: Text("Chat"),
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        "/chat/${user.chatId}/${user.id}",
-                      );
-                    },
-                    style: NeumorphicStyle(
-                      color: color,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: NeumorphicIconButton(
-                    icon: Icon(Ionicons.close_circle_outline),
-                    text: Text("Block"),
-                    onPressed: () {
-                      context.read<RelationsCubit>().block(user.id);
-                      Navigator.pop(context);
-                    },
-                    style: NeumorphicStyle(
-                      color: color,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 32 + MediaQuery.of(context).viewPadding.bottom),
-          ],
-        ),
-      ),
-      style: NeumorphicStyle(
-        intensity: 1,
-        depth: NeumorphicTheme.depth(context)! * 2,
-        color: color,
-        boxShape: NeumorphicBoxShape.roundRect(
-          BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildRelationsListView(UserRelations relations) {
     // Will look if the relations
@@ -199,15 +119,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
           users: relations.friends,
           key: "friends",
           onPressed: (user) async {
-            showModalBottomSheet(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
-              ),
-              context: context,
-              isScrollControlled: true,
-              barrierColor: colors.barrierColor,
-              builder: (context) => _buildFriendDetailView(context, user),
-            );
+            Navigator.of(context).pushNamed("/friend/${user.id}");
           },
           onLongPressed: (user) async {
             showRelationsActionSheet(

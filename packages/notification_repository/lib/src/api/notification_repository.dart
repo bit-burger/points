@@ -75,10 +75,13 @@ class NotificationRepository implements INotificationRepository {
         .on(SupabaseEventTypes.insert, (payload) {
       final newNotification = Notification.fromJson(payload.newRecord!);
 
+      // Update unread count by one if the new notification is unread
       if (!newNotification.hasRead) {
         _addToCurrentUnreadCount(1);
       }
 
+      // add it to the paging stream if there is one,
+      // if not add it to the normal notification stream
       if (_notificationsPagingStreamController != null) {
         _currentNotifications = _currentNotifications!.copyWith(
           earlierNotification: newNotification,
@@ -105,9 +108,13 @@ class NotificationRepository implements INotificationRepository {
         _client.from('notifications:user_id=eq.$_userId').on(
       SupabaseEventTypes.update,
       (payload) {
-        // The only thing that should be updated, is the has_read column
-        _addToCurrentUnreadCount(-1);
+        // update the count stream if necessary
+        final oldUnreadCountValue = payload.oldRecord!["has_read"] ? 0 : 1;
+        final newUnreadCountValue = payload.newRecord!["has_read"] ? 0 : 1;
+        final unreadCountValueDelta = newUnreadCountValue - oldUnreadCountValue;
+        _addToCurrentUnreadCount(unreadCountValueDelta);
 
+        // if there is a paging stream, update the paging stream
         if (_notificationsPagingStreamController != null) {
           final updatedNotification = Notification.fromJson(payload.newRecord!);
 

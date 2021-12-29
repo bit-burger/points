@@ -208,6 +208,9 @@ commit;
 alter publication supabase_realtime
   add table profiles, relations, messages, notifications;
 
+-- needed to see the old row on an update (only needed in notifications)
+ALTER TABLE notifications REPLICA IDENTITY FULL;
+
 -- TODO: TEMP FIX REQUIRES ALL RLS TO BE TURNED OFF AND THE FOLLOWING QUERY TO BE RUN:
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA realtime TO postgres;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA realtime TO postgres;

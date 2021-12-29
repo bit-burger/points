@@ -1,9 +1,11 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
 import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/notification_type_icon_data.dart';
+import 'package:points/helpers/relations_action_sheet.dart';
 import 'package:points/state_management/notifications/notification_paging_cubit.dart';
 import 'package:points/state_management/notifications/notification_unread_count_cubit.dart';
 import 'package:points/theme/points_colors.dart' as pointsColors;
@@ -11,6 +13,7 @@ import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:user_repositories/relations_repository.dart';
 
 import 'notification_widget.dart';
 
@@ -22,6 +25,22 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
+
+  String _statusForRelatedUser(RelatedUser relatedUser) {
+    final name = relatedUser.name;
+    switch (relatedUser.relationType) {
+      case RelationType.friend:
+        return "You are currently friends with $name";
+      case RelationType.requesting:
+        return "$name is currently requesting to be friends with you";
+      case RelationType.pending:
+        return "You are currently requesting to be friends with $name";
+      case RelationType.blocked:
+        return "You have currently blocked $name";
+      case RelationType.blockedBy:
+        return "You are currently blocked by $name";
+    }
+  }
 
   Widget _buildListView(NotificationPagingState state) {
     final notifications = state.notifications;
@@ -40,25 +59,73 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ? null
               : state.mentionedUsers
                   .firstWhere((user) => user.id == notification.unknownUserId);
-          final knownUser = state.mentionedUsers
-              .firstWhere((user) => user.id == notification.selfId);
-
-          final firstUser = notification.firstActorId == unknownUser?.id
-              ? unknownUser
-              : knownUser;
-          final secondUser = notification.secondActorId == unknownUser?.id
-              ? unknownUser
-              : knownUser;
-
-          final mainUser = (firstUser ?? secondUser!);
           return Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: NotificationWidget(
+              onPressed: () async {
+                showRelationsActionSheet(
+                  context: context,
+                  title: unknownUser == null
+                      ? null
+                      : unknownUser is RelatedUser
+                          ? _statusForRelatedUser(unknownUser)
+                          : "You are not currently related with ${unknownUser.name}",
+                  actions: [
+                    if (unknownUser != null) ...[
+                      if (unknownUser is RelatedUser) ...[
+                        if (unknownUser.relationType == RelationType.friend)
+                          SheetAction(
+                            label: "Show profile of friend",
+                            key: "show_profile",
+                          ),
+                        if (unknownUser.relationType == RelationType.requesting)
+                          rejectAction,
+                        if (unknownUser.relationType == RelationType.pending)
+                          cancelAction,
+                        if (unknownUser.relationType != RelationType.blocked)
+                          blockAction,
+                        if (unknownUser.relationType == RelationType.blocked)
+                          unblockAction,
+                      ],
+                      if (unknownUser is! RelatedUser) ...[
+                        requestAction,
+                        blockAction,
+                      ],
+                    ],
+                    SheetAction(
+                      label: "Mark as ${notification.hasRead ? "un" : ""}read",
+                      key: "mark_read",
+                    ),
+                  ],
+                  userId: unknownUser?.id,
+                  alternativeResultCallback: (result) {
+                    switch (result) {
+                      case "mark_read":
+                        final notificationPagingCubit =
+                            context.read<NotificationPagingCubit>();
+                        if (notification.hasRead) {
+                          notificationPagingCubit.markUnread(
+                            notificationId: notification.id,
+                          );
+                        } else {
+                          notificationPagingCubit.markRead(
+                            notificationId: notification.id,
+                          );
+                        }
+                        break;
+                      case "show_profile":
+                        Navigator.of(context).pushNamed(
+                          "/friend/${notification.unknownUserId}",
+                        );
+                        break;
+                    }
+                  },
+                );
+              },
               lessSpacing: true,
               icon: iconDataFromNotificationType(notification.type),
               message: notification.getNotificationMessage(unknownUser?.name),
-              color: pointsColors.colors[
-                  mainUser.id == notification.selfId ? 9 : mainUser.color],
+              color: pointsColors.colors[unknownUser?.color ?? 9],
               read: notification.hasRead,
             ),
           );
@@ -96,6 +163,66 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
 
+  Widget _buildMarkAllNotificationsReadButton() {
+    return BlocBuilder<NotificationUnreadCountCubit, int>(
+      builder: (context, unreadCount) {
+        return Badge(
+          showBadge: unreadCount > 0,
+          position: BadgePosition(
+            end: -6,
+            top: -6,
+          ),
+          badgeColor: pointsColors.white,
+          badgeContent: Text(unreadCount.toString()),
+          child: NeumorphicButton(
+            tooltip: "Mark all read",
+            child: SizedBox.fromSize(
+              size: Size.square(56),
+              child: Icon(Ionicons.checkmark_done_outline),
+            ),
+            style: NeumorphicStyle(
+              boxShape: NeumorphicBoxShape.circle(),
+            ),
+            onPressed: () {
+              context.read<NotificationPagingCubit>().markAllRead();
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildShowUnreadNotificationButton() {
+    return BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
+      buildWhen: (oldState, newState) {
+        return oldState.showingRead != newState.showingRead;
+      },
+      builder: (context, state) {
+        return NeumorphicButton(
+          tooltip: state.showingRead
+              ? "Only show unread notifications"
+              : "Show read and unread notifications",
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 250),
+            child: Icon(
+              // TODO: alternative use of Ionicons.eye_off_outline is possible
+              state.showingRead
+                  ? Ionicons.mail_unread_outline
+                  : Ionicons.mail_outline,
+              key: ValueKey(state.showingRead),
+            ),
+          ),
+          style: NeumorphicStyle(
+            boxShape: NeumorphicBoxShape.circle(),
+          ),
+          onPressed: () {
+            context.read<NotificationPagingCubit>().toggleShowRead();
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
@@ -113,60 +240,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 ),
               ),
               title: SizedBox(),
-              trailing: BlocBuilder<NotificationUnreadCountCubit, int>(
-                builder: (context, unreadCount) {
-                  return Badge(
-                    showBadge: unreadCount > 0,
-                    position: BadgePosition(
-                      end: -6,
-                      top: -6,
-                    ),
-                    badgeColor: pointsColors.white,
-                    badgeContent: Text(unreadCount.toString()),
-                    child: NeumorphicButton(
-                      tooltip: "Mark all read",
-                      child: SizedBox.fromSize(
-                        size: Size.square(56),
-                        child: Icon(Ionicons.checkmark_done_outline),
-                      ),
-                      style: NeumorphicStyle(
-                        boxShape: NeumorphicBoxShape.circle(),
-                      ),
-                      onPressed: () {
-                        context.read<NotificationPagingCubit>().markAllRead();
-                      },
-                    ),
-                  );
-                },
-              ),
-              secondTrailing:
-                  BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
-                buildWhen: (oldState, newState) {
-                  return oldState.showingRead != newState.showingRead;
-                },
-                builder: (context, state) {
-                  return NeumorphicButton(
-                    tooltip: state.showingRead
-                        ? "Show read and unread notifications"
-                        : "Only show unread notifications",
-                    child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 250),
-                      child: Icon(
-                        state.showingRead
-                            ? Ionicons.eye_off_outline
-                            : Ionicons.eye_outline,
-                        key: ValueKey(state.showingRead),
-                      ),
-                    ),
-                    style: NeumorphicStyle(
-                      boxShape: NeumorphicBoxShape.circle(),
-                    ),
-                    onPressed: () {
-                      context.read<NotificationPagingCubit>().toggleShowRead();
-                    },
-                  );
-                },
-              ),
+              trailing: _buildMarkAllNotificationsReadButton(),
+              secondTrailing: buildShowUnreadNotificationButton(),
             ),
             extendBodyBehindAppBar: true,
             body: BlocBuilder<NotificationPagingCubit, NotificationPagingState>(

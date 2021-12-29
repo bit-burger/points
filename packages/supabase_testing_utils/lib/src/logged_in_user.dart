@@ -25,7 +25,10 @@ class LoggedInUser {
 
   RelatedUser get user => RelatedUser.fromJson(
         profile.currentProfile!.toJson(),
+        // just for testing,
+        // RelatedUser does not check the chatId or relationType
         chatId: "",
+        relationType: RelationType.friend,
       );
 
   LoggedInUser._(
