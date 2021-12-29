@@ -1,8 +1,10 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:badges/badges.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/helpers/notification_type_icon_data.dart';
 import 'package:points/helpers/relations_action_sheet.dart';
@@ -44,94 +46,146 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   Widget _buildListView(NotificationPagingState state) {
     final notifications = state.notifications;
-    return ScrollablePositionedList.builder(
-      padding: MediaQuery.of(context).viewPadding +
-          EdgeInsets.only(
-            top: 80,
-            bottom: 80,
-          ),
-      itemPositionsListener: itemPositionsListener,
-      itemCount: notifications.length + (state.moreToLoad ? 1 : 0),
-      itemBuilder: (BuildContext context, int index) {
-        if (index < notifications.length) {
-          final notification = notifications[index];
-          final unknownUser = notification.unknownUserId == null
-              ? null
-              : state.mentionedUsers
-                  .firstWhere((user) => user.id == notification.unknownUserId);
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: NotificationWidget(
-              onPressed: () async {
-                showRelationsActionSheet(
-                  context: context,
-                  title: unknownUser == null
-                      ? null
-                      : unknownUser is RelatedUser
-                          ? _statusForRelatedUser(unknownUser)
-                          : "You are not currently related with ${unknownUser.name}",
-                  actions: [
-                    if (unknownUser != null) ...[
-                      if (unknownUser is RelatedUser) ...[
-                        if (unknownUser.relationType == RelationType.friend)
-                          SheetAction(
-                            label: "Show profile of friend",
-                            key: "show_profile",
-                          ),
-                        if (unknownUser.relationType == RelationType.requesting)
-                          rejectAction,
-                        if (unknownUser.relationType == RelationType.pending)
-                          cancelAction,
-                        if (unknownUser.relationType != RelationType.blocked)
-                          blockAction,
-                        if (unknownUser.relationType == RelationType.blocked)
-                          unblockAction,
-                      ],
-                      if (unknownUser is! RelatedUser) ...[
-                        requestAction,
-                        blockAction,
-                      ],
-                    ],
-                    SheetAction(
-                      label: "Mark as ${notification.hasRead ? "un" : ""}read",
-                      key: "mark_read",
-                    ),
-                  ],
-                  userId: unknownUser?.id,
-                  alternativeResultCallback: (result) {
-                    switch (result) {
-                      case "mark_read":
-                        final notificationPagingCubit =
-                            context.read<NotificationPagingCubit>();
-                        if (notification.hasRead) {
-                          notificationPagingCubit.markUnread(
-                            notificationId: notification.id,
-                          );
-                        } else {
-                          notificationPagingCubit.markRead(
-                            notificationId: notification.id,
-                          );
-                        }
-                        break;
-                      case "show_profile":
-                        Navigator.of(context).pushNamed(
-                          "/friend/${notification.unknownUserId}",
-                        );
-                        break;
-                    }
-                  },
-                );
-              },
-              lessSpacing: true,
-              icon: iconDataFromNotificationType(notification.type),
-              message: notification.getNotificationMessage(unknownUser?.name),
-              color: pointsColors.colors[unknownUser?.color ?? 9],
-              read: notification.hasRead,
+    return SlidableAutoCloseBehavior(
+      child: ScrollablePositionedList.builder(
+        padding: MediaQuery.of(context).viewPadding +
+            EdgeInsets.only(
+              top: 80,
+              bottom: 80,
             ),
-          );
-        }
-        return _buildLoader();
-      },
+        itemPositionsListener: itemPositionsListener,
+        itemCount: notifications.length + (state.moreToLoad ? 1 : 0),
+        itemBuilder: (BuildContext context, int index) {
+          if (index < notifications.length) {
+            final notification = notifications[index];
+            final unknownUser = notification.unknownUserId == null
+                ? null
+                : state.mentionedUsers.firstWhere(
+                    (user) => user.id == notification.unknownUserId);
+            return Slidable(
+              closeOnScroll: true,
+              endActionPane: ActionPane(
+                extentRatio: 72 / MediaQuery.of(context).size.width,
+                motion: ScrollMotion(),
+                children: [
+                  Expanded(
+                    child: SizedBox.expand(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 20),
+                        child: Center(
+                          child: Builder(
+                            builder: (context) {
+                              return CupertinoButton(
+                                child: Icon(
+                                  notification.hasRead
+                                      ? Ionicons.close_outline
+                                      : Ionicons.checkmark_outline,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () {
+                                  Slidable.of(context)!.close();
+                                  final notificationPagingCubit =
+                                      context.read<NotificationPagingCubit>();
+                                  if (notification.hasRead) {
+                                    notificationPagingCubit.markUnread(
+                                      notificationId: notification.id,
+                                    );
+                                  } else {
+                                    notificationPagingCubit.markRead(
+                                      notificationId: notification.id,
+                                    );
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: NotificationWidget(
+                  onPressed: () async {
+                    showRelationsActionSheet(
+                      context: context,
+                      title: unknownUser == null
+                          ? null
+                          : unknownUser is RelatedUser
+                              ? _statusForRelatedUser(unknownUser)
+                              : "You are not currently related with ${unknownUser.name}",
+                      actions: [
+                        if (unknownUser != null) ...[
+                          if (unknownUser is RelatedUser) ...[
+                            if (unknownUser.relationType == RelationType.friend)
+                              SheetAction(
+                                label: "Show profile of friend",
+                                key: "show_profile",
+                              ),
+                            if (unknownUser.relationType ==
+                                RelationType.requesting)
+                              rejectAction,
+                            if (unknownUser.relationType ==
+                                RelationType.pending)
+                              cancelAction,
+                            if (unknownUser.relationType !=
+                                RelationType.blocked)
+                              blockAction,
+                            if (unknownUser.relationType ==
+                                RelationType.blocked)
+                              unblockAction,
+                          ],
+                          if (unknownUser is! RelatedUser) ...[
+                            requestAction,
+                            blockAction,
+                          ],
+                        ],
+                        SheetAction(
+                          label:
+                              "Mark as ${notification.hasRead ? "un" : ""}read",
+                          key: "mark_read",
+                        ),
+                      ],
+                      userId: unknownUser?.id,
+                      alternativeResultCallback: (result) {
+                        switch (result) {
+                          case "mark_read":
+                            final notificationPagingCubit =
+                                context.read<NotificationPagingCubit>();
+                            if (notification.hasRead) {
+                              notificationPagingCubit.markUnread(
+                                notificationId: notification.id,
+                              );
+                            } else {
+                              notificationPagingCubit.markRead(
+                                notificationId: notification.id,
+                              );
+                            }
+                            break;
+                          case "show_profile":
+                            Navigator.of(context).pushNamed(
+                              "/friend/${notification.unknownUserId}",
+                            );
+                            break;
+                        }
+                      },
+                    );
+                  },
+                  lessSpacing: true,
+                  icon: iconDataFromNotificationType(notification.type),
+                  message:
+                      notification.getNotificationMessage(unknownUser?.name),
+                  color: pointsColors.colors[unknownUser?.color ?? 9],
+                  read: notification.hasRead,
+                ),
+              ),
+            );
+          }
+          return _buildLoader();
+        },
+      ),
     );
   }
 
@@ -208,7 +262,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               // TODO: alternative use of Ionicons.eye_off_outline is possible
               state.showingRead
                   ? Ionicons.mail_unread_outline
-                  : Ionicons.mail_outline,
+                  : Ionicons.mail_open_outline,
               key: ValueKey(state.showingRead),
             ),
           ),
@@ -246,7 +300,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
             extendBodyBehindAppBar: true,
             body: BlocBuilder<NotificationPagingCubit, NotificationPagingState>(
               buildWhen: (oldState, newState) {
-                return oldState.notifications != newState.notifications;
+                return oldState.notifications != newState.notifications ||
+                    oldState.mentionedUsers != newState.mentionedUsers;
               },
               builder: (context, notificationState) {
                 return AnimatedSwitcher(

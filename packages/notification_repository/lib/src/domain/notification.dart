@@ -51,7 +51,7 @@ class Notification {
         return _firstName(otherName) +
             " " +
             (changeType == "cancelled"
-                ? "cancelled the friend request of"
+                ? "cancelled their friend request to"
                 : changeType) +
             " " +
             _secondName(otherName);

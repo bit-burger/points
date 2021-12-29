@@ -19,6 +19,7 @@ dependencies:
   ionicons: ^0.1.2
 
   # Widgets
+  flutter_slidable: ^1.2.0
   modal_bottom_sheet: ^2.0.0
   badges: ^2.0.2
   flutter_svg: ^1.0.0
