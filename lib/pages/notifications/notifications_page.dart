@@ -108,6 +108,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: NotificationWidget(
+                  date: notification.createdAt,
                   onPressed: () async {
                     showRelationsActionSheet(
                       context: context,
