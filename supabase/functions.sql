@@ -117,6 +117,14 @@ end;
 $$
 language plpgsql security definer;
 
+create or replace function mark_message_unread(message_id int)
+returns void as $$
+begin
+update notifications set has_read=false where id = message_id and user_id = auth.uid();
+end;
+$$
+language plpgsql security definer;
+
 create or replace function mark_all_messages_read()
 returns void as $$
 begin
@@ -125,6 +133,12 @@ end;
 $$
 language plpgsql security definer;
 
+create or replace function all_unread_messages_count()
+returns int as $$
+  select count(*) from notifications
+  where user_id = auth.uid() and has_read = false
+$$
+language sql security definer;
 
 ---------------
 -- RELATIONS --
