@@ -36,14 +36,12 @@ class _HomePageState extends State<HomePage>
       ),
       speedDialChildren: [
         SpeedDialChild(
-          icon: Center(
-            child: PointsLogo(
-              size: 24,
-            ),
-          ),
-          label: "points",
+          icon: Icon(Ionicons.search_outline),
+          label: "search",
           onPressed: () {
-            // Navigate to points screen
+            Navigator.of(context).pushNamed(
+              "/user-discovery",
+            );
           },
         ),
         SpeedDialChild(
@@ -98,12 +96,10 @@ class _HomePageState extends State<HomePage>
                         tag: "User search",
                         transitionOnUserGestures: true,
                         child: NeumorphicButton(
-                          tooltip: "Search for users",
-                          child: Icon(Ionicons.search_outline),
+                          tooltip: "Points menu",
+                          child: PointsLogo(size: 28),
                           onPressed: () {
-                            Navigator.of(context).pushNamed(
-                              "/user-discovery",
-                            );
+                            // Navigate to points screen
                           },
                           style: NeumorphicStyle(
                             boxShape: NeumorphicBoxShape.circle(),

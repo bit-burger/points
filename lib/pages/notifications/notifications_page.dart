@@ -121,7 +121,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           if (notificationUnknownUser is RelatedUser) ...[
             if (notificationUnknownUser.relationType == RelationType.friend)
               SheetAction(
-                label: "Show profile of friend",
+                label: "Show profile",
                 key: "show_profile",
               ),
             if (notificationUnknownUser.relationType == RelationType.requesting)
