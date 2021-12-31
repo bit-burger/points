@@ -1,13 +1,15 @@
 # Setting up your supabase environment with points
 
-1. Disable email confirmations in the auth config settings 
-   (Authentication (Sidebar) > Settings > Enable email confirmations)
+1. Sign up or sign in into supabase and create a new project
+
+2. Disable email confirmations in the auth config settings 
+   (Authentication (Sidebar) > Settings > Enable email confirmations) (Might be changed in later release)
    
-2. In the extensions tab search for FUZZYSTRMATCH and enable it
+3. In the extensions tab search for FUZZYSTRMATCH and enable it
    (Database (Sidebar) > (In the second sidebar under "Databases") Extensions > Searchbar)
    
-3. Make a new query (SQL (Sidebar) > New query)
+4. Make a new query (SQL (Sidebar) > New query)
 
-4. Copy paste main.sql into it and click on run
+5. Copy paste main.sql into it and click on run
 
-5. Make another new query but copy and run functions.sql in it on run
+6. Make another new query, but copy functions.sql into it and click on run

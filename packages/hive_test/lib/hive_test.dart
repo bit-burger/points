@@ -151,7 +151,8 @@ class FakeHiveBox<E> extends Box<E> {
   }
 
   @override
-  noSuchMethod(Invocation invocation) {
-    return super.noSuchMethod(invocation);
+  Future<void> flush() {
+    // TODO: implement flush
+    throw UnimplementedError();
   }
 }
