@@ -149,4 +149,10 @@ class FakeHiveBox<E> extends Box<E> {
     // TODO: implement watch
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> flush() {
+    // TODO: implement flush
+    throw UnimplementedError();
+  }
 }
