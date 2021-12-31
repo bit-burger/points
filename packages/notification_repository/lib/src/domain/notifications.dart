@@ -1,10 +1,14 @@
 import 'notification.dart';
 
 class Notifications {
-  final List<Notification> notifications;
+  final List<Notification> _notifications;
   final bool allNotificationsFetched;
+  List<Notification> get notifications => [..._notifications];
 
-  Notifications(this.notifications, this.allNotificationsFetched);
+  Notifications(
+    List<Notification> notifications,
+    this.allNotificationsFetched,
+  ) : _notifications = notifications;
 
   Notifications copyWith({
     Iterable<Notification>? olderNotifications,
@@ -14,7 +18,7 @@ class Notifications {
   }) {
     final newNotifications = [
       ...?earlierNotifications,
-      ...notifications,
+      ..._notifications,
       ...?olderNotifications,
     ];
     if (earlierNotification != null) {

@@ -42,13 +42,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
     } else if (difference.inDays == 1) {
       return "yesterday";
     } else if (difference.inDays < 7) {
-      formatString = "E";
+      formatString = "EEEE";
     } else if (difference.inDays < 160) {
       formatString = "EEE, MMM d";
     } else {
       formatString = "EEE, MMM d, y";
     }
-    return DateFormat(formatString).format(date);
+    return DateFormat(formatString).format(date).toLowerCase();
   }
 
   String _statusForRelatedUser(RelatedUser relatedUser) {
@@ -219,9 +219,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
             padding: const EdgeInsets.only(top: 16),
             child: Text(
               displayDate,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle1!
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
           ),
         );
