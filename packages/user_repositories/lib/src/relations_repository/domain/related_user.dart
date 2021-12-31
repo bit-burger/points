@@ -28,6 +28,21 @@ class RelatedUser extends User {
           gives: gives,
         );
 
+  RelatedUser copyWithNewRelationType(RelationType relationType) {
+    return RelatedUser(
+      id: id,
+      relationType: relationType,
+      chatId: chatId,
+      name: name,
+      status: status,
+      bio: bio,
+      color: color,
+      icon: icon,
+      points: points,
+      gives: gives,
+    );
+  }
+
   factory RelatedUser.fromJson(
     Map<String, dynamic> json, {
     RelationType? relationType,

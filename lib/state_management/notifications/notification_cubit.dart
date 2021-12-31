@@ -47,7 +47,9 @@ class NotificationCubit extends Cubit<Notification?> {
         if (senderIndex != -1) {
           final sender = relations[senderIndex];
           emit(
-            Notification(
+            MessageNotification(
+              message.chatId,
+              message.senderId,
               icon: pointsIcons.pointsIcons[sender.icon],
               color: pointsColors.colors[sender.color],
               title: sender.name,

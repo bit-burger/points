@@ -36,13 +36,13 @@ class NotificationDelegate extends SingleChildStatelessWidget {
             onTap: () {
               context.read<NotificationCubit>().markAsRead();
 
-              if (notification is! MessageNotification) {
-                notificationsOpenCallback();
-              } else {
+              if (notification is MessageNotification) {
                 chatOpenCallback(
                   notification.openChatId,
                   notification.openChatUserId,
                 );
+              } else {
+                notificationsOpenCallback();
               }
             },
           );

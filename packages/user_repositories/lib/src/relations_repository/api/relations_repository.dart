@@ -40,7 +40,7 @@ class RelationsRepository extends IRelationsRepository {
   /// The [RealtimeSubscription] of the relations of the user
   RealtimeSubscription? _relationsSub;
 
-  /// All relations which profiles are currently being listend to
+  /// All relations which profiles are currently being listened to
   final Map<String, RealtimeSubscription> _friendsProfilesSubs = Map();
 
   /// All relations that could
@@ -267,7 +267,7 @@ class RelationsRepository extends IRelationsRepository {
 
     // If the newRecords does not exist,
     // try to remove a listener on the users profile
-    late final RelatedUser user;
+    late RelatedUser user;
     if (event.oldRecord != null) {
       _currentRelations.values.forEach((relations) {
         relations.removeWhere((user_) {
@@ -290,9 +290,12 @@ class RelationsRepository extends IRelationsRepository {
       }
     }
     if (event.newRecord != null) {
-      final relationsType = event.newRecord!["state"]!;
-      _currentRelations[relationsType]!.add(user);
-      if (relationsType == "friends") {
+      final rawRelationType = event.newRecord!["state"]!;
+      user = user.copyWithNewRelationType(
+        relationTypeFromString(rawRelationType),
+      );
+      _currentRelations[rawRelationType]!.add(user);
+      if (rawRelationType == "friends") {
         _handlerAddFriendListener(userId, user.chatId, user.relationType);
       } else {
         await _handleRemoveFriendListener(userId);
@@ -311,8 +314,8 @@ class RelationsRepository extends IRelationsRepository {
       _sortFriendList(_currentRelations["blocked"]!),
       _sortFriendList(_currentRelations["blocked_by"]!),
     );
-    _relationsStreamController.add(userRelations);
     currentUserRelations = userRelations;
+    _relationsStreamController.add(userRelations);
   }
 
   /// Sort [User]s into a new list by name

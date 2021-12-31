@@ -1,11 +1,14 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:badges/badges.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' hide Notification;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
-    hide NeumorphicAppBar;
+    hide NeumorphicAppBar, Notification;
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:grouped_list/grouped_list.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:notification_repository/notification_repository.dart';
 import 'package:points/helpers/notification_type_icon_data.dart';
 import 'package:points/helpers/relations_action_sheet.dart';
 import 'package:points/state_management/notifications/notification_paging_cubit.dart';
@@ -25,8 +28,28 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  final ItemPositionsListener itemPositionsListener =
+  final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
+
+  String? _dateToString(DateTime date) {
+    final now = DateTime.now();
+    final difference = DateTime(now.year, now.month, now.day).difference(
+      DateTime(date.year, date.month, date.day),
+    );
+    late final formatString;
+    if (difference.inDays == 0) {
+      return null;
+    } else if (difference.inDays == 1) {
+      return "yesterday";
+    } else if (difference.inDays < 7) {
+      formatString = "E";
+    } else if (difference.inDays < 160) {
+      formatString = "EEE, MMM d";
+    } else {
+      formatString = "EEE, MMM d, y";
+    }
+    return DateFormat(formatString).format(date);
+  }
 
   String _statusForRelatedUser(RelatedUser relatedUser) {
     final name = relatedUser.name;
@@ -44,153 +67,196 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  Widget _buildListView(NotificationPagingState state) {
-    final notifications = state.notifications;
-    return SlidableAutoCloseBehavior(
-      child: ScrollablePositionedList.builder(
-        padding: MediaQuery.of(context).viewPadding +
-            EdgeInsets.only(
-              top: 80,
-              bottom: 80,
-            ),
-        itemPositionsListener: itemPositionsListener,
-        itemCount: notifications.length + (state.moreToLoad ? 1 : 0),
-        itemBuilder: (BuildContext context, int index) {
-          if (index < notifications.length) {
-            final notification = notifications[index];
-            final unknownUser = notification.unknownUserId == null
-                ? null
-                : state.mentionedUsers.firstWhere(
-                    (user) => user.id == notification.unknownUserId);
-            return Slidable(
-              closeOnScroll: true,
-              endActionPane: ActionPane(
-                extentRatio: 72 / MediaQuery.of(context).size.width,
-                motion: ScrollMotion(),
-                children: [
-                  Expanded(
-                    child: SizedBox.expand(
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 20),
-                        child: Center(
-                          child: Builder(
-                            builder: (context) {
-                              return CupertinoButton(
-                                child: Icon(
-                                  notification.hasRead
-                                      ? Ionicons.close_outline
-                                      : Ionicons.checkmark_outline,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  Slidable.of(context)!.close();
-                                  final notificationPagingCubit =
-                                      context.read<NotificationPagingCubit>();
-                                  if (notification.hasRead) {
-                                    notificationPagingCubit.markUnread(
-                                      notificationId: notification.id,
-                                    );
-                                  } else {
-                                    notificationPagingCubit.markRead(
-                                      notificationId: notification.id,
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
+  Widget _buildSlidableAction(Notification notification) {
+    return Expanded(
+      child: SizedBox.expand(
+        child: Padding(
+          padding: EdgeInsets.only(right: 20),
+          child: Center(
+            child: Builder(
+              builder: (context) {
+                return CupertinoButton(
+                  child: Icon(
+                    notification.hasRead
+                        ? Ionicons.close_outline
+                        : Ionicons.checkmark_outline,
+                    color: Colors.black,
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: NotificationWidget(
-                  date: notification.createdAt,
-                  onPressed: () async {
-                    showRelationsActionSheet(
-                      context: context,
-                      title: unknownUser == null
-                          ? null
-                          : unknownUser is RelatedUser
-                              ? _statusForRelatedUser(unknownUser)
-                              : "You are not currently related with ${unknownUser.name}",
-                      actions: [
-                        if (unknownUser != null) ...[
-                          if (unknownUser is RelatedUser) ...[
-                            if (unknownUser.relationType == RelationType.friend)
-                              SheetAction(
-                                label: "Show profile of friend",
-                                key: "show_profile",
-                              ),
-                            if (unknownUser.relationType ==
-                                RelationType.requesting)
-                              rejectAction,
-                            if (unknownUser.relationType ==
-                                RelationType.pending)
-                              cancelAction,
-                            if (unknownUser.relationType !=
-                                RelationType.blocked)
-                              blockAction,
-                            if (unknownUser.relationType ==
-                                RelationType.blocked)
-                              unblockAction,
-                          ],
-                          if (unknownUser is! RelatedUser) ...[
-                            requestAction,
-                            blockAction,
-                          ],
-                        ],
-                        SheetAction(
-                          label:
-                              "Mark as ${notification.hasRead ? "un" : ""}read",
-                          key: "mark_read",
-                        ),
-                      ],
-                      userId: unknownUser?.id,
-                      alternativeResultCallback: (result) {
-                        switch (result) {
-                          case "mark_read":
-                            final notificationPagingCubit =
-                                context.read<NotificationPagingCubit>();
-                            if (notification.hasRead) {
-                              notificationPagingCubit.markUnread(
-                                notificationId: notification.id,
-                              );
-                            } else {
-                              notificationPagingCubit.markRead(
-                                notificationId: notification.id,
-                              );
-                            }
-                            break;
-                          case "show_profile":
-                            Navigator.of(context).pushNamed(
-                              "/friend/${notification.unknownUserId}",
-                            );
-                            break;
-                        }
-                      },
-                    );
+                  onPressed: () {
+                    Slidable.of(context)!.close();
+                    final notificationPagingCubit =
+                        context.read<NotificationPagingCubit>();
+                    if (notification.hasRead) {
+                      notificationPagingCubit.markUnread(
+                        notificationId: notification.id,
+                      );
+                    } else {
+                      notificationPagingCubit.markRead(
+                        notificationId: notification.id,
+                      );
+                    }
                   },
-                  lessSpacing: true,
-                  icon: iconDataFromNotificationType(notification.type),
-                  message:
-                      notification.getNotificationMessage(unknownUser?.name),
-                  color: pointsColors.colors[unknownUser?.color ?? 9],
-                  read: notification.hasRead,
-                ),
-              ),
-            );
-          }
-          return _buildLoader();
-        },
+                );
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildNoNotifications() {
+  void _showNotificationActions(
+    Notification notification,
+    User? notificationUnknownUser,
+  ) {
+    showRelationsActionSheet(
+      context: context,
+      title: notificationUnknownUser == null
+          ? null
+          : notificationUnknownUser is RelatedUser
+              ? _statusForRelatedUser(notificationUnknownUser)
+              : "You are not currently related with ${notificationUnknownUser.name}",
+      actions: [
+        if (notificationUnknownUser != null) ...[
+          if (notificationUnknownUser is RelatedUser) ...[
+            if (notificationUnknownUser.relationType == RelationType.friend)
+              SheetAction(
+                label: "Show profile of friend",
+                key: "show_profile",
+              ),
+            if (notificationUnknownUser.relationType == RelationType.requesting)
+              rejectAction,
+            if (notificationUnknownUser.relationType == RelationType.pending)
+              cancelAction,
+            if (notificationUnknownUser.relationType != RelationType.blocked)
+              blockAction,
+            if (notificationUnknownUser.relationType == RelationType.blocked)
+              unblockAction,
+          ],
+          if (notificationUnknownUser is! RelatedUser) ...[
+            requestAction,
+            blockAction,
+          ],
+        ],
+        SheetAction(
+          label: "Mark as ${notification.hasRead ? "un" : ""}read",
+          key: "mark_read",
+        ),
+      ],
+      userId: notificationUnknownUser?.id,
+      alternativeResultCallback: (result) {
+        switch (result) {
+          case "mark_read":
+            final notificationPagingCubit =
+                context.read<NotificationPagingCubit>();
+            if (notification.hasRead) {
+              notificationPagingCubit.markUnread(
+                notificationId: notification.id,
+              );
+            } else {
+              notificationPagingCubit.markRead(
+                notificationId: notification.id,
+              );
+            }
+            break;
+          case "show_profile":
+            Navigator.of(context).pushNamed(
+              "/friend/${notificationUnknownUser?.id}",
+            );
+            break;
+        }
+      },
+    );
+  }
+
+  Widget _buildNotification(
+    NotificationPagingState state,
+    Notification notification,
+  ) {
+    final unknownUser = notification.unknownUserId == null
+        ? null
+        : state.mentionedUsers
+            .firstWhere((user) => user.id == notification.unknownUserId);
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: NotificationWidget(
+        date: notification.createdAt,
+        onPressed: () => _showNotificationActions(notification, unknownUser),
+        lessSpacing: true,
+        icon: iconDataFromNotificationType(notification.type),
+        message: notification.getNotificationMessage(unknownUser?.name),
+        color: pointsColors.colors[unknownUser?.color ?? 9],
+        read: notification.hasRead,
+      ),
+    );
+  }
+
+  Widget _buildNotificationsList(NotificationPagingState state) {
+    final notifications = state.notifications;
+    return GroupedListView<Notification, DateTime>(
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      order: GroupedListOrder.DESC,
+      groupBy: (Notification notification) {
+        final date = notification.createdAt;
+        return DateTime(date.year, date.month, date.day);
+      },
+      itemComparator: (first, second) =>
+          first.createdAt.compareTo(second.createdAt),
+      elements: notifications,
+      padding: MediaQuery.of(context).viewPadding +
+          EdgeInsets.only(
+            top: 80,
+            bottom: 80,
+          ),
+      groupHeaderBuilder: (Notification notification) {
+        final displayDate = _dateToString(notification.createdAt);
+        if (displayDate == null) {
+          return SizedBox();
+        }
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text(
+              displayDate,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
+      },
+      itemBuilder: (BuildContext context, Notification notification) {
+        return Slidable(
+          closeOnScroll: true,
+          endActionPane: ActionPane(
+            extentRatio: 72 / MediaQuery.of(context).size.width,
+            motion: ScrollMotion(),
+            children: [
+              _buildSlidableAction(notification),
+            ],
+          ),
+          child: _buildNotification(state, notification),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoadingList(NotificationPagingState state) {
+    final children = [
+      _buildNotificationsList(state),
+      if (state.moreToLoad) _buildLoader(),
+    ];
+    return SlidableAutoCloseBehavior(
+      child: ScrollablePositionedList.builder(
+        itemPositionsListener: _itemPositionsListener,
+        itemCount: children.length,
+        itemBuilder: (_, i) => children[i],
+      ),
+    );
+  }
+
+  Widget _buildEmptyNotifications() {
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 32),
@@ -310,8 +376,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   child: notificationState.notifications.isEmpty
                       ? notificationState.loading
                           ? _buildLoader()
-                          : _buildNoNotifications()
-                      : _buildListView(notificationState),
+                          : _buildEmptyNotifications()
+                      : _buildLoadingList(notificationState),
                 );
               },
             ),
@@ -324,10 +390,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
   void _scrollChanged() {
     final pagingCubit = context.read<NotificationPagingCubit>();
     if (!pagingCubit.state.loading) {
-      final visible = itemPositionsListener.itemPositions.value;
+      final visibleItems = _itemPositionsListener.itemPositions.value;
 
-      // Only happens if the ListView gets an extra item for the Loader
-      if (visible.last.index == pagingCubit.state.notifications.length) {
+      // Only happens if the ScrollablePositionedListView gets an extra item,
+      // because of the Loader
+      if (visibleItems.last.index == 1) {
         pagingCubit.loadMore();
       }
     }
@@ -335,7 +402,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   void initState() {
-    itemPositionsListener.itemPositions.addListener(_scrollChanged);
+    _itemPositionsListener.itemPositions.addListener(_scrollChanged);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _itemPositionsListener.itemPositions.removeListener(_scrollChanged);
+    super.dispose();
   }
 }

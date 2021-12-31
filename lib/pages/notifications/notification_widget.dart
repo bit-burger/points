@@ -3,8 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
 class NotificationWidget extends StatelessWidget {
-  static final todayDateFormat = DateFormat("HH:mm, 'today'");
-  static final dateFormat = DateFormat("HH:mm, dd.MM.yyyy");
+  static final timeDateFormat = DateFormat("HH:mm");
 
   final IconData? icon;
   final String? title;
@@ -60,10 +59,7 @@ class NotificationWidget extends StatelessWidget {
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Text(
-                      ((date!.day == DateTime.now().day)
-                              ? todayDateFormat
-                              : dateFormat)
-                          .format(date!),
+                      timeDateFormat.format(date!),
                       style: Theme.of(context)
                           .textTheme
                           .labelSmall!

@@ -93,7 +93,8 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
   ) async {
     final activeUsers = [
       profileRepository.currentProfile!,
-      ...relationsRepository.currentUserRelations!.all,
+      ...(relationsRepository.currentUserRelations!)
+          .all,
       ..._userCache,
     ];
     final activeUserIdsSet = activeUsers.map<String>((user) => user.id).toSet();
@@ -140,7 +141,8 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
   }
 
   void markUnread({required int notificationId}) {
-    notificationRepository.markNotificationUnread(notificationId: notificationId);
+    notificationRepository.markNotificationUnread(
+        notificationId: notificationId);
   }
 
   @override
@@ -150,5 +152,4 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
     await _relationsSub.cancel();
     return super.close();
   }
-
 }
