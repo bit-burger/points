@@ -24,6 +24,6 @@ Future<void> configureSupabase() async {
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
-    debug: !flutter.kReleaseMode, // optional
+    debug: !flutter.kReleaseMode,
   );
 }

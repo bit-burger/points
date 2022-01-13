@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:points/points.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:points/supabase_configuration.dart';

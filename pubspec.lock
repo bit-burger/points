@@ -367,7 +367,7 @@ packages:
       name: gotrue
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.2"
+    version: "0.1.3"
   grouped_list:
     dependency: "direct main"
     description:
@@ -721,12 +721,10 @@ packages:
   realtime_client:
     dependency: transitive
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "5cf17fa902e4cf95f0df08882a4b23b4c9067812"
-      url: "https://github.com/Vinzent03/realtime-dart"
-    source: git
-    version: "0.1.12+1"
+      name: realtime_client
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.13"
   rxdart:
     dependency: transitive
     description:
@@ -840,12 +838,10 @@ packages:
   supabase:
     dependency: "direct dev"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "40e61ec62a4af7eda0abc7a37dcbf6a26d5cb86b"
-      url: "https://github.com/bit-burger/supabase-dart"
-    source: git
-    version: "0.2.10"
+      name: supabase
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.12"
   supabase_flutter:
     dependency: "direct main"
     description:

@@ -7,10 +7,10 @@ environment:
   sdk: '>=2.14.3 <3.0.0'
 
 dependencies:
-  supabase:
-    git: https://github.com/bit-burger/supabase-dart
+  supabase: ^0.2.12
   dotenv: ^3.0.0
   faker: ^2.0.0
+
   hive_test:
     path: ../hive_test
   auth_repository:

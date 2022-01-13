@@ -61,10 +61,6 @@ dependencies:
   notification_repository:
     path: ./packages/notification_repository
 
-dependency_overrides:
-  supabase:
-    git: https://github.com/bit-burger/supabase-dart
-
 dev_dependencies:
   # Test framework
   bloc_test: ^9.0.1
@@ -72,7 +68,7 @@ dev_dependencies:
     sdk: flutter
 
   # Raw packages (without Flutter)
-  supabase: ^0.2.10
+  supabase: ^0.2.12
   hive: ^2.0.4
 
   # Mocking and faking
