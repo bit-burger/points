@@ -62,7 +62,7 @@ class NotificationWidget extends StatelessWidget {
                       timeDateFormat.format(date!),
                       style: Theme.of(context)
                           .textTheme
-                          .labelSmall!
+                          .caption!
                           .copyWith(color: Theme.of(context).hintColor),
                     ),
                   ),
