@@ -12,7 +12,6 @@ import 'package:points/widgets/user_list_tile.dart';
 import '../../widgets/neumorphic_app_bar_fix.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/theme/points_icons.dart';
-import 'package:points/widgets/neumorphic_box.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
 import '../../theme/points_colors.dart' as pointsColors;
@@ -154,6 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Expanded(
                   child: NeumorphicLoadingTextButton(
+                    margin: EdgeInsets.only(left: 20),
                     child: Center(child: Text("Submit")),
                     onPressed: disabled || !hasChanges
                         ? null
@@ -167,6 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 Expanded(
                   child: NeumorphicLoadingTextButton(
+                    margin: EdgeInsets.only(right: 20),
                     child: Center(child: Text("Cancel")),
                     onPressed: !hasChanges ? null : () => formBloc.reload(),
                     loading: loading,
@@ -313,17 +314,26 @@ class _ProfilePageState extends State<ProfilePage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: NeumorphicBox(
-                        reverseHeight: true,
-                        listPadding: true,
+                      child: Neumorphic(
+                        margin: EdgeInsets.all(20),
+                        style: NeumorphicStyle(
+                          depth: -NeumorphicTheme.depth(context)!,
+                        ),
                         child: ListView(
                           children: [
                             SizedBox(height: 24),
-                            _buildIcon(formBloc),
-                            SizedBox(height: 16),
-                            ..._buildTextFields(formBloc),
-                            SizedBox(height: 16),
-                            _buildColorButtonRows(formBloc),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                children: [
+                                  _buildIcon(formBloc),
+                                  SizedBox(height: 16),
+                                  ..._buildTextFields(formBloc),
+                                  SizedBox(height: 16),
+                                  _buildColorButtonRows(formBloc),
+                                ],
+                              ),
+                            ),
                             SizedBox(height: 24),
                             _buildSubmitButtons(formBloc),
                             SizedBox(height: 24),
