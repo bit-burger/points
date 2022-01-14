@@ -8,7 +8,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
   final String? tooltip;
   final bool? loading;
   final Widget? loader;
-  final EdgeInsets? padding;
+  final EdgeInsets? padding, margin;
   final TextStyle? textStyle;
   final NeumorphicStyle? style;
 
@@ -19,6 +19,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
     this.loading,
     this.loader,
     this.padding,
+    this.margin,
     this.textStyle,
     this.style,
   }) : super();
@@ -44,6 +45,7 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
     return IgnorePointer(
       ignoring: !enabled,
       child: NeumorphicButton(
+        margin: margin,
         padding: padding,
         tooltip: tooltip,
         child: Center(
