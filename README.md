@@ -1,3 +1,7 @@
+<p align="center">
+    <img width="150pixels" src=".github/logo-white.png">
+</p>
+
 <h1 align="center">points</h1>
 
 <p align="center">
