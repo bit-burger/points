@@ -7,4 +7,4 @@ then
 fi
 
 convert -density 576 -background none -fill \#DDE6E8 logo.svg -opaque \#000000 ../.github/logo-white.png
-mogrify -blur 0x2 ../.github/logo-white.png
+mogrify -gravity Center -crop 80%x80% -resize 512x512 ../.github/logo-white.png
