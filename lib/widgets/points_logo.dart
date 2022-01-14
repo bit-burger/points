@@ -9,7 +9,7 @@ class PointsLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      "assets/logo.svg",
+      "icons/logo.svg",
       height: size,
       width: size,
       color: Colors.black,
