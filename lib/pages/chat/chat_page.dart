@@ -120,15 +120,28 @@ class _ChatPageState extends State<ChatPage> {
                   inverted: true,
                   visible: true,
                   changeVisible: (_) {},
+                  messageDecorationBuilder: (message, isUser) => BoxDecoration(
+                    color: message.user.containerColor,
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: message.user.containerColor == pointColors.white
+                        ? Border.all(color: Colors.black, width: 0.5)
+                        : null,
+                  ),
                   messageTextBuilder: (message, [ChatMessage? __]) =>
                       Text(message!),
                   messageTimeBuilder: (_, [ChatMessage? __]) => SizedBox(),
                   avatarBuilder: (user) {
                     return CircleAvatar(
-                      child: Icon(user.customProperties!["icon"], size: 18),
-                      radius: 17,
-                      foregroundColor: Colors.black,
-                      backgroundColor: user.color,
+                      backgroundColor: user.containerColor == pointColors.white
+                          ? Colors.black
+                          : Colors.transparent ,
+                      radius: 17.5,
+                      child: CircleAvatar(
+                        child: Icon(user.customProperties!["icon"], size: 18),
+                        radius: 17,
+                        foregroundColor: Colors.black,
+                        backgroundColor: user.color,
+                      ),
                     );
                   },
                   defaultLoadCallback: (bool) => true,
