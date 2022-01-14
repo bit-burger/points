@@ -1,0 +1,2 @@
+# ignore all pngs as they are generated and only needed when changing one of the svgs
+*.png
