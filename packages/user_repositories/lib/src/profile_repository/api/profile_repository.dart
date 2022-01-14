@@ -37,7 +37,7 @@ class ProfileRepository extends IProfileRepository {
     final searchParam = "${"profiles"}:id=eq.$userId";
     _sub = _client
         .from(searchParam)
-        .stream()
+        .stream(["id"])
         .limit(1)
         .execute()
         .listen(_handleUpdate, onError: (_) {

@@ -16,6 +16,10 @@ cd meta_repository || exit
 flutter pub get
 cd .. || exit
 
+cd notification_repository || exit
+flutter pub get
+cd .. || exit
+
 cd supabase_testing_utils || exit
 flutter pub get
 cd .. || exit

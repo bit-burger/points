@@ -19,6 +19,15 @@ dependencies:
   ionicons: ^0.1.2
 
   # Widgets
+  scrollable_positioned_list: ^0.2.3
+  grouped_list: ^4.1.0
+  intl: ^0.17.0
+  flutter_slidable: ^1.2.0
+  modal_bottom_sheet: ^2.0.0
+  badges: ^2.0.2
+  flutter_svg: ^1.0.0
+  package_info_plus: ^1.3.0
+  simple_speed_dial: ^0.1.3
   adaptive_dialog: ^1.2.0
   infinite_scroll_pagination: ^3.1.0
   in_app_notification: ^1.0.1
@@ -49,6 +58,8 @@ dependencies:
     path: ./packages/meta_repository
   chat_repository:
     path: ./packages/chat_repository
+  notification_repository:
+    path: ./packages/notification_repository
 
 dev_dependencies:
   # Test framework
@@ -57,7 +68,7 @@ dev_dependencies:
     sdk: flutter
 
   # Raw packages (without Flutter)
-  supabase: ^0.2.10
+  supabase: ^0.2.12
   hive: ^2.0.4
 
   # Mocking and faking
@@ -68,5 +79,5 @@ flutter:
   assets:
     - .env
     - google_fonts/
-
+    - assets/
   uses-material-design: true

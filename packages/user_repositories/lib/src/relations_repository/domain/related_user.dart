@@ -1,10 +1,14 @@
+import 'package:user_repositories/src/relations_repository/domain/relation_type.dart';
+
 import '../../domain_shared/user.dart';
 
 class RelatedUser extends User {
+  final RelationType relationType;
   final String chatId;
 
   RelatedUser({
     required String id,
+    required this.relationType,
     required this.chatId,
     required String name,
     required String status,
@@ -24,12 +28,29 @@ class RelatedUser extends User {
           gives: gives,
         );
 
+  RelatedUser copyWithNewRelationType(RelationType relationType) {
+    return RelatedUser(
+      id: id,
+      relationType: relationType,
+      chatId: chatId,
+      name: name,
+      status: status,
+      bio: bio,
+      color: color,
+      icon: icon,
+      points: points,
+      gives: gives,
+    );
+  }
+
   factory RelatedUser.fromJson(
     Map<String, dynamic> json, {
+    RelationType? relationType,
     String? chatId,
   }) {
     return RelatedUser(
       id: json["id"],
+      relationType: relationType ?? relationTypeFromString(json["state"]),
       chatId: chatId ?? json["chat_id"],
       name: json["name"],
       status: json["status"],

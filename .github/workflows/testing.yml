@@ -20,6 +20,10 @@ jobs:
         run: |
           cd packages/chat_repository
           dart test
+      - name: test notification_repository
+        run: |
+          cd packages/notification_repository
+          dart test
       - name: test user_repositories
         run: |
           cd packages/user_repositories

@@ -6,6 +6,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:points/supabase_configuration.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'configure_package_info.dart';
+
 void main() async {
   GoogleFonts.config.allowRuntimeFetching = false;
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +16,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await configureSupabase();
   await Hive.initFlutter();
+  await configurePackageInfo();
 
   final sessionStore = await Hive.openBox<String>("sessions");
 

@@ -33,6 +33,18 @@ class UserDiscoveryRepository extends IUserDiscoveryRepository {
     return User.fromJson(response.data[0]);
   }
 
+  @override
+  Future<User> getUserById({required String id}) async {
+    final response =
+        await _client.from("profiles").select().eq("id", id).single().execute();
+
+    if(response.error != null) {
+      throw PointsConnectionError();
+    }
+
+    return User.fromJson(response.data);
+  }
+
   /*
     imprecise name
     imprecise name  + popularity

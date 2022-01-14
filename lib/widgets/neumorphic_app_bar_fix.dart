@@ -106,6 +106,7 @@ class NeumorphicAppBarState extends State<NeumorphicAppBar> {
       if (widget.secondTrailing != null) {
         trailing = Row(
           mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: [
             ConstrainedBox(
               constraints: const BoxConstraints.tightFor(

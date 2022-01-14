@@ -5,6 +5,7 @@ import 'package:auth_repository/auth_repository.dart';
 import 'package:chat_repository/chat_repository.dart';
 import 'package:faker/faker.dart';
 import 'package:hive_test/hive_test.dart';
+import 'package:notification_repository/notification_repository.dart';
 import 'package:supabase/supabase.dart' hide User;
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
@@ -20,10 +21,14 @@ class LoggedInUser {
   final RelationsRepository relations;
   final UserDiscoveryRepository userDiscovery;
   final ChatRepository chat;
+  final NotificationRepository notifications;
 
   RelatedUser get user => RelatedUser.fromJson(
         profile.currentProfile!.toJson(),
+        // just for testing,
+        // RelatedUser does not check the chatId or relationType
         chatId: "",
+        relationType: RelationType.friend,
       );
 
   LoggedInUser._(
@@ -36,9 +41,11 @@ class LoggedInUser {
     this.relations,
     this.userDiscovery,
     this.chat,
+    this.notifications,
   );
 
   Future<void> close() async {
+    notifications.close();
     profile.close();
     relations.close();
     chat.close();
@@ -108,6 +115,10 @@ class LoggedInUser {
       client: supabaseClient,
     );
 
+    final notificationRepository = NotificationRepository(
+      client: supabaseClient,
+    );
+
     return LoggedInUser._(
       supabaseClient,
       user.id,
@@ -118,6 +129,7 @@ class LoggedInUser {
       relationsRepository,
       userDiscoverRepository,
       chatRepository,
+      notificationRepository,
     );
   }
 }

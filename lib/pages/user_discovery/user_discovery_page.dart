@@ -104,10 +104,11 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
 
   Widget _buildUserList() {
     return PagedListView<int, User>(
-      padding: MediaQuery.of(context).padding.add(EdgeInsets.only(
+      padding: MediaQuery.of(context).viewPadding +
+          EdgeInsets.only(
             top: 80,
             bottom: 80,
-          )),
+          ),
       builderDelegate: PagedChildBuilderDelegate(
         animateTransitions: true,
         firstPageProgressIndicatorBuilder: (_) => Loader(),

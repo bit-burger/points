@@ -1,12 +1,14 @@
 import 'package:chat_repository/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notification_repository/notification_repository.dart';
 import 'package:points/pages/auth/auth_initial_page.dart';
 import 'package:points/pages/auth/auth_page.dart';
 import 'package:points/pages/auth/connection_error_page.dart';
 import 'package:points/pages/home/home_navigator.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/notifications/notification_cubit.dart';
+import 'package:points/state_management/notifications/notification_unread_count_cubit.dart';
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -42,6 +44,11 @@ class AuthNavigator extends StatelessWidget {
                 client: Supabase.instance.client,
               ),
             ),
+            RepositoryProvider(
+              create: (_) => NotificationRepository(
+                client: Supabase.instance.client,
+              ),
+            ),
           ],
           child: MultiBlocProvider(
             providers: [
@@ -61,6 +68,18 @@ class AuthNavigator extends StatelessWidget {
                 create: (context) => NotificationCubit(
                   relationsRepository: context.read<RelationsRepository>(),
                   chatRepository: context.read<ChatRepository>(),
+                  authCubit: context.read<AuthCubit>(),
+                  notificationRepository:
+                      context.read<NotificationRepository>(),
+                  userDiscoveryRepository:
+                      context.read<UserDiscoveryRepository>(),
+                  profileRepository: context.read<ProfileRepository>(),
+                )..startListening(),
+              ),
+              BlocProvider(
+                create: (context) => NotificationUnreadCountCubit(
+                  notificationRepository:
+                      context.read<NotificationRepository>(),
                   authCubit: context.read<AuthCubit>(),
                 )..startListening(),
               ),
