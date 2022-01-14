@@ -1,5 +1,7 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+import 'neumorphic_action.dart';
+
 /// Taken and modified from https://github.com/janoschp/simple_speed_dial
 
 class SpeedDialChild {
@@ -132,7 +134,7 @@ class _NeumorphicSpeedDialState extends State<NeumorphicSpeedDial>
                                 speedDialChildAnimationIndex],
                             child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: NeumorphicButton(
                                 child: SizedBox(
                                   width: 100,
@@ -152,6 +154,11 @@ class _NeumorphicSpeedDialState extends State<NeumorphicSpeedDial>
                                   _animationController.reverse();
                                   speedDialChild.onPressed.call();
                                 },
+                                minDistance: 2.5,
+                                style: NeumorphicStyle(
+                                  depth: 8,
+                                  intensity: 0.7,
+                                ),
                               ),
                             ),
                           ),
@@ -166,8 +173,8 @@ class _NeumorphicSpeedDialState extends State<NeumorphicSpeedDial>
           ),
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: NeumorphicFloatingActionButton(
-            child: widget.child,
+          child: NeumorphicAction(
+            child: widget.child ?? SizedBox(),
             onPressed: () {
               if (_animationController.isDismissed) {
                 _animationController.forward();

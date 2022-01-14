@@ -8,6 +8,7 @@ import 'package:points/state_management/notifications/notification_unread_count_
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:points/theme/points_colors.dart' as pointsColors;
+import 'package:points/widgets/neumorphic_action.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/points_logo.dart';
@@ -92,19 +93,15 @@ class _HomePageState extends State<HomePage>
                           key: ValueKey(rootUser),
                         ),
                       ),
-                      leading: Hero(
-                        tag: "User search",
-                        transitionOnUserGestures: true,
-                        child: NeumorphicButton(
-                          tooltip: "Points menu",
+                      leading: NeumorphicAction(
+                        tooltip: "Points page",
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
                           child: PointsLogo(size: 28),
-                          onPressed: () {
-                            // Navigate to points screen
-                          },
-                          style: NeumorphicStyle(
-                            boxShape: NeumorphicBoxShape.circle(),
-                          ),
                         ),
+                        onPressed: () {
+                          // Navigate to points screen
+                        },
                       ),
                       trailing: BlocBuilder<NotificationUnreadCountCubit, int>(
                         builder: (context, unreadCount) {
@@ -116,19 +113,13 @@ class _HomePageState extends State<HomePage>
                             ),
                             badgeColor: pointsColors.white,
                             badgeContent: Text(unreadCount.toString()),
-                            child: NeumorphicButton(
+                            child: NeumorphicAction(
                               tooltip: "Notifications",
-                              child: SizedBox.fromSize(
-                                size: Size.square(56),
-                                child: Icon(Ionicons.notifications_outline),
-                              ),
+                              child: Icon(Ionicons.notifications_outline),
                               onPressed: () {
                                 Navigator.of(context)
                                     .pushNamed("/notifications");
                               },
-                              style: NeumorphicStyle(
-                                boxShape: NeumorphicBoxShape.circle(),
-                              ),
                             ),
                           );
                         },

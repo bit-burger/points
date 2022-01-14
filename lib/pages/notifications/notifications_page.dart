@@ -16,6 +16,7 @@ import 'package:points/state_management/notifications/notification_unread_count_
 import 'package:points/theme/points_colors.dart' as pointsColors;
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
+import 'package:points/widgets/neumorphic_action.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:user_repositories/relations_repository.dart';
@@ -296,15 +297,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ),
           badgeColor: pointsColors.white,
           badgeContent: Text(unreadCount.toString()),
-          child: NeumorphicButton(
+          child: NeumorphicAction(
             tooltip: "Mark all read",
-            child: SizedBox.fromSize(
-              size: Size.square(56),
-              child: Icon(Ionicons.checkmark_done_outline),
-            ),
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.circle(),
-            ),
+            child: Icon(Ionicons.checkmark_done_outline),
             onPressed: () {
               context.read<NotificationPagingCubit>().markAllRead();
             },
@@ -320,7 +315,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         return oldState.showingRead != newState.showingRead;
       },
       builder: (context, state) {
-        return NeumorphicButton(
+        return NeumorphicAction(
           tooltip: state.showingRead
               ? "Only show unread notifications"
               : "Show read and unread notifications",
@@ -333,9 +328,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   : Ionicons.mail_open_outline,
               key: ValueKey(state.showingRead),
             ),
-          ),
-          style: NeumorphicStyle(
-            boxShape: NeumorphicBoxShape.circle(),
           ),
           onPressed: () {
             context.read<NotificationPagingCubit>().toggleShowRead();
@@ -356,11 +348,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ignoring: state.loading,
           child: NeumorphicScaffold(
             appBar: NeumorphicAppBar(
-              leading: NeumorphicBackButton(
-                style: NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
-                ),
-              ),
+              leading: NeumorphicAction.backButton(),
               title: SizedBox(),
               trailing: _buildMarkAllNotificationsReadButton(),
               secondTrailing: buildShowUnreadNotificationButton(),

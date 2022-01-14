@@ -9,8 +9,8 @@ import 'package:points/helpers/uppercase_to_lowercase_text_input_formatter.dart'
 import 'package:points/pages/user_discovery/invite_popup.dart';
 import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
 import 'package:points/widgets/loader.dart';
+import 'package:points/widgets/neumorphic_action.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
-import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/neumorphic_text_field.dart';
 import 'package:points/widgets/user_list_tile.dart';
@@ -196,18 +196,10 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
             ),
             middleSpacing: false,
             centerTitle: false,
-            trailing: Hero(
-              tag: "User search",
-              child: NeumorphicLoadingTextButton(
-                tooltip: "Search",
-                child: Icon(Ionicons.search_outline),
-                onPressed: _search,
-                style: NeumorphicStyle(
-                  boxShape: NeumorphicBoxShape.circle(),
-                  intensity: 0.7,
-                  depth: 8,
-                ),
-              ),
+            trailing: NeumorphicAction(
+              tooltip: "Search",
+              child: Icon(Ionicons.search_outline),
+              onPressed: _search,
             ),
           ),
           extendBodyBehindAppBar: true,
@@ -222,7 +214,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
           floatingActionButton: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              NeumorphicFloatingActionButton(
+              NeumorphicAction(
                 child: Icon(Ionicons.person_add_outline),
                 onPressed: () => showModalBottomSheet(
                   context: context,
@@ -230,17 +222,11 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
                   backgroundColor: Colors.transparent,
                   builder: (_) => InvitePopup(),
                 ),
-                style: NeumorphicStyle(
-                  depth: 8,
-                ),
               ),
               SizedBox(height: 16),
-              NeumorphicFloatingActionButton(
+              NeumorphicAction(
                 child: Icon(Ionicons.home_outline),
                 onPressed: () => Navigator.pop(context),
-                style: NeumorphicStyle(
-                  depth: 8,
-                ),
               ),
             ],
           ),

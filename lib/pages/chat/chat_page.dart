@@ -4,6 +4,7 @@ import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/state_management/chat/chat_cubit.dart';
 import 'package:points/widgets/loader.dart';
+import 'package:points/widgets/neumorphic_action.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
@@ -224,9 +225,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return NeumorphicScaffold(
       appBar: NeumorphicAppBar(
-        leading: NeumorphicBackButton(
-          style: NeumorphicStyle(boxShape: NeumorphicBoxShape.circle()),
-        ),
+        leading: NeumorphicAction.backButton(),
         title: SizedBox(),
       ),
       extendBodyBehindAppBar: true,
