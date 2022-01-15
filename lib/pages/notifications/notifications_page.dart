@@ -1,5 +1,4 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart' hide Notification;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
@@ -289,21 +288,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget _buildMarkAllNotificationsReadButton() {
     return BlocBuilder<NotificationUnreadCountCubit, int>(
       builder: (context, unreadCount) {
-        return Badge(
-          showBadge: unreadCount > 0,
-          position: BadgePosition(
-            end: -6,
-            top: -6,
-          ),
-          badgeColor: pointsColors.white,
-          badgeContent: Text(unreadCount.toString()),
-          child: NeumorphicAction(
-            tooltip: "Mark all read",
-            child: Icon(Ionicons.checkmark_done_outline),
-            onPressed: () {
-              context.read<NotificationPagingCubit>().markAllRead();
-            },
-          ),
+        return NeumorphicAction(
+          badgeNotifications: unreadCount,
+          tooltip: "Mark all read",
+          child: Icon(Ionicons.checkmark_done_outline),
+          onPressed: () {
+            context.read<NotificationPagingCubit>().markAllRead();
+          },
         );
       },
     );

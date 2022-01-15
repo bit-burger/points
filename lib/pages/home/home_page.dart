@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
@@ -86,14 +85,11 @@ class _HomePageState extends State<HomePage>
                   NeumorphicScaffold(
                     extendBodyBehindAppBar: true,
                     appBar: NeumorphicAppBar(
-                      title: AnimatedSwitcher(
-                        duration: Duration(milliseconds: 250),
-                        child: Text(
-                          rootUser?.name ?? "...",
-                          key: ValueKey(rootUser),
-                        ),
+                      title: Text(
+                        rootUser?.points.toString() ?? "",
                       ),
                       leading: NeumorphicAction(
+                        badgeNotifications: rootUser?.points,
                         tooltip: "Points page",
                         child: Padding(
                           padding: EdgeInsets.all(12),
@@ -105,22 +101,14 @@ class _HomePageState extends State<HomePage>
                       ),
                       trailing: BlocBuilder<NotificationUnreadCountCubit, int>(
                         builder: (context, unreadCount) {
-                          return Badge(
-                            showBadge: unreadCount > 0,
-                            position: BadgePosition(
-                              end: -6,
-                              top: -6,
-                            ),
-                            badgeColor: pointsColors.white,
-                            badgeContent: Text(unreadCount.toString()),
-                            child: NeumorphicAction(
-                              tooltip: "Notifications",
-                              child: Icon(Ionicons.notifications_outline),
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pushNamed("/notifications");
-                              },
-                            ),
+                          return NeumorphicAction(
+                            badgeNotifications: unreadCount,
+                            tooltip: "Notifications",
+                            child: Icon(Ionicons.notifications_outline),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed("/notifications");
+                            },
                           );
                         },
                       ),

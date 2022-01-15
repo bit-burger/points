@@ -1,20 +1,22 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:points/state_management/auth/auth_cubit.dart';
+import 'package:badges/badges.dart';
+import '../theme/points_colors.dart' as pointsColors;
 
 class NeumorphicAction extends StatelessWidget {
+  final int? badgeNotifications;
   final String? tooltip;
   final VoidCallback onPressed;
   final Widget child;
   final EdgeInsets? margin;
 
   const NeumorphicAction({
+    this.badgeNotifications,
     this.tooltip,
     this.margin,
     required this.onPressed,
     required this.child,
-  });
+  }) : assert((badgeNotifications ?? 0) >= 0);
 
   static Widget backButton() {
     return _BackButton();
@@ -22,7 +24,7 @@ class NeumorphicAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicButton(
+    final widget = NeumorphicButton(
       padding: EdgeInsets.zero,
       tooltip: tooltip,
       child: SizedBox.fromSize(
@@ -36,6 +38,21 @@ class NeumorphicAction extends StatelessWidget {
       ),
       minDistance: 3,
       onPressed: onPressed,
+    );
+    if (badgeNotifications == null || badgeNotifications == 0) {
+      return widget;
+    }
+    return Badge(
+      position: BadgePosition(
+        end: -6,
+        top: -6,
+      ),
+      badgeColor: pointsColors.white,
+      badgeContent: Text(badgeNotifications!.toString()),
+      shape: badgeNotifications! >= 10 ? BadgeShape.square : BadgeShape.circle,
+      padding: EdgeInsets.all(3),
+      borderRadius: BorderRadius.circular(50),
+      child: widget,
     );
   }
 }
