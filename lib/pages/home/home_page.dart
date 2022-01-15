@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
@@ -8,6 +7,7 @@ import 'package:points/state_management/notifications/notification_unread_count_
 import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:points/theme/points_colors.dart' as pointsColors;
+import 'package:points/widgets/neumorphic_action.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/points_logo.dart';
@@ -85,51 +85,30 @@ class _HomePageState extends State<HomePage>
                   NeumorphicScaffold(
                     extendBodyBehindAppBar: true,
                     appBar: NeumorphicAppBar(
-                      title: AnimatedSwitcher(
-                        duration: Duration(milliseconds: 250),
-                        child: Text(
-                          rootUser?.name ?? "...",
-                          key: ValueKey(rootUser),
-                        ),
+                      title: Text(
+                        rootUser?.points.toString() ?? "",
                       ),
-                      leading: Hero(
-                        tag: "User search",
-                        transitionOnUserGestures: true,
-                        child: NeumorphicButton(
-                          tooltip: "Points menu",
+                      leading: NeumorphicAction(
+                        badgeNotifications: rootUser?.points,
+                        tooltip: "Points page",
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
                           child: PointsLogo(size: 28),
-                          onPressed: () {
-                            // Navigate to points screen
-                          },
-                          style: NeumorphicStyle(
-                            boxShape: NeumorphicBoxShape.circle(),
-                          ),
                         ),
+                        onPressed: () {
+                          // Navigate to points screen
+                        },
                       ),
                       trailing: BlocBuilder<NotificationUnreadCountCubit, int>(
                         builder: (context, unreadCount) {
-                          return Badge(
-                            showBadge: unreadCount > 0,
-                            position: BadgePosition(
-                              end: -6,
-                              top: -6,
-                            ),
-                            badgeColor: pointsColors.white,
-                            badgeContent: Text(unreadCount.toString()),
-                            child: NeumorphicButton(
-                              tooltip: "Notifications",
-                              child: SizedBox.fromSize(
-                                size: Size.square(56),
-                                child: Icon(Ionicons.notifications_outline),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pushNamed("/notifications");
-                              },
-                              style: NeumorphicStyle(
-                                boxShape: NeumorphicBoxShape.circle(),
-                              ),
-                            ),
+                          return NeumorphicAction(
+                            badgeNotifications: unreadCount,
+                            tooltip: "Notifications",
+                            child: Icon(Ionicons.notifications_outline),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed("/notifications");
+                            },
                           );
                         },
                       ),
