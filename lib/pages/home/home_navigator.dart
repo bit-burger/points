@@ -11,6 +11,7 @@ import 'package:points/pages/relations/friend_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/chat/chat_cubit.dart';
+import 'package:points/state_management/friend/friend_cubit.dart';
 import 'package:points/state_management/notifications/notification_paging_cubit.dart';
 import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
 import 'package:points/theme/points_colors.dart';
@@ -93,7 +94,12 @@ class _HomeNavigatorState extends State<HomeNavigator> {
               return ModalBottomSheetRoute(
                 modalBarrierColor: barrierColor,
                 expanded: false,
-                builder: (_) => FriendPage(friendId: friendId),
+                builder: (_) => BlocProvider(
+                  create: (context) => FriendCubit(
+                    context.read<RelationsRepository>(),
+                  )..loadFriendData(friendId: friendId),
+                  child: FriendPage(),
+                ),
               );
             case "chat":
               if (uri.length < 3) {
