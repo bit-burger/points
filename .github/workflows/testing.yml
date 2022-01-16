@@ -15,18 +15,18 @@ jobs:
       - name: test auth_repository
         run: |
           cd packages/auth_repository
-          dart test
+          dart test --chain-stack-traces
       - name: test chat_repository
         run: |
           cd packages/chat_repository
-          dart test
+          dart test --chain-stack-traces
       - name: test notification_repository
         run: |
           cd packages/notification_repository
-          dart test
+          dart test --chain-stack-traces
       - name: test user_repositories
         run: |
           cd packages/user_repositories
-          dart test test/profile_repository_test.dart
-          dart test test/relations_repository_test.dart
-          dart test test/user_discovery_repository_test.dart
+          dart test --chain-stack-traces test/profile_repository_test.dart
+          dart test --chain-stack-traces test/relations_repository_test.dart
+          dart test --chain-stack-traces test/user_discovery_repository_test.dart
