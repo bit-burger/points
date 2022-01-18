@@ -5,17 +5,23 @@ class NeumorphicIconButton extends StatelessWidget {
   final Widget text;
   final VoidCallback onPressed;
   final NeumorphicStyle? style;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
 
   const NeumorphicIconButton({
     required this.icon,
     required this.text,
     required this.onPressed,
     this.style,
+    this.padding,
+    this.margin,
   }) : super();
 
   @override
   Widget build(BuildContext context) {
     return NeumorphicButton(
+      padding: padding,
+      margin: margin,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

@@ -1,19 +1,22 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/state_management/friend/friend_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:points/widgets/points_logo.dart';
 import '../../theme/points_colors.dart' as pointsColors;
 import '../../theme/points_icons.dart' as pointsIcons;
 import '../../widgets/neumorphic_icon_button.dart';
 
 class FriendPage extends StatelessWidget {
-  /// TODO: Add buttons "give points" and "unfriend"
+  // TODO: Check alternative designs for (now hidden) unfriend and block buttons
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<FriendCubit, FriendState>(
       listener: (context, state) {
-        if(state is FriendUnfriendedState) {
+        if (state is FriendUnfriendedState) {
           Navigator.of(context).pop();
         }
       },
@@ -22,69 +25,130 @@ class FriendPage extends StatelessWidget {
         final friend = (state as FriendDataState).data;
         final color = pointsColors.colors[friend.color];
         return Neumorphic(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      pointsIcons.pointsIcons[friend.icon],
-                      size: 48,
+                    SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          pointsIcons.pointsIcons[friend.icon],
+                          size: 48,
+                        ),
+                        SizedBox(width: 16),
+                        Text(friend.name,
+                            style: Theme.of(context).textTheme.headline4)
+                      ],
                     ),
-                    SizedBox(width: 16),
-                    Text(friend.name,
-                        style: Theme.of(context).textTheme.headline4)
+                    SizedBox(height: 32),
+                    Text(friend.status,
+                        style: Theme.of(context).textTheme.headline6),
+                    SizedBox(height: 32),
+                    Text(
+                      friend.bio,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 48),
                   ],
                 ),
-                SizedBox(height: 32),
-                Text(friend.status,
-                    style: Theme.of(context).textTheme.headline6),
-                SizedBox(height: 32),
-                Text(
-                  friend.bio,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 48),
-                Row(
-                  children: [
-                    Expanded(
-                      child: NeumorphicIconButton(
-                        icon: Icon(Ionicons.chatbox_outline),
-                        text: Text("Chat"),
+              ),
+              SizedBox(
+                height: 82,
+                child: Container(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.only(left: 16),
+                    children: [
+                      SizedBox.shrink(
+                        child: NeumorphicIconButton(
+                          icon: Icon(Ionicons.chatbox_outline),
+                          text: Text("Chat"),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/chat/${friend.chatId}/${friend.id}",
+                            );
+                          },
+                          margin: EdgeInsets.symmetric(vertical: 16),
+                          style: NeumorphicStyle(
+                            color: color,
+                          ),
+                        ),
+                      ),
+                      NeumorphicIconButton(
+                        icon: PointsLogo(size: 26),
+                        text: Text("Give"),
                         onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            "/chat/${friend.chatId}/${friend.id}",
-                          );
+                          // Give points
                         },
+                        margin: EdgeInsets.symmetric(vertical: 16),
                         style: NeumorphicStyle(
                           color: color,
                         ),
                       ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: NeumorphicIconButton(
+                      NeumorphicIconButton(
+                        icon: Icon(Ionicons.remove_circle_outline),
+                        text: Text("Unfriend"),
+                        onPressed: () async {
+                          final result = await showOkCancelAlertDialog(
+                            title: "Warning",
+                            message:
+                                "Do you want to unfriend '${friend.name}'?",
+                            context: context,
+                            isDestructiveAction: true,
+                          );
+                          if (result == OkCancelResult.ok) {
+                            context
+                                .read<RelationsCubit>()
+                                .unfriend(friend.id);
+                          }
+                        },
+                        margin: EdgeInsets.symmetric(vertical: 16),
+                        style: NeumorphicStyle(
+                          color: color,
+                        ),
+                      ),
+                      NeumorphicIconButton(
                         icon: Icon(Ionicons.close_circle_outline),
                         text: Text("Block"),
-                        onPressed: () {
-                          context.read<RelationsCubit>().block(friend.id);
+                        onPressed: () async {
+                          final result = await showOkCancelAlertDialog(
+                            title: "Warning",
+                            message: "Do you want to block '${friend.name}'?",
+                            context: context,
+                            isDestructiveAction: true,
+                          );
+                          if (result == OkCancelResult.ok) {
+                            context.read<RelationsCubit>().unblock(friend.id);
+                          }
                         },
+                        margin: EdgeInsets.symmetric(vertical: 16),
                         style: NeumorphicStyle(
                           color: color,
                         ),
                       ),
-                    ),
-                  ],
+                    ].map<Widget>(
+                      (w) {
+                        return SizedBox(
+                          width: (MediaQuery.of(context).size.width - 16) / 2,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 16),
+                            child: w,
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
                 ),
-                SizedBox(
-                    height: 32 + MediaQuery.of(context).viewPadding.bottom),
-              ],
-            ),
+              ),
+              SizedBox(height: 32 + MediaQuery.of(context).viewPadding.bottom),
+            ],
           ),
           style: NeumorphicStyle(
             intensity: 1,
