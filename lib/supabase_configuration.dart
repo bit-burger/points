@@ -16,11 +16,6 @@ Future<void> configureSupabase() async {
     "The supabase url ($supabaseUrl) is invalid",
   );
 
-  assert(
-    regExp.supabaseKey.hasMatch(supabaseAnonKey!),
-    "The supabase anon key ($supabaseAnonKey) is invalid",
-  );
-
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
