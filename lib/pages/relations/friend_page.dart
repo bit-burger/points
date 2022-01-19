@@ -55,9 +55,36 @@ class FriendPage extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 48),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      textBaseline: TextBaseline.alphabetic,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      children: [
+                        Text(
+                          friend.points.toString(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 4),
+                        Text("points"),
+                        SizedBox(width: 16),
+                        Text(
+                          friend.gives.toString(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 4),
+                        Text("gives"),
+                      ],
+                    ),
                   ],
                 ),
               ),
+              SizedBox(height: 12 ),
               SizedBox(
                 height: 82,
                 child: Container(
@@ -104,9 +131,7 @@ class FriendPage extends StatelessWidget {
                             isDestructiveAction: true,
                           );
                           if (result == OkCancelResult.ok) {
-                            context
-                                .read<RelationsCubit>()
-                                .unfriend(friend.id);
+                            context.read<RelationsCubit>().unfriend(friend.id);
                           }
                         },
                         margin: EdgeInsets.symmetric(vertical: 16),
