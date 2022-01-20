@@ -365,7 +365,7 @@ class RelationsRepository extends IRelationsRepository {
 
   /// Base method for invoking a RPC with error handling
   void _invoke(String id, String function) {
-    _invokeBase(function, params: {"_id": "id"});
+    _invokeBase(function, params: {"_id": id});
   }
 
   void _invokeBase(
