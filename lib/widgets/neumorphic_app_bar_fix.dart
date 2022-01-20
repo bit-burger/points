@@ -138,7 +138,9 @@ class NeumorphicAppBarState extends State<NeumorphicAppBar> {
               middle: DefaultTextStyle(
                 style: (appBarTheme.titleTextStyle ??
                         Theme.of(context).textTheme.headline5!)
-                    .merge(nTheme?.current?.appBarTheme.textStyle),
+                    .merge(nTheme?.current?.appBarTheme.textStyle)
+                // .copyWith(fontWeight: FontWeight.bold)
+                ,
                 child: widget.title,
               ),
               trailing: Padding(

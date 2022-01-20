@@ -60,6 +60,11 @@ class FriendCubit extends Cubit<FriendState> {
     });
   }
 
+  void givePoints(int howMany) {
+    final friend = (state as FriendDataState).data;
+    relationsRepository.givePoints(friend.id, howMany);
+  }
+
   @override
   Future<void> close() async {
     await _sub.cancel();

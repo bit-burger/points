@@ -31,6 +31,10 @@ abstract class IRelationsRepository {
   /// Unfriend user
   void unfriend(String id);
 
+  /// Give points, the amount of points given,
+  /// will be subtracted from the gives
+  void givePoints(String id, int amount);
+
   /// Cleanup
   void close();
 }

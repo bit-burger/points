@@ -59,7 +59,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
                 if (state.contains(MaterialState.pressed)) {
                   return Colors.grey[400];
                 }
-                return Colors.grey[600];
+                return colors.textLabelColor;
               },
             ),
             padding: MaterialStateProperty.all(EdgeInsets.zero),

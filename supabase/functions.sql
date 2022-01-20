@@ -140,6 +140,20 @@ returns int as $$
 $$
 language sql security definer;
 
+------------
+-- POINTS --
+------------
+
+create or replace function give_points(_id uuid, amount int)
+  returns void as $$
+    BEGIN
+      update profiles set gives = gives - amount where id = auth.uid();
+      update profiles set points = points + amount where id = _id;
+    END;
+  $$
+  language plpgsql security definer;
+
+
 ---------------
 -- RELATIONS --
 ---------------

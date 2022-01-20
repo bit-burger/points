@@ -4,14 +4,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:points/pages/chat/chat_page.dart';
+import 'package:points/pages/give_points/give_friend_points_dialog.dart';
+import 'package:points/pages/give_points/give_points_page.dart';
 import 'package:points/pages/notifications/notification_delegate.dart';
 import 'package:points/pages/notifications/notifications_page.dart';
 import 'package:points/pages/profile/profile_page.dart';
-import 'package:points/pages/relations/friend_page.dart';
+import 'package:points/pages/friend/friend_page.dart';
 import 'package:points/pages/user_discovery/user_discovery_page.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/chat/chat_cubit.dart';
 import 'package:points/state_management/friend/friend_cubit.dart';
+import 'package:points/state_management/give_friend_points/give_friend_points_cubit.dart';
 import 'package:points/state_management/notifications/notification_paging_cubit.dart';
 import 'package:points/state_management/user_discovery/user_discovery_cubit.dart';
 import 'package:points/theme/points_colors.dart';
@@ -85,6 +88,26 @@ class _HomeNavigatorState extends State<HomeNavigator> {
                 barrierColor: barrierColor,
                 context: context,
                 builder: (_) => InfoDialog(),
+              );
+            case "give-friend-points":
+              if (uri.length < 2) {
+                return null;
+              }
+              final friendId = uri[1];
+              return DialogRoute(
+                barrierColor: barrierColor,
+                context: context,
+                builder: (_) => BlocProvider(
+                  create: (context) => GiveFriendPointsCubit(
+                    relationsRepository: context.read<RelationsRepository>(),
+                    profileRepository: context.read<ProfileRepository>(),
+                  )..selectFriend(friendId: friendId),
+                  child: GiveFriendPointsDialog(),
+                ),
+              );
+            case "give-points":
+              return MaterialPageRoute(
+                builder: (_) => GivePointsPage(),
               );
             case "friend":
               if (uri.length < 2) {

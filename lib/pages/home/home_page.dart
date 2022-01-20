@@ -86,17 +86,17 @@ class _HomePageState extends State<HomePage>
                     extendBodyBehindAppBar: true,
                     appBar: NeumorphicAppBar(
                       title: Text(
-                        rootUser?.points.toString() ?? "",
+                        rootUser?.points.toString() ?? "...",
                       ),
                       leading: NeumorphicAction(
-                        badgeNotifications: rootUser?.points,
-                        tooltip: "Points page",
+                        badgeNotifications: rootUser?.gives,
+                        tooltip: "Give points",
                         child: Padding(
                           padding: EdgeInsets.all(12),
                           child: PointsLogo(size: 28),
                         ),
                         onPressed: () {
-                          // Navigate to points screen
+                          Navigator.of(context).pushNamed("/give-points");
                         },
                       ),
                       trailing: BlocBuilder<NotificationUnreadCountCubit, int>(

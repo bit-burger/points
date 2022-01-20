@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/state_management/friend/friend_cubit.dart';
+import 'package:points/state_management/profile/profile_cubit.dart';
 import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:points/widgets/points_logo.dart';
@@ -84,7 +85,7 @@ class FriendPage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 12 ),
+              SizedBox(height: 12),
               SizedBox(
                 height: 82,
                 child: Container(
@@ -112,7 +113,21 @@ class FriendPage extends StatelessWidget {
                         icon: PointsLogo(size: 26),
                         text: Text("Give"),
                         onPressed: () {
-                          // Give points
+                          final profile = (context.read<ProfileCubit>().state
+                                  as ProfileExistsState)
+                              .profile;
+                          if (profile.gives == 0) {
+                            showOkAlertDialog(
+                              context: context,
+                              title: "No gives",
+                              message: "You don't have any gives currently, "
+                                  "which means that you can't "
+                                  "give anyone any points",
+                            );
+                          } else {
+                            Navigator.of(context)
+                                .pushNamed("/give-friend-points/${friend.id}");
+                          }
                         },
                         margin: EdgeInsets.symmetric(vertical: 16),
                         style: NeumorphicStyle(

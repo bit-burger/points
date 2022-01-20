@@ -358,9 +358,21 @@ class RelationsRepository extends IRelationsRepository {
     _invoke(id, functions.unfriend);
   }
 
+  @override
+  void givePoints(String id, int amount) {
+    _invokeBase(functions.givePoints, params: {"_id": id, "amount": amount});
+  }
+
   /// Base method for invoking a RPC with error handling
-  void _invoke(String id, String function) async {
-    final response = await _client.rpc(function, params: {"_id": id}).execute();
+  void _invoke(String id, String function) {
+    _invokeBase(function, params: {"_id": "id"});
+  }
+
+  void _invokeBase(
+    String function, {
+    required Map<String, dynamic> params,
+  }) async {
+    final response = await _client.rpc(function, params: params).execute();
     if (response.error != null) {
       if (response.error!.message.startsWith("SocketException")) {
         _error(PointsConnectionError());
