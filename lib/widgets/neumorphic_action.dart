@@ -6,7 +6,7 @@ import '../theme/points_colors.dart' as pointsColors;
 class NeumorphicAction extends StatelessWidget {
   final int? badgeNotifications;
   final String? tooltip;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Widget child;
   final EdgeInsets? margin;
 
@@ -14,7 +14,7 @@ class NeumorphicAction extends StatelessWidget {
     this.badgeNotifications,
     this.tooltip,
     this.margin,
-    required this.onPressed,
+    this.onPressed,
     required this.child,
   }) : assert((badgeNotifications ?? 0) >= 0);
 
