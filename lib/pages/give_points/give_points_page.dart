@@ -145,29 +145,39 @@ class GivePointsPage extends StatelessWidget {
                 final friends = (state as RelationsData).userRelations.friends;
                 return AnimatedSwitcher(
                   duration: Duration(milliseconds: 250),
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    key: UniqueKey(),
-                    itemCount: friends.length,
-                    itemBuilder: (context, index) {
-                      final friend = friends[0];
-                      return UserListTile(
-                        color: friend.color,
-                        icon: friend.icon,
-                        name: friend.name,
-                        gives: friend.gives,
-                        points: friend.points,
-                        margin: EdgeInsets.symmetric(vertical: 12),
-                        onPressed: profile.gives == 0
-                            ? null
-                            : () {
-                                Navigator.of(context).pushNamed(
-                                  "/give-friend-points/${friend.id}",
-                                );
-                              },
-                      );
-                    },
-                  ),
+                  child: friends.isEmpty
+                      ? Center(
+                          child: Text(
+                            "No friends :(",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5!
+                                .copyWith(color: Theme.of(context).hintColor),
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          key: UniqueKey(),
+                          itemCount: friends.length,
+                          itemBuilder: (context, index) {
+                            final friend = friends[0];
+                            return UserListTile(
+                              color: friend.color,
+                              icon: friend.icon,
+                              name: friend.name,
+                              gives: friend.gives,
+                              points: friend.points,
+                              margin: EdgeInsets.symmetric(vertical: 12),
+                              onPressed: profile.gives == 0
+                                  ? null
+                                  : () {
+                                      Navigator.of(context).pushNamed(
+                                        "/give-friend-points/${friend.id}",
+                                      );
+                                    },
+                            );
+                          },
+                        ),
                 );
               },
             );
