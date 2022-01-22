@@ -145,13 +145,38 @@ language sql security definer;
 ------------
 
 create or replace function give_points(_id uuid, amount int)
-  returns void as $$
-    BEGIN
-      update profiles set gives = gives - amount where id = auth.uid();
-      update profiles set points = points + amount where id = _id;
-    END;
-  $$
-  language plpgsql security definer;
+returns void as $$
+  DECLARE
+    relations_between_found INT;
+    message_data jsonb;
+  BEGIN
+    SELECT count(*)
+    into relations_between_found
+    from relations
+    where relations.id = auth.uid() and other_id = _id and state = 'friends';
+
+    if relations_between_found <> 1 then
+      RAISE EXCEPTION 'not_friends';
+    end if;
+
+    update profiles set gives = gives - amount where id = auth.uid();
+    update profiles set points = points + amount where id = _id;
+
+    message_data := concat('{"amount": ', amount, '}')::jsonb;
+
+    insert into notifications(
+    user_id,
+    first_actor,
+    second_actor,
+    notification_type,
+    message_data,
+    has_read
+  ) values
+    (auth.uid(), auth.uid(), _id, 'gave_points', message_data, true),
+    (_id, auth.uid(), _id, 'gave_points', message_data, false);
+  END;
+$$
+language plpgsql security definer;
 
 
 ---------------
