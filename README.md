@@ -65,7 +65,7 @@ is inspired by Black Mirror's Nosedive and Community's Meow Meow Beanz.
 The application is intended as a flutter example for state management,
 with bloc and for using supabase in flutter and not a serious application.
 
-## The points system
+### The points system
 After each day the points are redistributed,
 that means 10% of your points will be converted to points,
 that you have to give to someone else, '*gives*'.
@@ -76,7 +76,7 @@ The lowest your points can sink to is 0,
 then you are also unable to get any more gives,
 until somebody else gives you points again.
 
-## Other features
+### Other features
 - a friend system with friends, friend requests and blocking of users
 - live updating of your relations (friends, requests and blocks),
   along with the profiles of the friends
