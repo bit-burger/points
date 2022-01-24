@@ -53,6 +53,39 @@ A mock social media app
   | <kbd><img src=".github/user-email.png"/></kbd> | <kbd><img src=".github/chat.png"/></kbd> | <kbd><img src=".github/user-close.png"/></kbd> |
 </details>
 
+## Idea
+The idea is to mock other social media, by giving each other useless points, 
+which mock likes, subscribers and karma in other social media.
+This is why that app is called 'points',
+the main idea revolves about giving and collecting points
+and striving to have as many as possible.
+The idea (the abstraction of social media down to the ranking of people)
+is inspired by Black Mirror's Nosedive and Communities Meow Meow Beanz.
+
+The application is intended as a flutter example for state management,
+with bloc and for using supabase in flutter and not a serious application.
+
+## The points system
+After each day the points are redistributed,
+that means 10% of your points will be converted to points,
+that you have to give to someone else, '*gives*'.
+If you do not give all your gives to someone else,
+these gives will be destroyed and given to other people,
+the amount of gives will also be taken from your points.
+The lowest your points can sink to is 0,
+then you are also unable to get any more gives,
+until somebody else gives you points again.
+
+## Other features
+- a friend system with friends, friend requests and blocking of users
+- live updating of your relations (friends, requests and blocks),
+  along with the profiles of the friends
+- profile editor (edit your icon, name, status, bio and color)
+- chatting with all your friends
+- notifications (however only inside the app)
+- searching for users
+- requesting to be friends with a user via email
+
 ## Technologies
 ### Frontend
 - [Flutter](https://flutter.dev) as the main UI framework
