@@ -66,15 +66,18 @@ The application is intended as a flutter example for state management,
 with bloc and for using supabase in flutter and not a serious application.
 
 ### The points system
-After each day the points are redistributed,
-that means 10% of your points will be converted to points,
+You can give points to only your friends and
+after each day the points are redistributed.
+That means 10% of your points will be converted to points
 that you have to give to someone else, '*gives*'.
+
 If you do not give all your gives to someone else,
 these gives will be destroyed and given to other people,
-the amount of gives will also be taken from your points.
+the amount of gives will also be subtracted from your points.
+
 The lowest your points can sink to is 0,
 then you are also unable to get any more gives,
-until somebody else gives you points again.
+until one of your friends else gives you points again.
 
 ### Other features
 - a friend system with friends, friend requests and blocking of users
