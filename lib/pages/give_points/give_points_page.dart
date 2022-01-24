@@ -109,12 +109,12 @@ class GivePointsPage extends StatelessWidget {
           ),
           Expanded(
             child: Center(
-              child: Text("points", style: boldTextStyle),
+              child: Text("gives", style: boldTextStyle),
             ),
           ),
           Expanded(
             child: Center(
-              child: Text("gives", style: boldTextStyle),
+              child: Text("points", style: boldTextStyle),
             ),
           ),
         ],
@@ -160,7 +160,7 @@ class GivePointsPage extends StatelessWidget {
                           key: UniqueKey(),
                           itemCount: friends.length,
                           itemBuilder: (context, index) {
-                            final friend = friends[0];
+                            final friend = friends[index];
                             return UserListTile(
                               color: friend.color,
                               icon: friend.icon,
