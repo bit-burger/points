@@ -60,7 +60,7 @@ This is why that app is called 'points',
 the main idea revolves about giving and collecting points
 and striving to have as many as possible.
 The idea (the abstraction of social media down to the ranking of people)
-is inspired by Black Mirror's Nosedive and Communities Meow Meow Beanz.
+is inspired by Black Mirror's Nosedive and Community's Meow Meow Beanz.
 
 The application is intended as a flutter example for state management,
 with bloc and for using supabase in flutter and not a serious application.
