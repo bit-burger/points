@@ -105,15 +105,16 @@ until one of your friends else gives you points again.
 ### To run the project:
 1. Clone the project
 2. Run the script [`pub-installer.sh`](https://github.com/bit-burger/points/blob/develop/pub-installer.sh) to install the packages
-3. Setup the supabase project with the matching settings and tables ([instructions](supabase/README.md))
-4. Then create a new text file in the root directory called `.env`
-5. In `.env` write your supabase credentials,
-   that you get from your new project (Settings > API) in such a form:
-```shell script
-SUPABASE_URL="YOUR_SUPABASE_URL"
-SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
-```
-6. Run the app on your preferred device with:
+3. Skip the steps below **or** or create your own supabase base project (otherwise the default one will be used)
+    - Setup the supabase project with the matching settings and tables ([instructions](supabase/README.md))
+    - Then create a new text file in the root directory called `.env`
+    - In `.env` write your supabase credentials,
+       that you get from your new project (Settings > API) in such a form:
+    ```shell script
+    SUPABASE_URL="YOUR_SUPABASE_URL"
+    SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
+    ```
+4. Run the app on your preferred device with:
 ```shell script
 flutter run
 ```
