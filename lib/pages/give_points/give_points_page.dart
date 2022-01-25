@@ -212,6 +212,7 @@ class GivePointsPage extends StatelessWidget {
             _buildColumnTitles(),
             SizedBox(height: 8),
             _buildFriendsList(context),
+            SizedBox(height: 16),
           ],
         ),
       ),
