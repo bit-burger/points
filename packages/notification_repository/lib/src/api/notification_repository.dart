@@ -86,7 +86,7 @@ class NotificationRepository implements INotificationRepository {
         _currentNotifications = _currentNotifications!.copyWith(
           earlierNotification: newNotification,
         );
-        if(_onlyUnread! && newNotification.hasRead == true) {
+        if (_onlyUnread! && newNotification.hasRead == true) {
           return;
         }
         _notificationsPagingStreamController!.add(_currentNotifications!);

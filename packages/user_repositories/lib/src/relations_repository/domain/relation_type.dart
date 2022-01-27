@@ -1,18 +1,22 @@
 enum RelationType {
   /// The user is a friend
   friend,
+
   /// The user has sent a friend request
   pending,
+
   /// Self has sent a friend request to the user
   requesting,
+
   /// The user has been blocked by self
   blocked,
+
   /// Self has been blocked by the user
   blockedBy,
 }
 
 RelationType relationTypeFromString(String s) {
-  switch(s) {
+  switch (s) {
     case "friends":
       return RelationType.friend;
     case "blocked_by":

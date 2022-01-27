@@ -58,12 +58,12 @@ class Notification {
       case NotificationType.pointsMilestone:
         return _firstName(otherName) +
             " ha${firstActorId == selfId ? "ve" : "s"} "
-                "reached ${messageData["amount"]} point${messageData["amount"] == 1 ? "": "s"}";
+                "reached ${messageData["amount"]} point${messageData["amount"] == 1 ? "" : "s"}";
       case NotificationType.gavePoints:
         return _firstName(otherName) +
             " gave " +
             _secondName(otherName) +
-            " ${messageData["amount"]} point${messageData["amount"] == 1 ? "": "s"}";
+            " ${messageData["amount"]} point${messageData["amount"] == 1 ? "" : "s"}";
       case NotificationType.receivedMessage:
       case NotificationType.profileUpdate:
       default:

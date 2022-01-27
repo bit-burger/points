@@ -91,8 +91,6 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
     }
   }
 
-
-
   Widget _buildRelationsListView(UserRelations relations) {
     // Will look if the relations
     // or the _showBlocked have changed,

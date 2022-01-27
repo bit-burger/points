@@ -38,7 +38,7 @@ class UserDiscoveryRepository extends IUserDiscoveryRepository {
     final response =
         await _client.from("profiles").select().eq("id", id).single().execute();
 
-    if(response.error != null) {
+    if (response.error != null) {
       throw PointsConnectionError();
     }
 

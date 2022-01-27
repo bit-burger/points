@@ -134,7 +134,7 @@ class _ChatPageState extends State<ChatPage> {
                     return CircleAvatar(
                       backgroundColor: user.containerColor == pointColors.white
                           ? Colors.black
-                          : Colors.transparent ,
+                          : Colors.transparent,
                       radius: 17.5,
                       child: CircleAvatar(
                         child: Icon(user.customProperties!["icon"], size: 18),

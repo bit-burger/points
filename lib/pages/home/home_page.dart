@@ -106,8 +106,7 @@ class _HomePageState extends State<HomePage>
                             tooltip: "Notifications",
                             child: Icon(Ionicons.notifications_outline),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed("/notifications");
+                              Navigator.of(context).pushNamed("/notifications");
                             },
                           );
                         },

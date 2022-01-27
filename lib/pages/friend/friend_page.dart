@@ -1,5 +1,4 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:points/state_management/friend/friend_cubit.dart';

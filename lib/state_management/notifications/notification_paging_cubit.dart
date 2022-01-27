@@ -93,8 +93,7 @@ class NotificationPagingCubit extends Cubit<NotificationPagingState> {
   ) async {
     final activeUsers = [
       profileRepository.currentProfile!,
-      ...(relationsRepository.currentUserRelations!)
-          .all,
+      ...(relationsRepository.currentUserRelations!).all,
       ..._userCache,
     ];
     final activeUserIdsSet = activeUsers.map<String>((user) => user.id).toSet();

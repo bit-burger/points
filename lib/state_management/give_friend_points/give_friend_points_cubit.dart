@@ -40,7 +40,7 @@ class GiveFriendPointsCubit extends Cubit<GiveFriendPointsState> {
     );
     // start listening
     _sub1 = relationsRepository.relationsStream.listen((userRelations) {
-      if(state is GiveFriendsPointsFinished) {
+      if (state is GiveFriendsPointsFinished) {
         return;
       }
       final friendIndex = userRelations.friends.indexWhere(
@@ -55,7 +55,7 @@ class GiveFriendPointsCubit extends Cubit<GiveFriendPointsState> {
       );
     });
     _sub2 = profileRepository.profileStream.listen((profile) {
-      if(state is GiveFriendsPointsFinished) {
+      if (state is GiveFriendsPointsFinished) {
         return;
       }
       if (profile.gives == 0) {
