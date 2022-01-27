@@ -111,8 +111,8 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
           ),
       builderDelegate: PagedChildBuilderDelegate(
         animateTransitions: true,
-        firstPageProgressIndicatorBuilder: (_) => Loader(),
-        newPageProgressIndicatorBuilder: (_) => Loader(),
+        firstPageProgressIndicatorBuilder: (_) => Center(child: Loader()),
+        newPageProgressIndicatorBuilder: (_) => Center(child: Loader()),
         itemBuilder: (context, user, index) {
           return UserListTile(
             name: user.name,

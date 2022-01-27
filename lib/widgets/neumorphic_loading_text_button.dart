@@ -32,7 +32,10 @@ class NeumorphicLoadingTextButton extends StatelessWidget {
         crossFadeState:
             !loading! ? CrossFadeState.showFirst : CrossFadeState.showSecond,
         firstChild: this.child,
-        secondChild: loader ?? Loader(),
+        secondChild: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Center(child: loader ?? Loader(compact: true)),
+        ),
         firstCurve: Curves.easeOutExpo,
         secondCurve: Curves.easeOutExpo,
         duration: Duration(milliseconds: 250),

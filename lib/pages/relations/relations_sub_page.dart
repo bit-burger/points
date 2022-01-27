@@ -244,16 +244,9 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
     final relationsCount = _showBlocked
         ? relations.relationsCount
         : relations.normalRelationsCount;
-    final blockedRelationsCount = relations.blockedRelationsCount;
 
     if (relationsCount == 0) {
-      var text = "No friends :(";
-      if (blockedRelationsCount == 0) {
-        text = "No friends no blocks :(";
-      }
-      _buildShowBlocksButton(relations);
       return Center(
-        key: ValueKey(text),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -262,7 +255,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
               child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(
-                  text,
+                  "No friends :(",
                   textAlign: TextAlign.center,
                   style: Theme.of(context)
                       .textTheme
@@ -271,6 +264,7 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
                 ),
               ),
             ),
+            SizedBox(height: 16),
             ..._buildShowBlocksButton(relations),
           ],
         ),

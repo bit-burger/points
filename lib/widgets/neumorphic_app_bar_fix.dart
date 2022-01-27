@@ -30,7 +30,7 @@ class NeumorphicAppBar extends StatefulWidget implements PreferredSizeWidget {
   /// Whether the title should be centered.
   ///
   /// Defaults to being adapted to the current [TargetPlatform].
-  final bool? centerTitle;
+  final bool centerTitle;
 
   /// Should there be space between leading, title and trailing
   final bool middleSpacing;
@@ -54,7 +54,7 @@ class NeumorphicAppBar extends StatefulWidget implements PreferredSizeWidget {
     Key? key,
     required this.title,
     this.leading,
-    this.centerTitle,
+    this.centerTitle = true,
     this.trailing,
     this.secondTrailing,
     this.middleSpacing = true,
@@ -65,19 +65,6 @@ class NeumorphicAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   NeumorphicAppBarState createState() => NeumorphicAppBarState();
-
-  bool _getEffectiveCenterTitle(ThemeData theme, NeumorphicThemeData nTheme) {
-    switch (theme.platform) {
-      case TargetPlatform.android:
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.linux:
-      case TargetPlatform.windows:
-        return false;
-      case TargetPlatform.iOS:
-      case TargetPlatform.macOS:
-        return true;
-    }
-  }
 }
 
 class NeumorphicAppBarTheme extends InheritedWidget {
@@ -124,7 +111,6 @@ class NeumorphicAppBarState extends State<NeumorphicAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final nTheme = NeumorphicTheme.of(context);
     final AppBarTheme appBarTheme = AppBarTheme.of(context);
     return Container(
@@ -138,17 +124,14 @@ class NeumorphicAppBarState extends State<NeumorphicAppBar> {
               middle: DefaultTextStyle(
                 style: (appBarTheme.titleTextStyle ??
                         Theme.of(context).textTheme.headline5!)
-                    .merge(nTheme?.current?.appBarTheme.textStyle)
-                // .copyWith(fontWeight: FontWeight.bold)
-                ,
+                    .merge(nTheme?.current?.appBarTheme.textStyle),
                 child: widget.title,
               ),
               trailing: Padding(
                 padding: EdgeInsets.only(left: 4.0),
                 child: _buildTrailing(),
               ),
-              centerMiddle: widget.centerTitle ??
-                  widget._getEffectiveCenterTitle(theme, nTheme!.current!),
+              centerMiddle: widget.centerTitle,
               middleSpacing:
                   widget.middleSpacing ? NavigationToolbar.kMiddleSpacing : 0,
             ),

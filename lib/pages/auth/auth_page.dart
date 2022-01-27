@@ -125,7 +125,7 @@ class _AuthPageState extends State<AuthPage> {
           loading: isLoading,
           loader: SizedBox(
             height: 56,
-            child: Loader(),
+            child: Loader(compact: true),
           ),
           child: SizedBox(
             height: 56,
@@ -251,6 +251,7 @@ class _AuthPageState extends State<AuthPage> {
               height: NeumorphicAppBar.toolbarHeight,
               child: NeumorphicAppBar(
                 leading: SizedBox(),
+                centerTitle: true,
                 title: AnimatedSwitcher(
                   duration: Duration(milliseconds: 250),
                   child: Text(
