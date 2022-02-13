@@ -119,13 +119,10 @@ flutter run
 
 ### Build the app:
 
-<p>
-To build the app and make it performant, it is necesary (because of the heavy shaders introduced with the neumorphic design) [to reduce the shader compilation jank using SkSL warmup](https://docs.flutter.dev/perf/rendering/shader)
-</p>
 
-<p>
+To build the app and make it performant, it is necesary (because of the heavy shaders introduced with the neumorphic design) [to reduce the shader compilation jank using SkSL warmup](https://docs.flutter.dev/perf/rendering/shader).\
 To do this you are required to include the path of a SkSL cache file, which has already been included in the git repository
-</p>
+
 
 To include the path in the build, run
 ```shell script
