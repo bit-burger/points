@@ -3,16 +3,14 @@
 </p>
 
 <h1 align="center">points</h1>
-
-<p align="center">
-A mock social media app
-</p>
+<h4 align="center">A mock social media app</h1>
 
 <br>
 
 <p align="center">
-    Written in frontend with <a Dart and href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as state managment,<br> 
-    in the backend <a href="https://supabase.com">supabase</a> is used for auth, data storage, and realtime syncing
+    Written in frontend with <a Dart and href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as the state managment,<br> 
+    as well <a href="https://supabase.com">supabase</a> in the backend for auth, data storage, and realtime syncing <br><br>
+    Features include authentication, a chat, notifications, <br>a friend system (that includes blocking) and updating your profile 
 </p>
 
 <p float="center">
