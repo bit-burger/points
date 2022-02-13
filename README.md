@@ -118,3 +118,22 @@ until one of your friends else gives you points again.
 ```shell script
 flutter run
 ```
+
+### Build the app:
+
+<p>
+To build the app and make it performant, it is necesary (because of the heavy shaders introduced with the neumorphic design) [to reduce the shader compilation jank using SkSL warmup](https://docs.flutter.dev/perf/rendering/shader)
+</p>
+
+<p>
+To do this you are required to include the path of a SkSL cache file, which has already been included in the git repository
+</p>
+
+To include the path in the build, run
+```shell script
+flutter build ios --bundle-sksl-path flutter_01.sksl.json
+```
+or
+```shell script
+flutter build android --bundle-sksl-path flutter_01.sksl.json
+```
