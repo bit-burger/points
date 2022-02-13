@@ -55,8 +55,8 @@ class User {
       bio: "Hi im alpha",
       color: 9,
       icon: 0,
-      points: 0,
-      gives: 0,
+      points: 100,
+      gives: 10,
     );
   }
 
