@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">points</h1>
-<h4 align="center">A mock social media app</h1>
+<h3 align="center">A mock social media app</h3>
 
 <br>
 
@@ -15,14 +15,17 @@
 
 <p float="center">
   <img src=".github/home.png" width="24%">
-  <img src=".github/user-profile.png" width="24%">
+  <img src=".github/profile.png" width="24%">
   <img src=".github/chat.png" width="24%">
   <img src=".github/user-discovery.png" width="24%">  
 </p>
 
 <br>
 
-<!--- Inspired by: https://github.com/robertodoering/harpy/blob/master/README.md --->
+<!---
+    Design of the README.md heavily inspired by: 
+    https://github.com/robertodoering/harpy/blob/master/README.md
+--->
 
 <details open>
   <summary>Demos</summary>
@@ -34,21 +37,25 @@
 
 <details>
     <summary>More demos</summary>
-    
-   | **Sign in** | **Sign up** | **Profile** |
-   | :---: | :---: | :---: |
-   | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/sign-up-demo.gif"/></kbd> | <kbd><img src=".github/profile-demo.gif"/></kbd> |
+
+   | **Sign in** | **Searching for users**| **Profile** |
+   |:---:| :---: | :---: |
+   | <kbd><img src=".github/sign-in-demo.gif"/></kbd> | <kbd><img src=".github/user-discovery-demo.gif"/></kbd> | <kbd><img src=".github/profile-demo.gif"/></kbd> |
+
+   | **Notifications demo** | **Giving points** |
+   |:---:| :---: |
+   | <kbd><img src=".github/notifications-demo.gif"/></kbd> | <kbd><img src=".github/give-points-demo.gif"/></kbd>
      
 </details>
 
 <details>
   <summary>Gallery</summary>
-  
-  | **Sign in** | **Home** | **Profile** |
+
+  | <kbd><img src=".github/home.png"/></kbd> | <kbd><img src=".github/home-menu.png"/></kbd> | <kbd><img src=".github/info.png"/></kbd> |
   | :---: | :---: | :---: |
-  | <kbd><img src=".github/log-in.png"/></kbd> | <kbd><img src=".github/home.png"/></kbd> | <kbd><img src=".github/user-profile.png"/></kbd> |
-  | **Invite friend by email** | **Chat** | **Clicked on user** |
-  | <kbd><img src=".github/user-email.png"/></kbd> | <kbd><img src=".github/chat.png"/></kbd> | <kbd><img src=".github/user-close.png"/></kbd> |
+  | <kbd><img src=".github/give-points.png"/></kbd> | <kbd><img src=".github/friend-close.png"/></kbd> | <kbd><img src=".github/chat.png"/></kbd> |
+  | <kbd><img src=".github/points.png"/></kbd> | <kbd><img src=".github/user-discovery.png"/></kbd> | <kbd><img src=".github/user-discovery-email.png"/></kbd> |
+  | <kbd><img src=".github/profile.png"/></kbd> | <kbd><img src=".github/notification-options.png"/></kbd> | <kbd><img src=".github/notifications.png"/></kbd> |
 </details>
 
 ## Idea
@@ -61,7 +68,8 @@ The idea (the abstraction of social media down to the ranking of people)
 is inspired by Black Mirror's Nosedive and Community's Meow Meow Beanz.
 
 The application is intended as a flutter example for state management,
-with bloc and for using supabase in flutter and not a serious application.
+with bloc and for using supabase in flutter
+and is not meant to be a serious application.
 
 ### The points system
 You can give points to only your friends and
