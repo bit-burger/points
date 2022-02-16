@@ -14,7 +14,6 @@ dependencies:
   flutter_neumorphic: ^3.2.0
 
   # Icons and fonts
-  cupertino_icons: ^1.0.4
   google_fonts: ^2.1.0
   ionicons: ^0.1.2
 
@@ -39,7 +38,6 @@ dependencies:
   flutter_form_bloc: ^0.29.1
   flutter_bloc: ^8.0.0
   bloc: ^8.0.1
-  provider: ^6.0.1
 
   # Configuration
   flutter_dotenv: ^5.0.2
@@ -88,7 +86,6 @@ flutter:
     - .env
     - google_fonts/
     - icons/logo.svg
-  uses-material-design: true
 
 flutter_native_splash:
   color: DDE6E8
