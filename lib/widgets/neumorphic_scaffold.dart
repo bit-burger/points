@@ -5,12 +5,15 @@ class NeumorphicScaffold extends StatelessWidget {
   final bool extendBodyBehindAppBar;
   final Widget body;
   final Widget? floatingActionButton;
+  final bool? resizeToAvoidBottomInset;
+
 
   const NeumorphicScaffold({
     this.appBar,
     this.extendBodyBehindAppBar = false,
     required this.body,
     this.floatingActionButton,
+    this.resizeToAvoidBottomInset,
   }) : super();
 
   @override
@@ -22,6 +25,7 @@ class NeumorphicScaffold extends StatelessWidget {
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       backgroundColor: theme.baseColor,
       floatingActionButton: floatingActionButton,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
     );
   }
 }

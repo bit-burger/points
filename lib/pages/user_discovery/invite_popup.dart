@@ -11,11 +11,19 @@ import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 import '../../helpers/reg_exp.dart' as regExp;
 
-class InvitePopup extends StatelessWidget {
+class InvitePopup extends StatefulWidget {
+  @override
+  State<InvitePopup> createState() => _InvitePopupState();
+}
+
+class _InvitePopupState extends State<InvitePopup> {
+  String email = "";
+  final FocusNode _focusNode = FocusNode(skipTraversal: true);
+
   Widget _buildTextField(BuildContext context) {
     return BlocBuilder<EmailUserInviterCubit, EmailUserInviterState>(
       buildWhen: (oldState, newState) {
-        return newState is! EmailUserInviterLoading;
+        return newState is! EmailUserInviterRequestLoading;
       },
       builder: (context, state) {
         String? error;
@@ -24,14 +32,16 @@ class InvitePopup extends StatelessWidget {
         }
         return NeumorphicTextFormField(
           errorText: error,
+          textInputAction: TextInputAction.send,
+          focusNode: _focusNode,
+          autofocus: true,
           hintText: "email",
-          onFieldSubmitted:
-              state is! EmailUserInviterFound ? null : (s) => _submit(context),
-          onChanged: (s) {
-            context
-                .read<EmailUserInviterCubit>()
-                .updateSearchQuery(searchQuery: s);
+          onFieldSubmitted: (email) {
+            context.read<EmailUserInviterCubit>().requestUser(email);
+            Future.microtask(() => _focusNode.requestFocus());
           },
+          onChanged: (s) => email = s,
+          keyboardType: TextInputType.emailAddress,
           inputFormatters: [
             FilteringTextInputFormatter(
               regExp.emailFilter,
@@ -46,14 +56,15 @@ class InvitePopup extends StatelessWidget {
 
   Widget _buildButton(BuildContext context) {
     return BlocBuilder<EmailUserInviterCubit, EmailUserInviterState>(
+      buildWhen: (oldState, newState) =>
+          oldState is EmailUserInviterRequestLoading !=
+          newState is EmailUserInviterRequestLoading,
       builder: (context, state) {
         final loading = state is EmailUserInviterRequestLoading;
-        final disabled = state is EmailUserInviterError ||
-            state is EmailUserInviterLoading ||
-            state is EmailUserInviterInitial;
         return Center(
           child: NeumorphicLoadingTextButton(
-            onPressed: disabled ? null : () => _submit(context),
+            onPressed: () =>
+                context.read<EmailUserInviterCubit>().requestUser(email),
             padding: EdgeInsets.zero,
             child: SizedBox(
               height: 56,
@@ -80,99 +91,80 @@ class InvitePopup extends StatelessWidget {
           relationsRepository: context.read<RelationsRepository>(),
         );
       },
-      child: Neumorphic(
-        child: Column(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: true,
+        body: Column(
           children: [
-            BlocBuilder<EmailUserInviterCubit, EmailUserInviterState>(
-              buildWhen: (oldState, newState) {
-                return newState is EmailUserInviterFinished ||
-                    newState is EmailUserInviterInitial;
-              },
-              builder: (context, state) {
-                late final Widget widget;
-                if (state is EmailUserInviterFinished) {
-                  widget = Column(
-                    key: ValueKey("initial"),
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 32),
-                      RichText(
-                        text: TextSpan(
-                          style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
-                                    color: Theme.of(context).disabledColor,
-                                  ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+            Neumorphic(
+              style: NeumorphicStyle(
+                boxShape: NeumorphicBoxShape.roundRect(
+                  BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+              ),
+              child: Column(
+                children: [
+                  BlocConsumer<EmailUserInviterCubit, EmailUserInviterState>(
+                    buildWhen: (oldState, newState) {
+                      return newState is EmailUserInviterInitial;
+                    },
+                    listener: (context, state) {
+                      if (state is EmailUserInviterFinished) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    builder: (context, state) {
+                      return AnimatedSwitcher(
+                        duration: Duration(milliseconds: 500),
+                        child: Column(
+                          key: ValueKey("form"),
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            WidgetSpan(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 4),
-                                child: Icon(
-                                  Icons.check,
-                                  color: Theme.of(context).disabledColor,
+                            SizedBox(height: 24),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Add friend by email",
+                                  style: Theme.of(context).textTheme.headline6,
                                 ),
                               ),
                             ),
-                            TextSpan(text: "user successfully added"),
+                            SizedBox(height: 24),
+                            SizedBox(
+                              height: 90,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: _buildTextField(context),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: _buildButton(context),
+                            ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 24),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: NeumorphicLoadingTextButton(
-                          onPressed: () {
-                            context.read<EmailUserInviterCubit>().reset();
-                          },
-                          child: Text("Add another user"),
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  widget = Column(
-                    key: ValueKey("form"),
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(height: 24),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Add friend by email",
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 24),
-                      SizedBox(
-                        height: 90,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: _buildTextField(context),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: _buildButton(context),
-                      ),
-                    ],
-                  );
-                }
-                return AnimatedSwitcher(
-                  duration: Duration(milliseconds: 500),
-                  child: widget,
-                );
-              },
+                      );
+                    },
+                  ),
+                  SizedBox(height: 32),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _submit(BuildContext context) {
-    context.read<EmailUserInviterCubit>().requestUser();
   }
 }

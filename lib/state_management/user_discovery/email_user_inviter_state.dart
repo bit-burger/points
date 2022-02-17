@@ -8,17 +8,6 @@ abstract class EmailUserInviterState extends Equatable {
 
 class EmailUserInviterInitial extends EmailUserInviterState {}
 
-class EmailUserInviterLoading extends EmailUserInviterState {}
-
-class EmailUserInviterFound extends EmailUserInviterState {
-  final String userId;
-
-  EmailUserInviterFound(this.userId);
-
-  @override
-  List<Object?> get props => [userId];
-}
-
 class EmailUserInviterNotValid extends EmailUserInviterError {
   EmailUserInviterNotValid() : super("Not a valid email");
 }

@@ -220,6 +220,7 @@ class _UserDiscoveryPageState extends State<UserDiscoveryPage> {
               NeumorphicAction(
                 child: Icon(Ionicons.person_add_outline),
                 onPressed: () => showModalBottomSheet(
+                  isScrollControlled: true,
                   context: context,
                   barrierColor: colors.barrierColor,
                   backgroundColor: Colors.transparent,
