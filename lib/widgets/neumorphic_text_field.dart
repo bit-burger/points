@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+/// A [TextField] styled with a neumorphic design
 class NeumorphicTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool obscureText;

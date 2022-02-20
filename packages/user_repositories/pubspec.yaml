@@ -1,5 +1,5 @@
 name: user_repositories
-description: A starting point for Dart libraries or applications.
+description: All repositories in points dealing directly with users, for finding and fetching users,
 version: 1.0.0
 publish_to: none
 

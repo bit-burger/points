@@ -10,12 +10,17 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'pages/auth/auth_navigator.dart';
 import 'state_management/auth/auth_cubit.dart';
 
+/// Root of the points App
 class Points extends StatelessWidget {
+  /// Store used in the AuthRepository for saving auth state
   final Box<String> sessionStore;
 
   Points({required this.sessionStore}) : super();
 
   Widget _buildHome() {
+    // Provide the AuthRepository and MetadataData,
+    // as those are the only repositories,
+    // that don't rely on the AuthRepository having already logged in
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
@@ -30,6 +35,7 @@ class Points extends StatelessWidget {
           ),
         ),
       ],
+     // Provide the AuthCubit and set the AuthNavigator as root of the App
       child: BlocProvider<AuthCubit>(
         create: (context) => AuthCubit(
           metadataRepository: context.read<MetadataRepository>(),
@@ -42,7 +48,8 @@ class Points extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InAppNotification(
+    return InAppNotification( // to be able to have in app notifications
+      // Configuring the theme in lib/theme
       child: NeumorphicTheme(
         themeMode: ThemeMode.light,
         theme: pointsTheme.neumorphic,

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+/// The loader used throughout the app
 class Loader extends StatelessWidget {
   final bool compact;
 

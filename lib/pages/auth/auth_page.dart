@@ -16,6 +16,7 @@ import 'package:points/widgets/neumorphic_text_form_field.dart';
 import 'package:points/widgets/shaker.dart';
 import '../../helpers/reg_exp.dart' as regExp;
 
+/// Lets the user log in and sign up
 class AuthPage extends StatefulWidget {
   @override
   _AuthPageState createState() => _AuthPageState();

@@ -8,6 +8,7 @@ import '../errors/notification_connection_error.dart';
 
 import 'notification_repository_contract.dart';
 
+/// Supabase implementation of [INotificationRepository]
 class NotificationRepository implements INotificationRepository {
   final SupabaseClient _client;
   final String _userId;

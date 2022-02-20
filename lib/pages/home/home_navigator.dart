@@ -26,6 +26,11 @@ import 'package:user_repositories/user_discovery_repository.dart';
 import 'home_page.dart';
 import 'info_dialog.dart';
 
+/// Contains all routes needed,
+/// for the part of the application where the user is logged in.
+///
+/// Also inserts the NotificationDelegate into the widget tree
+/// for in app notifications
 class HomeNavigator extends StatefulWidget {
   @override
   State<HomeNavigator> createState() => _HomeNavigatorState();

@@ -17,6 +17,7 @@ import 'package:points/widgets/user_list_tile.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 import '../../theme/points_colors.dart' as colors;
 
+/// Discover a user by searching for them, with paging for search results
 class UserDiscoveryPage extends StatefulWidget {
   @override
   State<UserDiscoveryPage> createState() => _UserDiscoveryPageState();

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# generate the png icon for github from the logo.svg file
+
+# convert cmd tool by imagemagick has to be installed
 
 if ! command -v convert &> /dev/null
 then

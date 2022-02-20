@@ -2,6 +2,9 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
 import 'loader.dart';
 
+/// A neumorphic themed text button,
+/// with the ability to be disabled (and have a disabled text style),
+/// or (with the [loading] property) to be loading
 class NeumorphicLoadingTextButton extends StatelessWidget {
   final Widget child;
   final VoidCallback? onPressed;

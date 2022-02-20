@@ -9,6 +9,12 @@ import 'package:user_repositories/relations_repository.dart';
 
 part 'chat_state.dart';
 
+/// Handles listening and the paging of a specific chat with another user,
+/// even updates the chat if the profile
+/// of one of the users in the chat changes.
+///
+/// The [ChatClosed] state is also emitted,
+/// if the two people are no longer friends.
 class ChatCubit extends Cubit<ChatState> {
   final IChatRepository chatRepository;
   final IProfileRepository profileRepository;
@@ -30,6 +36,16 @@ class ChatCubit extends Cubit<ChatState> {
     required this.authCubit,
   }) : super(InitialChatState());
 
+  /// Initial loading of all messages,
+  /// start listening to the [IChatRepository.messagesFromSpecificChat],
+  /// for the paging of the chat messages.
+  ///
+  /// The [IRelationsRepository] and the [IProfileRepository]
+  /// are also listened to, to update the chat, if one of the profiles change.
+  ///
+  /// The [IRelationsRepository] is also listened to,
+  /// to make sure that the chat is closed,
+  /// if the two people are no longer friends.
   void loadMessages() {
     assert(relationsRepository.currentUserRelations != null);
     assert(state is InitialChatState);
@@ -97,6 +113,10 @@ class ChatCubit extends Cubit<ChatState> {
   }
 
   void fetchMoreMessages() {
+    // because the Cubit is already listening
+    // to the paging stream of the chatRepository,
+    // it does not have to add the messages
+    // to the stream at any time
     chatRepository.fetchMoreMessages();
   }
 
@@ -108,17 +128,17 @@ class ChatCubit extends Cubit<ChatState> {
     );
   }
 
-  bool closed = false;
+  bool _closed = false;
 
   Future<void> _close() async {
     emit(ChatClosed());
     await close();
-    closed = true;
+    _closed = true;
   }
 
   @override
   Future<void> close() async {
-    if (!closed) {
+    if (!_closed) {
       chatRepository.stopListeningToSpecificChat();
       await _chatSub.cancel();
       await _profileSub.cancel();

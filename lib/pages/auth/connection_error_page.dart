@@ -7,6 +7,9 @@ import 'package:points/widgets/neumorphic_loading_text_button.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/shaker.dart';
 
+/// If the [AuthCubit] emits that it has an error,
+/// this page is displayed by the [AuthNavigator],
+/// to give the user the option to log in or retry the connection
 class ConnectionErrorPage extends StatefulWidget {
   @override
   State<ConnectionErrorPage> createState() => _ConnectionErrorPageState();

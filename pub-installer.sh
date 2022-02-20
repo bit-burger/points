@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Install dart packages with pub for all flutter and dart packages
+
 cd packages/auth_repository || exit
 flutter pub get
 cd .. || exit

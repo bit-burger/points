@@ -16,6 +16,13 @@ import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 
+/// Listens to the [AuthCubit] to show the correct page.
+///
+/// Waiting for auto log in to complete: [AuthInitialPage]
+/// Not logged in: [AuthPage]
+/// Connection error: [ConnectionErrorPage]
+/// Logged in: [HomeNavigator] along with the all the repositories,
+///            that need a logged in [SupabaseClient] and the shared Cubits
 class AuthNavigator extends StatelessWidget {
   Page _buildHome() {
     return MaterialPage(

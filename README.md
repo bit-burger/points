@@ -10,7 +10,7 @@
 <p align="center">
     Written in frontend with <a Dart and href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as the state managment,<br> 
     as well <a href="https://supabase.com">supabase</a> in the backend for auth, data storage, and realtime syncing <br><br>
-    Features include authentication, a chat, notifications, <br>a friend system (that includes blocking) and updating your profile 
+    Features include authentication, a chat, notifications, updating your profile, <br>as well as a friend system (that includes friend requests and blocking)
 </p>
 
 <p float="center">
@@ -23,7 +23,7 @@
 <br>
 
 <!---
-    Design of the README.md heavily inspired by: 
+    Design of the supabase.md heavily inspired by: 
     https://github.com/robertodoering/harpy/blob/master/README.md
 --->
 
@@ -95,48 +95,31 @@ until one of your friends else gives you points again.
 - searching for users
 - requesting to be friends with a user via email
 
-## Technologies
-### Frontend
+## Project overview
+### Technologies
+#### Backend
+- [supabase](https://supabase.com) powered by a [PostgreSQL](https://postgresql.org) database
+
+#### Frontend
 - [Flutter](https://flutter.dev) as the main UI framework
 - [flutter_neumorphic](https://pub.dev/packages/flutter_neumorphic) for the neumorphic look
 - [ionicons](https://pub.dev/packages/ionicons) for the icons and [Courier Prime](https://fonts.google.com/specimen/Courier+Prime) for the font
-- [supabase](https://pub.dev/packages/supabase) to connect to the supabase backend
-- [flutter_bloc](https://pub.dev/packages/flutter_bloc) for the state_management
- 
-### Backend
-- [supabase](https://supabase.com) powered by a [PostgreSQL](https://postgresql.org) database
+- [supabase client library for flutter](https://pub.dev/packages/supabase) to connect to the supabase backend
+- [flutter_bloc](https://pub.dev/packages/flutter_bloc) (with cubits) for the state_management
+- [in app notifications](https://pub.dev/packages/in_app_notification) for notifications inside the app
+
+[**A more in-Depth introduction to the project**](docs/project-overview.md)
+
+<a><h3>Project timeline</h3></a>
 
 ## Getting started
-
 ### To run the project:
 1. Clone the project
 2. Run the script [`pub-installer.sh`](https://github.com/bit-burger/points/blob/develop/pub-installer.sh) to install the packages
-3. Skip the steps below **or** or create your own supabase base project (otherwise the default one will be used)
-    - Setup the supabase project with the matching settings and tables ([instructions](supabase/README.md))
-    - Then create a new text file in the root directory called `.env`
-    - In `.env` write your supabase credentials,
-       that you get from your new project (Settings > API) in such a form:
-    ```shell script
-    SUPABASE_URL="YOUR_SUPABASE_URL"
-    SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
-    ```
-4. Run the app on your preferred device with:
-```shell script
-flutter run
+3. Use the default supabase project by changing nothing
+or [create a new one and use it instead](docs/supabase.md)
+5. Run the app or build it with increased FPS (because of the graphically complex neumorphic design)
+using [SkSL warmup to reduce the shader compilation jank](https://docs.flutter.dev/perf/rendering/shader):
 ```
-
-### Build the app:
-
-
-To build the app and make it performant, it is necesary (because of the heavy shaders introduced with the neumorphic design) [to reduce the shader compilation jank using SkSL warmup](https://docs.flutter.dev/perf/rendering/shader).\
-To do this you are required to include the path of a SkSL cache file, which has already been included in the git repository
-
-
-To include the path in the build, run
-```shell script
-flutter build ios --bundle-sksl-path flutter_01.sksl.json
-```
-or
-```shell script
-flutter build android --bundle-sksl-path flutter_01.sksl.json
+flutter build [build target] --bundle-sksl-path flutter_01.sksl.json
 ```

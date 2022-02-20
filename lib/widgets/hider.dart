@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Hide a widget with animations
 class Hider extends StatelessWidget {
   final Widget child;
   final bool hide;

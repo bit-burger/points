@@ -14,8 +14,10 @@ import 'package:points/widgets/points_logo.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
-import '../../widgets/speed_dial.dart';
+import '../../widgets/neumorphic_speed_dial.dart';
 
+/// The home shows the user the amount of points,
+/// gives and notifications, and provides quick navigation to most pages.
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();

@@ -2,6 +2,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
+/// Custom widget for a notification
 class NotificationWidget extends StatelessWidget {
   static final timeDateFormat = DateFormat("HH:mm");
 

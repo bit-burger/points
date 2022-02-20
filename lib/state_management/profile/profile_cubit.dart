@@ -5,6 +5,10 @@ import 'package:user_repositories/profile_repository.dart';
 
 part 'profile_state.dart';
 
+/// Listens to the [IProfileRepository.profileStream],
+/// for the profile data of the current user.
+///
+/// Used in multiple pages.
 class ProfileCubit extends Cubit<ProfileState> {
   final IProfileRepository _profileRepository;
   final AuthCubit _authCubit;

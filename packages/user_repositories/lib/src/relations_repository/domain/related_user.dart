@@ -2,8 +2,14 @@ import 'package:user_repositories/src/relations_repository/domain/relation_type.
 
 import '../../domain_shared/user.dart';
 
+/// A user that is related to the current user,
+/// for example a friend or somebody that the user has blocked
 class RelatedUser extends User {
+  /// The current relationship between the two
   final RelationType relationType;
+
+  /// The chatId, can only be used,
+  /// if the [relationType] is [RelationType.friend]
   final String chatId;
 
   RelatedUser({

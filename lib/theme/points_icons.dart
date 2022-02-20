@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:ionicons/ionicons.dart';
 
+/// Matching icons to the icon property of the profiles
 const List<IconData> pointsIcons = [
   // default
   Ionicons.person_outline,

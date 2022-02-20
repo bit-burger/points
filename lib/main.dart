@@ -13,11 +13,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
+  // configure the supabase with the .env file, hive for storing data
+  // and the package info for the InfoDialog
   await dotenv.load(fileName: ".env");
   await configureSupabase();
   await Hive.initFlutter();
   await configurePackageInfo();
 
+  // Box to store the credentials for auto log in,
+  // injected into the AuthRepository
   final sessionStore = await Hive.openBox<String>("sessions");
 
   final app = Points(

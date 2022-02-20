@@ -20,7 +20,7 @@ import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:user_repositories/relations_repository.dart';
 
-import 'notification_widget.dart';
+import '../../widgets/notification_widget.dart';
 
 class NotificationsPage extends StatefulWidget {
   @override

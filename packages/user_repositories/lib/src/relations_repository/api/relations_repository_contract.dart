@@ -1,6 +1,7 @@
 import 'package:user_repositories/relations_repository.dart';
 
-/// Change and view updates of relations in points
+/// Get realtime updates of the current users relations,
+/// as well as changing relations and giving points to other users
 abstract class IRelationsRepository {
   /// Updates of relations
   Stream<UserRelations> get relationsStream;

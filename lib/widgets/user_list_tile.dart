@@ -2,6 +2,9 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import '../theme/points_colors.dart' show colors;
 import '../theme/points_icons.dart';
 
+/// A list tile to show the profile of a user.
+///
+/// Shows the color, icon, name, and points as well as the status or gives
 class UserListTile extends StatelessWidget {
   final int color;
   final int icon;

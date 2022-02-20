@@ -5,7 +5,15 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:points/state_management/give_friend_points/give_friend_points_cubit.dart';
 import 'package:points/theme/points_colors.dart';
 import 'package:points/widgets/neumorphic_box.dart';
+import '../home/home_navigator.dart';
 
+/// A dialog to give a friend a specified amount of points via a slider.
+/// The range of the slider is changed in realtime,
+/// depending on how many gives the user has.
+///
+/// Only uses the [GiveFriendPointsCubit].
+///
+/// Can be opened for the preferred friend from [HomeNavigator]
 class GiveFriendPointsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

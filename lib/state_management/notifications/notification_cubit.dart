@@ -10,6 +10,7 @@ import 'package:points/helpers/notification_type_icon_data.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
+import '../../pages/notifications/notification_delegate.dart';
 
 import '../../theme/points_colors.dart' as pointsColors;
 import '../../theme/points_icons.dart' as pointsIcons;
@@ -18,6 +19,19 @@ import '../auth/auth_cubit.dart';
 
 part 'notification_state.dart';
 
+/// Listens to the [IChatRepository] and [INotificationRepository],
+/// for notifications which it emits
+/// as a [ChatNotification] or a [Notification],
+/// depending on if it is from the [IChatRepository.messagesNotificationStream]
+/// or from the [INotificationRepository.notificationStream].
+///
+/// Also makes sure to emit with the correct icons and colors
+/// by fetching/getting the users mentioned in the notifications.
+///
+/// Uses the [IProfileRepository], [IRelationsRepository],
+/// and [IUserDiscoveryRepository] to get the repositories.
+///
+/// Used only by the [NotificationDelegate].
 class NotificationCubit extends Cubit<Notification?> {
   final IChatRepository chatRepository;
   final INotificationRepository notificationRepository;
@@ -37,6 +51,7 @@ class NotificationCubit extends Cubit<Notification?> {
     required this.authCubit,
   }) : super(null);
 
+  /// Start listening to the [IChatRepository] and [INotificationRepository]
   void startListening() {
     _messageNotificationSub = chatRepository.messagesNotificationStream.listen(
       (message) {
@@ -111,6 +126,10 @@ class NotificationCubit extends Cubit<Notification?> {
     );
   }
 
+  /// Get the profile of a user, either using the [IProfileRepository],
+  /// if it is the users own profile,
+  /// the [IRelationsRepository] for a related user,
+  /// or the [IUserDiscoveryRepository] to fetch it]
   Future<User?> _tryToGetUser(String id) async {
     if (profileRepository.currentProfile?.id == id) {
       return profileRepository.currentProfile!;
@@ -129,6 +148,9 @@ class NotificationCubit extends Cubit<Notification?> {
     }
   }
 
+  /// If clicked on a notification, mark it as read.
+  ///
+  /// Handled in the [NotificationDelegate]
   void markAsRead() {
     if (state != null && state!.id != null) {
       final id = state!.id!;

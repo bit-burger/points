@@ -4,6 +4,11 @@ import 'package:bloc/bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 
+/// Listens to and emits
+/// the [INotificationRepository.notificationUnreadCountStream],
+/// for the amount of unread notifications in realtime.
+///
+/// Used in multiple pages.
 class NotificationUnreadCountCubit extends Cubit<int> {
   final INotificationRepository notificationRepository;
   final AuthCubit authCubit;

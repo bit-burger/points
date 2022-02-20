@@ -5,9 +5,18 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:user_repositories/profile_repository.dart';
 import 'package:user_repositories/relations_repository.dart';
+import '../../pages/give_points/give_friend_points_dialog.dart';
 
 part 'give_friend_points_state.dart';
 
+/// Give a single friend points and also react to changes in gives
+/// and close the chat if the friend is unfriended/unfriends the user.
+///
+/// Used only in the [GiveFriendPointsDialog]
+/// with the [GiveFriendPointsData.howManyPoints] being the value the slider
+/// and the [GiveFriendPointsData.howManyPointsLimit] being
+/// the max value of the slider.This max value is actively changed,
+/// when the amount of gives the user has increases/decreases.
 class GiveFriendPointsCubit extends Cubit<GiveFriendPointsState> {
   final IRelationsRepository relationsRepository;
   final IProfileRepository profileRepository;

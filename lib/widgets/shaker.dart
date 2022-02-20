@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math_64.dart';
 
+/// Shake the child widget via a [GlobalKey]
 class Shaker extends StatefulWidget {
   final Widget child;
 

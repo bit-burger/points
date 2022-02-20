@@ -3,8 +3,14 @@ import 'dart:async';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/profile_repository.dart';
+import '../../pages/profile/profile_page.dart';
 import '../../helpers/reg_exp.dart' as regExp;
 
+/// A "form bloc" from the flutter_form_bloc library for the [ProfilePage]
+/// to update, validate and save the profile.
+///
+/// Also listens to the profile in realtime and updating it
+/// (for example if another device changes the profile).
 class ProfileFormBloc extends FormBloc<String, String> {
   static String? Function(String? s) lengthCheck(String fieldName,
       {required int maxLength}) {

@@ -11,6 +11,8 @@ import 'package:user_repositories/relations_repository.dart';
 import 'package:user_repositories/user_discovery_repository.dart';
 import '../../helpers/reg_exp.dart' as regExp;
 
+/// Invite by email, using the [EmailUserInviterCubit]
+/// to validate the email/if it belongs to somebody.
 class InvitePopup extends StatefulWidget {
   @override
   State<InvitePopup> createState() => _InvitePopupState();
@@ -93,6 +95,7 @@ class _InvitePopupState extends State<InvitePopup> {
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        // make sure, that it is over the keyboard
         resizeToAvoidBottomInset: true,
         body: Column(
           children: [
@@ -119,6 +122,7 @@ class _InvitePopupState extends State<InvitePopup> {
                     },
                     listener: (context, state) {
                       if (state is EmailUserInviterFinished) {
+                        // leave page, when invited successfully
                         Navigator.pop(context);
                       }
                     },

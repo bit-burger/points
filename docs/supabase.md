@@ -13,3 +13,7 @@
 5. Copy paste main.sql into it and click on run
 
 6. Make another new query, but copy functions.sql into it and click on run
+
+7. In the root of the cloned project,
+replace the SUPABASE_URL and SUPABASE_ANON_KEYS with your own credentials
+from the newly configured supabase project (settings > api > anon public/url)

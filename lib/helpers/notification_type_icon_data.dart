@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:notification_repository/notification_repository.dart';
 
+/// Returns a icon from [Ionicons] for a [NotificationType]
 IconData? iconDataFromNotificationType(NotificationType type) {
   switch (type) {
     case NotificationType.gavePoints:

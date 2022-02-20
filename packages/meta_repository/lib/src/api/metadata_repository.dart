@@ -10,6 +10,8 @@ class MetadataRepository extends IMetadataRepository {
     required SupabaseClient client,
   }) : _client = client;
 
+  /// not currently implemented, will probably not be implemented
+  @deprecated
   @override
   Future<String> getVersion() {
     // TODO: implement getVersion

@@ -2,9 +2,23 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:user_repositories/relations_repository.dart';
+import '../../pages/relations/relations_sub_page.dart';
+import '../../pages/give_points/give_points_page.dart';
 
 part 'relations_state.dart';
 
+/// Listens to and emits the [IRelationsRepository] to listen to the
+/// friends, friend requests and blocked users (by and to the user).
+///
+/// Is also used to change relationships, these are supported operations:
+///  - [request], [cancelRequest]
+///  - [accept], [reject]
+///  - [unfriend]
+///  - [block], [unblock]
+///
+/// Used by multiple pages,
+/// most importantly however in the [RelationsSubPage] and [GivePointsPage]
+/// (in the [GivePointsPage however only the friends are listened to).
 class RelationsCubit extends Cubit<RelationsState> {
   final IRelationsRepository _relationsRepository;
   final AuthCubit authCubit;

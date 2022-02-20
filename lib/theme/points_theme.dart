@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'points_colors.dart' as pointsColors;
 
+/// Neumorphic and material themes for points, only white mode
+
 final neumorphic = NeumorphicThemeData(
   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(25)),
   appBarTheme: NeumorphicAppBarThemeData(

@@ -27,6 +27,9 @@ extension on User {
   }
 }
 
+/// Using the [ChatCubit] chat with friends, paging included.
+///
+/// Can be opened for the preferred friend from [HomeNavigator]
 class ChatPage extends StatefulWidget {
   final String chatId;
   final String userId;

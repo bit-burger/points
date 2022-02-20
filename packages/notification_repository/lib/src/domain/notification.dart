@@ -1,5 +1,7 @@
 import 'notification_type.dart';
 
+/// Represents a notification, with also capabilities for formatting a string,
+/// if provided the names of the referenced people in the [Notification]
 class Notification {
   final int id;
   final String selfId;
@@ -42,6 +44,7 @@ class Notification {
     return otherName!;
   }
 
+  /// Format a string from the message data, if given [otherName]
   String getNotificationMessage([String? otherName]) {
     switch (type) {
       case NotificationType.systemMessage:

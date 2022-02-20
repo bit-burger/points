@@ -1,12 +1,15 @@
+/// Type of notification, needed for interpreting the [Notification.]
 enum NotificationType {
   systemMessage,
   changedRelation,
+  gavePoints,
+  /// not used
   pointsMilestone,
   receivedMessage,
   profileUpdate,
-  gavePoints,
 }
 
+/// For getting the [NotificationType] from a [String] in json
 NotificationType notificationTypeFromString(String s) {
   switch (s) {
     case "system_message":

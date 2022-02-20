@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-/// Represents a user in points
+/// Represents a user profile in points
 class User {
   final String id;
   final String name;

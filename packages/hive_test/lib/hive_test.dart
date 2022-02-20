@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 
+/// A fake hive box for testing
 class FakeHiveBox<E> extends Box<E> {
   Map data = Map<dynamic, E>();
 

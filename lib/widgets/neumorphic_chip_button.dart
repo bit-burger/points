@@ -1,5 +1,6 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+/// A smaller button that looks similar to a [Chip], but in neumorphic design
 class NeumorphicChipButton extends StatelessWidget {
   final Widget child;
   final VoidCallback? onPressed;

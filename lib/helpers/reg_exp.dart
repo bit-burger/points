@@ -1,3 +1,5 @@
+/// All RegExp used in points
+
 final supabaseUrl = RegExp(r"^https?:\/\/.+\..+");
 final supabaseKey = RegExp(r"^(\.|\w){147}$");
 

@@ -1,6 +1,7 @@
 import 'package:chat_repository/src/domain/message.dart';
 import 'package:matcher/matcher.dart';
 
+/// Match a message for testing (without timestamps)
 class MessageMatcher extends Matcher {
   final String chatId;
   final String content;

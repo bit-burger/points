@@ -8,6 +8,7 @@ import '../errors/messages_error.dart';
 import '../domain/message.dart';
 import '../domain/chat.dart';
 
+/// Supabase implementation of the [IChatRepository]
 class ChatRepository extends IChatRepository {
   final SupabaseClient _client;
   late final String _userId;

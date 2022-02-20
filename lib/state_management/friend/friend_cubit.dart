@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:user_repositories/relations_repository.dart';
+import '../../pages/friend/friend_page.dart';
 
 part 'friend_state.dart';
 
+/// Listen to the profile of a specific friend.
+///
+/// Used only in the [FriendPage].
 class FriendCubit extends Cubit<FriendState> {
   late final StreamSubscription _sub;
   final IRelationsRepository relationsRepository;
@@ -58,11 +62,6 @@ class FriendCubit extends Cubit<FriendState> {
         }
       }
     });
-  }
-
-  void givePoints(int howMany) {
-    final friend = (state as FriendDataState).data;
-    relationsRepository.givePoints(friend.id, howMany);
   }
 
   @override

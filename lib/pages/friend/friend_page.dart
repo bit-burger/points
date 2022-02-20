@@ -9,7 +9,14 @@ import 'package:points/widgets/points_logo.dart';
 import '../../theme/points_colors.dart' as pointsColors;
 import '../../theme/points_icons.dart' as pointsIcons;
 import '../../widgets/neumorphic_icon_button.dart';
+import '../home/home_navigator.dart';
 
+/// View a Friend in detail,
+/// start a chat, give them points, unfriend, or unblock them
+///
+/// Only uses the [FriendCubit].
+///
+/// Can be opened for the preferred friend from [HomeNavigator]
 class FriendPage extends StatelessWidget {
   // TODO: Check alternative designs for (now hidden) unfriend and block buttons
   @override

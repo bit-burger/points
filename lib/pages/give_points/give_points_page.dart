@@ -7,7 +7,11 @@ import 'package:points/theme/points_colors.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:points/widgets/user_list_tile.dart';
+import 'package:points/pages/give_points/give_friend_points_dialog.dart';
 
+/// See all your points and gives,
+/// as well as your friends with points and gives,
+/// only one click needed to get to the [GiveFriendPointsDialog[
 class GivePointsPage extends StatelessWidget {
   static final boldTextStyle = TextStyle(
     fontWeight: FontWeight.bold,

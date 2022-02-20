@@ -39,6 +39,10 @@ final unfriendAction = _RelationSheetAction(
   key: "unfriend",
 );
 
+/// Shows an [ActionSheet], for relation actions for a specific user,
+/// that are then applied to RelationsCubit.
+///
+/// Custom Actions can also be given and handled.
 void showRelationsActionSheet({
   required BuildContext context,
   String? title,

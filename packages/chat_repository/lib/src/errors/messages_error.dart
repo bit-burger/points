@@ -1,3 +1,4 @@
+/// Is thrown on a connection error
 class MessageConnectionError implements Exception {
   @override
   String toString() {

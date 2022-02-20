@@ -1,4 +1,5 @@
 /// Import all global domain and errors used by all repositories
+
 export 'domain_shared/user.dart';
 export 'domain_shared/user.dart';
 

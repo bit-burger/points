@@ -7,6 +7,11 @@ import 'package:flutter/material.dart' as flutter;
 
 import '../../configure_package_info.dart';
 
+/// Shows things like version and name to the user, also shows licenses.
+///
+/// Version and name provided by the package_info package,
+/// which was configured in lib/configure_package_info.dart,
+/// which was called in main.dart
 class InfoDialog extends StatelessWidget {
   void showLicensePage(BuildContext context) {
     flutter.showLicensePage(

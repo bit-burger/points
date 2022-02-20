@@ -1,5 +1,6 @@
 import 'message.dart';
 
+/// Represents a chat and all the messages that have already been loaded
 class Chat {
   final List<Message> messages;
   final bool allMessagesFetched;

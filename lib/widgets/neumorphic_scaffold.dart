@@ -1,5 +1,9 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+/// A scaffold, with the background of the current neumorphic theme
+///
+/// Should not be used, as a normal [Scaffold] should be used instead.
+@deprecated
 class NeumorphicScaffold extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final bool extendBodyBehindAppBar;

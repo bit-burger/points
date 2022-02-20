@@ -15,6 +15,7 @@ enum RelationType {
   blockedBy,
 }
 
+/// Used if the [RelationType] needs to be inferred from a [String] in json
 RelationType relationTypeFromString(String s) {
   switch (s) {
     case "friends":

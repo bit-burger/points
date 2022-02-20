@@ -1,5 +1,6 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+/// A round NeumorphicButton with a Icon
 class NeumorphicIconButton extends StatelessWidget {
   final Widget icon;
   final Widget text;

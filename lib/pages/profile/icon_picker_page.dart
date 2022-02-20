@@ -1,10 +1,13 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
+import 'package:points/widgets/neumorphic_action.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
 import '../../theme/points_icons.dart';
+import 'profile_page.dart';
 
+/// Pick a Icon for the [ProfilePage]
 class IconPickerPage extends StatefulWidget {
   @override
   State<IconPickerPage> createState() => _IconPickerPageState();
@@ -21,54 +24,45 @@ class _IconPickerPageState extends State<IconPickerPage> {
     return NeumorphicScaffold(
       extendBodyBehindAppBar: true,
       appBar: NeumorphicAppBar(
-          title: SizedBox(),
-          leading: NeumorphicBackButton(
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.circle(),
+        title: SizedBox(),
+        leading: NeumorphicAction.backButton(),
+        trailing: NeumorphicAction(
+          tooltip: "Zoom out",
+          child: Center(
+            child: Text(
+              "-",
+              style: TextStyle(fontSize: 36),
             ),
           ),
-          trailing: NeumorphicButton(
-            tooltip: "Zoom out",
-            child: Center(
-              child: Text(
-                "-",
-                style: TextStyle(fontSize: 36),
-              ),
-            ),
-            onPressed: () {
-              setState(
-                () {
-                  if (howManyOnEachRow < 10) {
-                    howManyOnEachRow++;
-                  }
-                },
-              );
-            },
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.circle(),
+          onPressed: () {
+            setState(
+              () {
+                if (howManyOnEachRow < 10) {
+                  howManyOnEachRow++;
+                }
+              },
+            );
+          },
+        ),
+        secondTrailing: NeumorphicAction(
+          tooltip: "Zoom in",
+          child: Center(
+            child: Text(
+              "+",
+              style: TextStyle(fontSize: 36),
             ),
           ),
-          secondTrailing: NeumorphicButton(
-            tooltip: "Zoom in",
-            child: Center(
-              child: Text(
-                "+",
-                style: TextStyle(fontSize: 36),
-              ),
-            ),
-            onPressed: () {
-              setState(
-                () {
-                  if (howManyOnEachRow > 3) {
-                    howManyOnEachRow--;
-                  }
-                },
-              );
-            },
-            style: NeumorphicStyle(
-              boxShape: NeumorphicBoxShape.circle(),
-            ),
-          )),
+          onPressed: () {
+            setState(
+              () {
+                if (howManyOnEachRow > 3) {
+                  howManyOnEachRow--;
+                }
+              },
+            );
+          },
+        ),
+      ),
       body: BlocBuilder<InputFieldBloc<int, dynamic>, InputFieldBlocState>(
         builder: (context, state) {
           return GridView.builder(

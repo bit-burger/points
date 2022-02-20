@@ -16,6 +16,7 @@ import 'package:points/widgets/neumorphic_scaffold.dart';
 import 'package:user_repositories/profile_repository.dart';
 import '../../theme/points_colors.dart' as pointsColors;
 
+/// Change and preview profile with the [ProfileFormBloc]
 class ProfilePage extends StatefulWidget {
   static const _textFieldBorder =
       UnderlineInputBorder(borderSide: BorderSide(width: 2));

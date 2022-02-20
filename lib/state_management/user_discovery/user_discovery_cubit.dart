@@ -7,6 +7,8 @@ import 'package:user_repositories/user_discovery_repository.dart';
 
 part 'user_discovery_state.dart';
 
+/// Search for users, page the results, and request/block the users,
+/// while keeping track of who has already been requested/blocked
 class UserDiscoveryCubit extends Cubit<UserDiscoveryState> {
   static const _resultsPageLength = 20;
 

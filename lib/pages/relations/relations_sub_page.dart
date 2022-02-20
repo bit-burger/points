@@ -8,7 +8,16 @@ import 'package:points/state_management/relations/relations_cubit.dart';
 import 'package:points/widgets/loader.dart';
 import 'package:points/widgets/user_list_tile.dart';
 import 'package:user_repositories/relations_repository.dart';
+import '../home/home_navigator.dart';
+import '../friend/friend_page.dart';
 
+/// Lists and updates all related users (friends, requests, blocked).
+///
+/// Implement swiping, clicking and long click.
+/// For example: Click on a friend and via [HomeNavigator]
+/// get a [FriendPage] shown, press long
+/// and get a SheetAction to unfriend or block the user,
+/// swipe Left and be asked if the user wants to unfriend the friend.
 class RelationsSubPage extends StatefulWidget {
   @override
   State<RelationsSubPage> createState() => _RelationsSubPageState();

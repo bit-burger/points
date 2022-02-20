@@ -5,9 +5,14 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:meta_repository/meta_repository.dart';
+import '../../pages/auth/auth_page.dart';
 
 part 'auth_state.dart';
 
+/// Cubit for the authentication state,
+/// also handles errors via the [reportConnectionError] method,
+/// which all Cubits call to report an error,
+/// to then show the [LoggedInPausedOnConnectionError] state.
 class AuthCubit extends Cubit<AuthState> {
   final IAuthRepository _authRepository;
   final IMetadataRepository _metadataRepository;
@@ -65,6 +70,9 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  /// sign in from the persisted data
+  ///
+  /// The data is persisted in the [IAuthRepository]
   void tryToAutoSignIn() {
     assert(state is AuthInitialState);
 
@@ -133,6 +141,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  /// Not currently used
   void deleteAccount() async {
     assert(state is LoggedInState);
 
@@ -144,6 +153,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  /// For the [AuthPage], if there has been an error, clear it
   void clearErrors() {
     assert(state is LoggedOutState);
 

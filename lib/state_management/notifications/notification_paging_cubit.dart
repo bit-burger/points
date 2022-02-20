@@ -9,6 +9,9 @@ import 'package:user_repositories/user_discovery_repository.dart';
 
 part 'notification_paging_state.dart';
 
+/// Handles listening and the paging of the notifications,
+/// even updates the appearance to the notifications,
+/// if the friends change, by listening to the [IRelationsRepository].
 class NotificationPagingCubit extends Cubit<NotificationPagingState> {
   final INotificationRepository notificationRepository;
   final IRelationsRepository relationsRepository;

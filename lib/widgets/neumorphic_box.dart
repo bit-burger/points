@@ -1,5 +1,10 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+/// A Neumorphic widget with round corners.
+///
+/// Should not be used, as its functionality can be easily replicated
+/// with the [Neumorphic] widget.
+@deprecated
 class NeumorphicBox extends StatelessWidget {
   final Widget child;
   final bool reverseHeight;

@@ -5,6 +5,7 @@ import 'package:points/widgets/hider.dart';
 
 import 'neumorphic_text_field.dart';
 
+/// The [NeumorphicTextField] as a [FormField] to be used in forms
 class NeumorphicTextFormField extends FormField<String> {
   NeumorphicTextFormField({
     Key? key,

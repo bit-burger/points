@@ -1,5 +1,6 @@
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
+/// Matching colors to the color property of the profiles
 const List<Color> colors = [
   red,
   orange,
@@ -24,6 +25,7 @@ const purple = Color(0xFFBDB2FF);
 const pink = Color(0xFFEFADFF);
 const white = Color(0xFFDDE6E8);
 
+// colors used for the theme in points
 const textColor = Color(0xFF000000);
 const textLabelColor = Color(0xFF757575);
 const textSelectionColor = Color(0xFFBDBDBD);
