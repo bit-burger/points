@@ -217,6 +217,15 @@ class _RelationsSubPageState extends State<RelationsSubPage> {
           ..._listViewFromUsers(
             name: "blocked by",
             users: relations.blockedBy,
+            onPressed: (user) {
+              showRelationsActionSheet(
+                context: context,
+                actions: [
+                  blockAction,
+                ],
+                userId: user.id,
+              );
+            },
           ),
         Column(
           children: _buildShowBlocksButton(relations).toList(),

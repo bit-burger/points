@@ -125,6 +125,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 key: "show_profile",
               ),
             if (notificationUnknownUser.relationType == RelationType.requesting)
+              acceptAction,
+            if (notificationUnknownUser.relationType == RelationType.requesting)
               rejectAction,
             if (notificationUnknownUser.relationType == RelationType.pending)
               cancelAction,
