@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_repository/notification_repository.dart';
 import 'package:points/pages/auth/auth_initial_page.dart';
 import 'package:points/pages/auth/auth_page.dart';
-import 'package:points/pages/auth/connection_error_page.dart';
+import 'package:points/pages/auth/connection_lost_page.dart';
 import 'package:points/pages/home/home_navigator.dart';
 import 'package:points/state_management/auth/auth_cubit.dart';
 import 'package:points/state_management/notifications/notification_cubit.dart';
@@ -20,7 +20,7 @@ import 'package:user_repositories/user_discovery_repository.dart';
 ///
 /// Waiting for auto log in to complete: [AuthInitialPage]
 /// Not logged in: [AuthPage]
-/// Connection error: [ConnectionErrorPage]
+/// Connection error: [ConnectionLostPage]
 /// Logged in: [HomeNavigator] along with the all the repositories,
 ///            that need a logged in [SupabaseClient] and the shared Cubits
 class AuthNavigator extends StatelessWidget {
@@ -120,10 +120,10 @@ class AuthNavigator extends StatelessWidget {
             if (state is LoggedInPausedOnConnectionError)
               MaterialPage(
                 name: "Connection failed",
-                key: ValueKey("ConnectionErrorPage"),
+                key: ValueKey("ConnectionLostPage"),
                 child: WillPopScope(
                   onWillPop: () async => false,
-                  child: ConnectionErrorPage(),
+                  child: ConnectionLostPage(),
                 ),
               ),
             if (state is LoggedInState) _buildHome(),

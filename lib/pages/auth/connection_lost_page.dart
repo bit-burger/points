@@ -10,12 +10,12 @@ import 'package:points/widgets/shaker.dart';
 /// If the [AuthCubit] emits that it has an error,
 /// this page is displayed by the [AuthNavigator],
 /// to give the user the option to log in or retry the connection
-class ConnectionErrorPage extends StatefulWidget {
+class ConnectionLostPage extends StatefulWidget {
   @override
-  State<ConnectionErrorPage> createState() => _ConnectionErrorPageState();
+  State<ConnectionLostPage> createState() => _ConnectionLostPageState();
 }
 
-class _ConnectionErrorPageState extends State<ConnectionErrorPage> {
+class _ConnectionLostPageState extends State<ConnectionLostPage> {
   final GlobalKey<ShakerState> shakerKey = GlobalKey();
 
   @override
@@ -24,8 +24,7 @@ class _ConnectionErrorPageState extends State<ConnectionErrorPage> {
       extendBodyBehindAppBar: true,
       appBar: NeumorphicAppBar(
         title: Text(
-          "Connection error",
-          style: TextStyle(color: Theme.of(context).errorColor),
+          "Connection lost",
         ),
         leading: SizedBox(),
       ),
@@ -51,15 +50,15 @@ class _ConnectionErrorPageState extends State<ConnectionErrorPage> {
                       height: 12,
                     ),
                     Text(
-                      "A connection error occurred, "
-                      "check your internet or try again later",
+                      "The connection was lost, "
+                      "reconnect or log out",
                       style: TextStyle(color: Theme.of(context).errorColor),
                     ),
                     SizedBox(
                       height: 36,
                     ),
                     NeumorphicLoadingTextButton(
-                      child: Text("Try again"),
+                      child: Text("Reconnect"),
                       loading: loading,
                       onPressed:
                           context.read<AuthCubit>().retryFromConnectionError,

@@ -19,7 +19,7 @@ While the AuthNavigator is waiting for the auto log in to complete,
 it shows the [AuthInitialPage](../lib/pages/auth/auth_initial_page.dart).
 If not logged in the [AuthPage](../lib/pages/auth/auth_page.dart) is shown.
 The AuthCubit also handles errors, as all Cubits report errors to the AuthCubit.
-If an error occurs the AuthNavigator shows the [ConnectionErrorPage](../lib/pages/auth/connection_error_page.dart),
+If an error occurs the AuthNavigator shows the [ConnectionLostPage](../lib/pages/auth/connection_lost_page.dart),
 which lets the user decide if they want to retry the connection or log out.
 When the user is finally logged in, the [HomeNavigator](../lib/pages/home/home_navigator.dart) is shown,
 with all other repositories and shared cubits that need the supabase client to be logged in.
