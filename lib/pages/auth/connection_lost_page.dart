@@ -52,7 +52,7 @@ class _ConnectionLostPageState extends State<ConnectionLostPage> {
                     Text(
                       "The connection was lost, "
                       "reconnect or log out",
-                      style: TextStyle(color: Theme.of(context).errorColor),
+                      textAlign: TextAlign.center,
                     ),
                     SizedBox(
                       height: 36,
