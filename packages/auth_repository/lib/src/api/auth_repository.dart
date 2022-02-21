@@ -25,7 +25,7 @@ class AuthRepository extends IAuthRepository {
     final response =
         await _client.auth.signIn(email: email, password: password);
     if (response.error == null) {
-      await _saveSession(response.data!);
+      await _saveSession(email, password);
       final user = response.user!;
       return AccountCredentials(userId: user.id, email: user.email!);
     }
@@ -56,28 +56,29 @@ class AuthRepository extends IAuthRepository {
     if (response.data == null) {
       throw AuthError(AuthErrorType.email);
     }
-    await _saveSession(response.data!);
+    await _saveSession(email, password);
     final user = response.user!;
     return AccountCredentials(userId: user.id, email: user.email!);
   }
 
   @override
   bool persistedLogInDataExists() {
-    return _retrieveSession() != null;
+    return _retrieveEmail() != null;
   }
 
   @override
   Future<AccountCredentials> tryAutoSignIn() async {
-    final jsonStr = _retrieveSession();
-    if (jsonStr == null) {
+    final email = _retrieveEmail();
+    if (email == null) {
       throw AuthAutoSignInFailedError();
     }
+    final password = _retrievePassword();
 
-    final response = await _client.auth.recoverSession(jsonStr);
+    final response = await _client.auth.signIn(
+      email: email,
+      password: password,
+    );
 
-    if (response.data != null) {
-      _saveSession(response.data!);
-    }
     switch (response.error?.message) {
       case null:
         final user = response.user!;
@@ -114,15 +115,26 @@ class AuthRepository extends IAuthRepository {
   }
 
   Future<void> _deleteSession() async {
-    await _sessionStore.delete("sessionTokenJsonStr");
+    await Future.wait([
+      _sessionStore.delete("email"),
+      _sessionStore.delete("password"),
+    ]);
   }
 
-  Future<void> _saveSession(Session session) async {
-    final sessionDataStr = session.persistSessionString;
-    await _sessionStore.put("sessionTokenJsonStr", sessionDataStr);
+  Future<void> _saveSession(String email, String password) async {
+    await Future.wait([
+      _sessionStore.put("email", email),
+      _sessionStore.put("password", password),
+    ]);
   }
 
-  String? _retrieveSession() {
-    return _sessionStore.get("sessionTokenJsonStr");
+  /// Can also be used to check,
+  /// if any credentials that were saved exist
+  String? _retrieveEmail() {
+    return _sessionStore.get("email");
+  }
+
+  String _retrievePassword() {
+    return _sessionStore.get("password")!;
   }
 }
