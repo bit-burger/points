@@ -60,9 +60,6 @@ and the pages are in [lib/pages](../lib/pages), the other directories in lib/ ar
 
 ### Supabase (and other) configurations
 
-The sql files needed in a points supabase project are found in [supabase/]
-and a guide to configure a supabase project for points is found [here](supabase.md).
-
 As previously mentioned, points uses the supabase_flutter singleton, which is configured
 in the [supabase_configuration.dart](../lib/supabase_configuration.dart) file,
 which is called in [main.dart](../lib/main.dart). The supabase_configuration.dart file,
@@ -72,6 +69,34 @@ The [configure_package_info.dart](../lib/configure_package_info.dart) file
 configures the package_info_plus package to read the current version of the program,
 which happens in the [InfoDialog](../lib/pages/home/info_dialog.dart) widget.
 It is also called in the main.dart file.
+
+### Supabase and PostgreSQL
+
+The sql files needed in a points supabase project are found in [supabase/](../supabase)
+and a guide to configure a supabase project for points is found [here](supabase.md).
+
+In points the different repositories use their injected SupabaseClient to interface with supabase,
+in points the tables profiles, relations, chats, messages, and notifications,
+which are defined in [main.sql](../supabase/main.sql), are all queried and listened to directly,
+without anything in between.
+
+It is made sure
+via [RLS](https://supabase.com/docs/guides/auth/row-level-security#restrict-updates),
+that the user can only query/listen to the table that they are allowed to.
+A user can query all profiles,
+but they are only allowed to query their own relations, notifications, and chats/messages.
+
+To however update the tables, for example send a friend request to a user,
+the repositories cannot directly update the tables. Updating a profile,
+getting a profile from an email, managing relations (accepting/rejecting a request, blocking, etc.).
+and even complex queries like searching for users or querying all relations, are done via functions.
+These functions are are defined inside of [functions.sql](../supabase/functions.sql).
+
+It is also notable, that the authentication is from supabase.
+For every new signed up user, supabase adds a new row to `auth.users` and then via a trigger,
+a new profile is inserted into the `profile` table of points.
+To redistribute the points at the end of the day, a crontab is used,
+it is also defined inside of [main.sql](../supabase/main.sql).
 
 ### App icon and splash screen
 
