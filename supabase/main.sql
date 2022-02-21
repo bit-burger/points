@@ -11,7 +11,7 @@ delete from auth.users where true;
 -- profiles --
 create domain points as bigint check (value >= 0);
 create domain color as smallint check ((value >= 0) and (value < 10));
-create domain icon as smallint check ((value >= 0) and (value < 230));
+create domain icon as smallint check ((value >= 0) and (value < 229));
 
 create table public.greek_alphabet(
   name varchar(8)

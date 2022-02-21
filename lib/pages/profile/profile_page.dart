@@ -74,8 +74,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return BlocProvider(
-                                create: (_) => formBloc.iconSelection,
+                              return BlocProvider.value(
+                                value: formBloc.iconSelection,
                                 child: IconPickerPage(),
                               );
                             },

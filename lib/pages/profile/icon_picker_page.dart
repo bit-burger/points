@@ -1,6 +1,7 @@
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart'
     hide NeumorphicAppBar;
+import 'package:ionicons/ionicons.dart';
 import 'package:points/widgets/neumorphic_action.dart';
 import 'package:points/widgets/neumorphic_app_bar_fix.dart';
 import 'package:points/widgets/neumorphic_scaffold.dart';
@@ -29,9 +30,9 @@ class _IconPickerPageState extends State<IconPickerPage> {
         trailing: NeumorphicAction(
           tooltip: "Zoom out",
           child: Center(
-            child: Text(
-              "-",
-              style: TextStyle(fontSize: 36),
+            child: Icon(
+                Ionicons.remove_outline,
+              size: 32,
             ),
           ),
           onPressed: () {
@@ -47,9 +48,9 @@ class _IconPickerPageState extends State<IconPickerPage> {
         secondTrailing: NeumorphicAction(
           tooltip: "Zoom in",
           child: Center(
-            child: Text(
-              "+",
-              style: TextStyle(fontSize: 36),
+            child: Icon(
+              Ionicons.add_outline,
+              size: 32,
             ),
           ),
           onPressed: () {

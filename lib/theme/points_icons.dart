@@ -1,7 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:ionicons/ionicons.dart';
 
-/// Matching icons to the icon property of the profiles
+/// Matching icons to the icon column of the profiles table,
+/// the column matches the index of one [pointsIcons].
 const List<IconData> pointsIcons = [
   // default
   Ionicons.person_outline,
@@ -57,7 +58,6 @@ const List<IconData> pointsIcons = [
   Ionicons.chatbubbles_outline,
   Ionicons.clipboard_outline,
   Ionicons.close_outline,
-  Ionicons.cloud_outline,
   Ionicons.cloudy_outline,
   Ionicons.cloudy_night_outline,
   Ionicons.code_outline,
