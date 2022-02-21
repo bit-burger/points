@@ -21,7 +21,7 @@ class NotificationPagingState {
     required this.moreToLoad,
     required this.mentionedUsers,
     this.loading = false,
-    this.showingRead = true,
+    this.showingRead = false,
   });
 
   NotificationPagingState copyWith({
