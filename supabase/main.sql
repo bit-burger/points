@@ -161,7 +161,11 @@ create table public.messages(
   constraint only_one_message_per_chat_per_timestamp
     unique(chat_id, created_at)
 );
+alter table public.messages enable row level security;
 
+create policy read_own_messages
+  on messages
+  for select using (auth.uid() = sender or auth.uid() = receiver);
 
 create or replace function chat_delete()
 returns trigger as
@@ -215,27 +219,21 @@ create index sort_by_timestamp on notifications(created_at);
 
 alter table notifications enable row level security;
 
-create policy access_own_notifications
+create policy read_own_notifications
   on notifications
   for select using (auth.uid() = user_id);
 
 
 -- Realtime --
-
 begin;
   drop publication if exists supabase_realtime;
   create publication supabase_realtime;
 commit;
 
-alter publication supabase_realtime
-  add table profiles, relations, messages, notifications;
+alter publication supabase_realtime add table profiles, relations, messages, notifications;
 
--- needed to see the old row on an update (only needed in notifications)
+-- needed to see the old row on an update (only needed in notifications, see NotificationRepository)
 ALTER TABLE notifications REPLICA IDENTITY FULL;
-
--- TODO: TEMP FIX REQUIRES ALL RLS TO BE TURNED OFF AND THE FOLLOWING QUERY TO BE RUN:
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA realtime TO postgres;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA realtime TO postgres;
 
 
 -- Crontab for redistributing points (handled by by the redistribute_points function)
