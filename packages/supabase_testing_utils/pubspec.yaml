@@ -1,0 +1,25 @@
+name: supabase_testing_utils
+description:
+  Different utils, for testing in the auth_repository,
+  chat_repository, notification_repository, and user_repository packages
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=2.14.3 <3.0.0'
+
+dependencies:
+  supabase:
+    git: https://github.com/bit-burger/supabase-dart
+  dotenv: ^3.0.0
+  faker: ^2.0.0
+  hive_test:
+    path: ../hive_test
+  auth_repository:
+    path: ../auth_repository
+  user_repositories:
+    path: ../user_repositories
+  chat_repository:
+    path: ../chat_repository
+  notification_repository:
+    path: ../notification_repository

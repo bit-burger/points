@@ -1,0 +1,17 @@
+name: chat_repository
+description: The repository for chatting with friends in points
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=2.14.3 <3.0.0'
+
+dependencies:
+  supabase:
+    git: https://github.com/bit-burger/supabase-dart
+
+dev_dependencies:
+  faker: ^2.0.0
+  test: ^1.19.3
+  supabase_testing_utils:
+    path: ../supabase_testing_utils

@@ -1,32 +1,99 @@
 name: points
 description: An example social media app, written in dart with Flutter and supabase as a backend
+publish_to: none
 
-version: 0.0.1
+version: 1.0.0
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.15.1 <3.0.0"
 
 dependencies:
+  # Flutter and extensions
   flutter:
     sdk: flutter
+  flutter_neumorphic: ^3.2.0
 
-  # UI
-  cupertino_icons: ^1.0.3
-  flutter_neumorphic: ^3.1.0
+  # Icons and fonts
+  google_fonts: ^2.1.0
+  ionicons: ^0.1.2
 
-  # State mangagement
-  flutter_bloc: ^7.3.0
-  bloc: ^7.2.1
+  # Widgets
+  scrollable_positioned_list: ^0.2.3
+  grouped_list: ^4.1.0
+  intl: ^0.17.0
+  flutter_slidable: ^1.2.0
+  modal_bottom_sheet: ^2.0.0
+  badges: ^2.0.2
+  flutter_svg: ^1.0.0
+  package_info_plus: ^1.3.0
+  simple_speed_dial: ^0.1.3
+  adaptive_dialog: ^1.2.0
+  infinite_scroll_pagination: ^3.1.0
+  in_app_notification: ^1.0.1
+  flutter_parsed_text: ^2.2.1
+  dash_chat:
+    git: https://github.com/bit-burger/dash_chat.git
+
+  # State management
+  flutter_form_bloc: ^0.29.1
+  flutter_bloc: ^8.0.0
+  bloc: ^8.0.1
+
+  # Configuration
+  flutter_dotenv: ^5.0.2
+
+  # Supabase
+  supabase_flutter: ^0.2.9
+  hive_flutter: ^1.1.0
+  connectivity_plus: ^2.1.0
 
   # Own packages
   auth_repository:
-    path: ./auth_repository
-  points_repository:
-    path: ./points_repository
+    path: ./packages/auth_repository
+  user_repositories:
+    path: ./packages/user_repositories
+  meta_repository:
+    path: ./packages/meta_repository
+  chat_repository:
+    path: ./packages/chat_repository
+  notification_repository:
+    path: ./packages/notification_repository
+
+dependency_overrides:
+  supabase:
+    git: https://github.com/bit-burger/supabase-dart
 
 dev_dependencies:
-  test: ^1.17.12
-  matcher: ^0.12.10
+  # Tools
+  flutter_native_splash: ^1.3.3
+  flutter_launcher_icons: ^0.9.2
+
+  # Test framework
+  bloc_test: ^9.0.1
+  flutter_test:
+    sdk: flutter
+
+  # Raw packages (without Flutter)
+  supabase: ^0.2.10
+  hive: ^2.0.4
+
+  # Mocking and faking
+  faker: ^2.0.0
+  mocktail: ^0.2.0
 
 flutter:
-  uses-material-design: true
+  assets:
+    - .env
+    - google_fonts/
+    - icons/logo.svg
+
+flutter_native_splash:
+  color: DDE6E8
+  image: icons/logo-with-text-clear.png
+
+flutter_icons:
+  adaptive_icon_background: DDE6E8
+  image_path_android: icons/logo-clear.png
+  android: true
+  ios: true
+  image_path_ios: icons/logo-filled.png

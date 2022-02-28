@@ -1,0 +1,32 @@
+name: Testing
+
+on: push
+
+jobs:
+  setup:
+    uses: bit-burger/points/.github/workflows/setup.yml@feature/fix-ci
+
+  test-packages:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: test auth_repository
+        run: |
+          cd packages/auth_repository
+          dart test --chain-stack-traces
+      - name: test chat_repository
+        run: |
+          cd packages/chat_repository
+          dart test --chain-stack-traces
+      - name: test notification_repository
+        run: |
+          cd packages/notification_repository
+          dart test --chain-stack-traces
+      - name: test user_repositories
+        run: |
+          cd packages/user_repositories
+          dart test --chain-stack-traces test/profile_repository_test.dart
+          dart test --chain-stack-traces test/relations_repository_test.dart
+          dart test --chain-stack-traces test/user_discovery_repository_test.dart

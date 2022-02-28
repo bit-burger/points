@@ -1,0 +1,40 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Setup
+
+# https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#creating-a-reusable-workflow
+on: workflow_call
+
+jobs:
+  pub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: Install packages
+        shell: bash
+        run: |
+          dart pub install
+          cd packages/auth_repository && pub install && cd ..
+          cd chat_repository && pub install && cd ..
+          cd hive_test && pub install && cd ..
+          cd meta_repository && pub install && cd ..
+          cd supabase_testing_utils && pub install && cd ..
+          cd user_repositories && pub install && cd ..
+          cd chat_repository && pub install
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create .env
+        shell: bash
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run:
+          echo "SUPABASE_URL=\"$SUPABASE_URL\"" >> .env
+          echo "SUPABASE_ANON_KEY=\"$SUPABASE_ANON_KEY\"" >> .env

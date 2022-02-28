@@ -1,0 +1,10 @@
+name: hive_test
+description: Package to mock hive boxes
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=2.14.3 <3.0.0'
+
+dependencies:
+  hive: ^2.0.4
