@@ -7,8 +7,7 @@ environment:
   sdk: '>=2.14.3 <3.0.0'
 
 dependencies:
-  supabase:
-    git: https://github.com/bit-burger/supabase-dart
+  supabase: ^0.3.6
 
 dev_dependencies:
   test: ^1.19.3
@@ -17,8 +16,6 @@ dev_dependencies:
   faker: ^2.0.0
 
   # Helpers
-  supabase_testing_utils:
-    path: ../supabase_testing_utils
   auth_repository:
     path: ../auth_repository
   hive_test:

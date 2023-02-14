@@ -1,4 +1,4 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart' hide Badge;
 import 'package:ionicons/ionicons.dart';
 import 'package:badges/badges.dart';
 import '../theme/points_colors.dart' as pointsColors;
@@ -46,15 +46,17 @@ class NeumorphicAction extends StatelessWidget {
       return widget;
     }
     return Badge(
-      position: BadgePosition(
+      position: BadgePosition.custom(
         end: -6,
         top: -6,
       ),
-      badgeColor: pointsColors.white,
+      badgeStyle: BadgeStyle(
+        shape: badgeNotifications! >= 10 ? BadgeShape.square : BadgeShape.circle,
+        padding: EdgeInsets.all(3),
+        borderRadius: BorderRadius.circular(50),
+        badgeColor: pointsColors.white,
+      ),
       badgeContent: Text(badgeNotifications!.toString()),
-      shape: badgeNotifications! >= 10 ? BadgeShape.square : BadgeShape.circle,
-      padding: EdgeInsets.all(3),
-      borderRadius: BorderRadius.circular(50),
       child: widget,
     );
   }

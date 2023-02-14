@@ -1,5 +1,5 @@
 import 'package:chat_repository/chat_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:notification_repository/notification_repository.dart';
