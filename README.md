@@ -9,7 +9,7 @@
 
 <p align="center">
     Written in frontend with <a Dart and href="https://flutter.dev">Flutter</a> using <a href="https://pub.dev/packages/bloc">bloc</a> as the state managment,<br> 
-    as well <a href="https://supabase.com">supabase</a> in the backend for auth, data storage, and realtime syncing <br><br>
+    as well as <a href="https://supabase.com">supabase</a> in the backend for auth, data storage, and realtime syncing <br><br>
     Features include authentication, a chat, notifications, updating your profile, <br>as well as a friend system (that includes friend requests and blocking)
 </p>
 
